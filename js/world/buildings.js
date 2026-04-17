@@ -29,7 +29,7 @@ function glow(color, intensity) {
   });
 }
 
-// Signpost sign board — flat plank with title (no text here; text is on the HUD when you trigger it).
+// Signpost sign board - flat plank with title (no text here; text is on the HUD when you trigger it).
 function sign(w, h, color) {
   const board = makeBox(w, h, 0.12, color, { roughness: 0.7 });
   const edge = makeBox(w + 0.1, h + 0.1, 0.06, PALETTE.woodDark, { roughness: 0.9 });
@@ -242,7 +242,7 @@ function buildForge(x, z) {
   fireLight.position.set(-1.5, y0 + 1.4, 0);
   g.add(fireLight);
 
-  // Floating gems — skill-themed
+  // Floating gems - skill-themed
   const gemColors = [PALETTE.accentBlue, PALETTE.accentViolet, PALETTE.accentGold, PALETTE.accentGreen];
   const gems = [];
   for (let i = 0; i < 4; i++) {
@@ -304,7 +304,7 @@ function buildCitadel(x, z) {
     g.add(ring);
   }
 
-  // Crown — floating rings
+  // Crown - floating rings
   const rings = [];
   for (let i = 0; i < 3; i++) {
     const r = makeTorus(3.2 - i * 0.4, 0.08, 8, 40, accent, { emissive: accent, emissiveIntensity: 1.6 });
@@ -445,7 +445,7 @@ function buildGateway(x, z) {
   const pillarB = pillarA.clone(); pillarB.position.x = 2.2; g.add(pillarB);
 
   // Arch top: half-torus in XY plane. Default orientation has arc 0..π
-  // span from (+r, 0, 0) over (0, r, 0) to (-r, 0, 0) — exactly the archway shape.
+  // span from (+r, 0, 0) over (0, r, 0) to (-r, 0, 0) - exactly the archway shape.
   const arch = new THREE.Mesh(
     new THREE.TorusGeometry(2.2, 0.45, 10, 30, Math.PI),
     makeStandard(PALETTE.stone)
@@ -522,7 +522,7 @@ function buildTransportHub(x, z) {
   soffit.position.y = canopyEaveY - 0.11;
   g.add(soffit);
 
-  // Lantern strips — dim basic color, bloom-safe
+  // Lantern strips - dim basic color, bloom-safe
   const lanternCol = new THREE.Color(accent).multiplyScalar(0.35);
   const lanternMat = new THREE.MeshBasicMaterial({ color: lanternCol, toneMapped: true });
   const lanternFront = new THREE.Mesh(new THREE.BoxGeometry(8.0, 0.04, 0.08), lanternMat);

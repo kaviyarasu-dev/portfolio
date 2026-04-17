@@ -54,7 +54,7 @@ function buildFaceTexture() {
   canvas.height = size;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, size, size);
-  // Eyes — dark almond dots
+  // Eyes - dark almond dots
   ctx.fillStyle = '#1c120c';
   ctx.beginPath();
   ctx.arc(22, 28, 3.6, 0, Math.PI * 2);
@@ -62,11 +62,11 @@ function buildFaceTexture() {
   ctx.beginPath();
   ctx.arc(42, 28, 3.6, 0, Math.PI * 2);
   ctx.fill();
-  // Eyebrow hints — short strokes
+  // Eyebrow hints - short strokes
   ctx.fillStyle = '#3a2820';
   ctx.fillRect(17, 21, 10, 2);
   ctx.fillRect(37, 21, 10, 2);
-  // Mouth — gentle arc
+  // Mouth - gentle arc
   ctx.strokeStyle = '#6a2e1e';
   ctx.lineWidth = 1.8;
   ctx.lineCap = 'round';
@@ -126,7 +126,7 @@ export function buildPlayer() {
 
   const fabricRough = buildFabricRoughnessTexture();
 
-  // Torso — capsule widened at shoulders, flattened front-to-back
+  // Torso - capsule widened at shoulders, flattened front-to-back
   const torsoGeo = new THREE.CapsuleGeometry(0.24, 0.42, 6, 14);
   const torsoMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(shirtCol),
@@ -135,7 +135,7 @@ export function buildPlayer() {
     metalness: 0
   });
   const torso = new THREE.Mesh(torsoGeo, torsoMat);
-  // Slimmer, slightly taller torso — shoulders wider than waist for adult proportions.
+  // Slimmer, slightly taller torso - shoulders wider than waist for adult proportions.
   // Width ratio < 1.25 means shoulder balls actually read as "broader" than chest.
   torso.scale.set(1.08, 1.05, 0.7);
   torso.position.y = 1.05;
@@ -144,7 +144,7 @@ export function buildPlayer() {
   body.add(torso);
   PlayerRig.torso = torso;
 
-  // Upper-chest pad — attached to BODY (not scaled torso) so it reads as a
+  // Upper-chest pad - attached to BODY (not scaled torso) so it reads as a
   // pectoral bulge rather than a squished capsule. Gives the character a less
   // egg-shaped silhouette from the front.
   const chestGeo = new THREE.SphereGeometry(0.22, 16, 12);
@@ -154,7 +154,7 @@ export function buildPlayer() {
   chest.castShadow = true;
   body.add(chest);
 
-  // Shoulder caps — spheres attached to BODY (not the scaled torso), matching
+  // Shoulder caps - spheres attached to BODY (not the scaled torso), matching
   // the arm-group origins so the shoulder joint reads as one continuous shape.
   const shoulderGeo = new THREE.SphereGeometry(0.12, 14, 10);
   const leftShoulder = new THREE.Mesh(shoulderGeo, torsoMat);
@@ -176,14 +176,14 @@ export function buildPlayer() {
   neck.castShadow = true;
   body.add(neck);
 
-  // Head — elongated sphere + layered tuft + thin face plane (eyes/brow/mouth)
+  // Head - elongated sphere + layered tuft + thin face plane (eyes/brow/mouth)
   const head = new THREE.Group();
   const skull = new THREE.Mesh(new THREE.SphereGeometry(0.23, 24, 18), skinMat);
   skull.scale.y = 1.05;
   skull.castShadow = true;
   head.add(skull);
 
-  // Face plane — sits just outside the skull surface (r=0.23, plane at z=0.236)
+  // Face plane - sits just outside the skull surface (r=0.23, plane at z=0.236)
   // with polygonOffset as z-fight insurance. Smaller than head width so fringe
   // puffs above y=+0.09 never intersect its bbox.
   const faceTex = buildFaceTexture();
@@ -225,17 +225,17 @@ export function buildPlayer() {
 
   function buildArm(side) {
     const group = new THREE.Group();
-    // Longer sleeve so hand reaches upper-thigh when arm hangs — more adult proportions.
+    // Longer sleeve so hand reaches upper-thigh when arm hangs - more adult proportions.
     const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.48, 4, 10), sleeveMat);
     arm.position.y = -0.33;
     arm.castShadow = true;
     group.add(arm);
-    // Elbow joint bulge — slightly thicker than sleeve so it pokes through visually.
+    // Elbow joint bulge - slightly thicker than sleeve so it pokes through visually.
     const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.082, 12, 10), sleeveMat);
     elbow.position.y = -0.33;
     elbow.castShadow = true;
     group.add(elbow);
-    // Hand — horizontal capsule reads as a closed fist (visible at default zoom).
+    // Hand - horizontal capsule reads as a closed fist (visible at default zoom).
     const handGeo = new THREE.CapsuleGeometry(0.062, 0.05, 4, 10);
     const hand = new THREE.Mesh(handGeo, skinMat);
     hand.rotation.x = Math.PI / 2;
@@ -250,12 +250,12 @@ export function buildPlayer() {
 
   function buildLeg(side) {
     const group = new THREE.Group();
-    // Longer leg capsule — lowers foot closer to ground, reduces the "floating" look.
+    // Longer leg capsule - lowers foot closer to ground, reduces the "floating" look.
     const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.56, 4, 10), pantsMat);
     leg.position.y = -0.35;
     leg.castShadow = true;
     group.add(leg);
-    // Knee joint bulge — fabric-colored sphere at mid-leg.
+    // Knee joint bulge - fabric-colored sphere at mid-leg.
     const knee = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), pantsMat);
     knee.position.y = -0.32;
     knee.castShadow = true;
@@ -270,7 +270,7 @@ export function buildPlayer() {
   const lleg = buildLeg(-1); body.add(lleg); PlayerRig.lleg = lleg;
   const rleg = buildLeg( 1); body.add(rleg); PlayerRig.rleg = rleg;
 
-  // Belt — attached to BODY group (not scaled torso) so it doesn't distort.
+  // Belt - attached to BODY group (not scaled torso) so it doesn't distort.
   // Slightly wider/deeper than the torso cross-section at waist height so it
   // reads as a thin leather band around the outside.
   const beltMat = new THREE.MeshStandardMaterial({
@@ -284,14 +284,14 @@ export function buildPlayer() {
   belt.receiveShadow = true;
   body.add(belt);
 
-  // Satchel — slung over right shoulder
+  // Satchel - slung over right shoulder
   const satchel = makeBox(0.22, 0.3, 0.12, PALETTE.woodDark, { roughness: 0.85 });
   satchel.position.set(-0.2, 0.95, 0.12);
   satchel.rotation.z = 0.15;
   body.add(satchel);
   PlayerRig.satchel = satchel;
 
-  // Cape — 4 segmented planes (3x2 subdiv for subtle bend), verlet-animated
+  // Cape - 4 segmented planes (3x2 subdiv for subtle bend), verlet-animated
   const capeMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(capeCol),
     roughness: 0.78,

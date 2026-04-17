@@ -1,4 +1,4 @@
-// Sky dome — large inward-facing sphere with a vertical gradient shader.
+// Sky dome - large inward-facing sphere with a vertical gradient shader.
 // Also spawns a sun billboard (always facing camera) for visual anchor.
 // Scatters low-poly drifting clouds below the dome (see buildClouds).
 

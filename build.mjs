@@ -58,7 +58,7 @@ const ORDER = [
 
 const root = path.dirname(new URL(import.meta.url).pathname);
 
-let out = '// Auto-generated from /js/*.js — do not edit. Run `node build.mjs` to regenerate.\n';
+let out = '// Auto-generated from /js/*.js - do not edit. Run `node build.mjs` to regenerate.\n';
 out += '(function(){\n"use strict";\n\n';
 
 for (const rel of ORDER) {
@@ -75,4 +75,4 @@ out += '})();\n';
 const distDir = path.join(root, 'dist');
 fs.mkdirSync(distDir, { recursive: true });
 fs.writeFileSync(path.join(distDir, 'bundle.js'), out);
-console.log('Wrote dist/bundle.js — ' + (out.length / 1024).toFixed(1) + ' KB');
+console.log('Wrote dist/bundle.js - ' + (out.length / 1024).toFixed(1) + ' KB');

@@ -78,7 +78,7 @@ export function updateCamera(dt) {
     cam.updateProjectionMatrix();
   }
 
-  // Zoom ease — mouse wheel / pinch feed rig.targetDistance.
+  // Zoom ease - mouse wheel / pinch feed rig.targetDistance.
   if (rig.targetDistance != null && rig.targetDistance !== rig.distance) {
     rig.distance = damp(rig.distance, rig.targetDistance, CAMERA_ZOOM_DAMP, dtS);
   }

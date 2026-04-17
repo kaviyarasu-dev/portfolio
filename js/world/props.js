@@ -108,7 +108,7 @@ function buildPineTierGeo(radius, height, segments, centerY, jitterFreqX, jitter
 }
 
 function buildPineCanopyGeo() {
-  // Three skirted tiers — classic conifer silhouette. Each upper tier's base
+  // Three skirted tiers - classic conifer silhouette. Each upper tier's base
   // peeks below the next tier's apex, creating visible branch layers.
   const bottom = buildPineTierGeo(1.45, 1.6, 10, 2.0, 4.2, 3.1, 0.22);
   const middle = buildPineTierGeo(1.15, 1.4, 9,  2.8, 4.8, 3.6, 0.2);
@@ -136,7 +136,7 @@ function buildBroadleafPuffGeo(radius, centerX, centerY, centerZ) {
 }
 
 function buildBroadleafCanopyGeo() {
-  // Four asymmetric puffs merged into a lobed crown — breaks the old lollipop
+  // Four asymmetric puffs merged into a lobed crown - breaks the old lollipop
   // silhouette. Subdiv 2 icosphere gives smoother edges; jitter stays per-puff
   // so each lobe feels independently wind-blown.
   const puffs = [
@@ -338,7 +338,7 @@ function scatterRocks(count) {
   }
 }
 
-// Grass tufts — simple two-triangle cross billboards (cheap)
+// Grass tufts - simple two-triangle cross billboards (cheap)
 function scatterGrass(count) {
   const geo = new THREE.PlaneGeometry(0.55, 0.5);
   // Duplicate cross for full-billboard volume

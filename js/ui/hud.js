@@ -1,5 +1,5 @@
 // HUD: dialogue modal, prompt, zone label, toast, typewriter effect.
-// Pure DOM manipulation — all nodes built via el() from dialogues.js.
+// Pure DOM manipulation - all nodes built via el() from dialogues.js.
 
 import { game } from '../state.js';
 import { clearChildren, el } from '../util/dom.js';
@@ -71,7 +71,7 @@ export function updateToast(dt) {
   }
 }
 
-// Typewriter — walks all text nodes inside the dialogue and fades characters in.
+// Typewriter - walks all text nodes inside the dialogue and fades characters in.
 export function startTypewriter() {
   if (!game.dialogueEl) return;
   const walker = document.createTreeWalker(game.dialogueEl, NodeFilter.SHOW_TEXT, null);

@@ -88,7 +88,7 @@ export const game = {
 
   // Clock
   clock: {
-    dayFraction: 0.28,   // 0..1 — golden-hour-ish start
+    dayFraction: 0.28,   // 0..1 - golden-hour-ish start
     speed: 0,            // auto-advance speed (0 = static)
     sunDir: null         // THREE.Vector3
   },

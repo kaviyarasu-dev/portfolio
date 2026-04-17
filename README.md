@@ -1,4 +1,4 @@
-# Kaviyarasu — Plaza of Kaviyarasu
+# Kaviyarasu - Plaza of Kaviyarasu
 
 ![Plaza of Kaviyarasu](./assets/screenshot.png)
 
@@ -45,5 +45,5 @@ Walking close to a landmark auto-opens its dialogue; walking away closes it. Aud
 
 ## Notes
 
-- The Notice Board downloads `./Kaviyarasu Full Stack Engineer Resume.pdf`. The filename is hard-coded in `RESUME_HREF` (`js/config.js`) — replace the file to swap the download.
+- The Notice Board downloads `./Kaviyarasu Full Stack Engineer Resume.pdf`. The filename is hard-coded in `RESUME_HREF` (`js/config.js`) - replace the file to swap the download.
 - Audio under `assets/audio/` is optional; missing files fail silently.

@@ -1,4 +1,4 @@
-// Animated water — single plane at WATER_LEVEL with a custom shader that
+// Animated water - single plane at WATER_LEVEL with a custom shader that
 // samples a scrolling normal map and fakes fresnel-tinted reflection using
 // the scene envMap.
 

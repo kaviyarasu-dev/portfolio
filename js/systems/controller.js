@@ -52,7 +52,7 @@ export function updateController(dt, time) {
     const fixed = resolveCollision(ppx, ppz, PLAYER_RADIUS);
     ppx = fixed.x; ppz = fixed.z;
 
-    // Keep on island — clamp to max radius ~170m
+    // Keep on island - clamp to max radius ~170m
     const rad = Math.hypot(ppx, ppz);
     const MAX = 168;
     if (rad > MAX) {

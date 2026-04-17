@@ -1,4 +1,4 @@
-// 3D island terrain — PlaneGeometry displaced by island shape + multi-octave noise.
+// 3D island terrain - PlaneGeometry displaced by island shape + multi-octave noise.
 // Vertex colors blend grass, sand, stone. A sampleHeight(x, z) closure is attached
 // to the mesh for camera/player/interaction sampling.
 
@@ -52,7 +52,7 @@ function islandShape(x, z) {
   return -2.5 * (nd - 0.95) / 0.2; // underwater slope
 }
 
-// Pathways — soft tint on the ground between plaza and each zone.
+// Pathways - soft tint on the ground between plaza and each zone.
 function pathInfluence(x, z) {
   let maxInfl = 0;
   for (let i = 0; i < ZONE_LAYOUT.length; i++) {
@@ -76,7 +76,7 @@ function pathInfluence(x, z) {
 }
 
 function flattenNearZones(x, z) {
-  // Returns [flatten, height] — inside a zone radius we zero noise and lift to 2.5
+  // Returns [flatten, height] - inside a zone radius we zero noise and lift to 2.5
   for (let i = 0; i < ZONE_LAYOUT.length; i++) {
     const zone = ZONE_LAYOUT[i];
     const dx = x - zone.x, dz = z - zone.z;

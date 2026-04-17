@@ -1,4 +1,4 @@
-// Portfolio 2030 — 3D world config. All units are meters.
+// Portfolio 2030 - 3D world config. All units are meters.
 
 export const WORLD_RADIUS = 180;          // island radius
 export const TERRAIN_SIZE = 420;          // terrain plane edge

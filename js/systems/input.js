@@ -40,7 +40,7 @@ export function wireInput() {
     document.addEventListener('mousemove', e => {
       if (game.pointer.locked) applyLookInput(e.movementX, e.movementY, false);
     });
-    // Wheel zoom — works whether or not pointer is locked. preventDefault stops
+    // Wheel zoom - works whether or not pointer is locked. preventDefault stops
     // the page from scrolling underneath the canvas.
     canvas.addEventListener('wheel', e => {
       e.preventDefault();

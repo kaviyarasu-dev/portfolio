@@ -19,7 +19,7 @@ export const featured = {
   bullets: [
     'Architected and shipped GravityWrite end-to-end on Laravel + React.',
     'Multi-provider LLM stack (OpenAI · Claude · Gemini) with runtime model switching.',
-    'Custom MCP tool embedded into n8n workflows — prompt-to-post pipelines run unattended.',
+    'Custom MCP tool embedded into n8n workflows - prompt-to-post pipelines run unattended.',
     'Database design, API architecture, billing, workspaces, model orchestration.'
   ],
   metrics: [
@@ -67,7 +67,7 @@ export const otherProjects = [
     accentColor: 0x7cc7ff,
     summary:
       'Single Sign-On gateway with Google OAuth. Shared identity across GravityWrite ' +
-      'and GravitySocial — one session, one account, every product.',
+      'and GravitySocial - one session, one account, every product.',
     bullets: [
       'Google OAuth flow with refresh handling and session orchestration.',
       'Shared-session bridge for GravityWrite and GravitySocial.',

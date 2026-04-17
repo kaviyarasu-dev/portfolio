@@ -96,7 +96,7 @@ function closingHint() {
 
 export const DIALOGUES = {
   plaza: () => [
-    titleBar('', contact.name, '— Senior Full Stack Engineer'),
+    titleBar('', contact.name, '- Senior Full Stack Engineer'),
     el('p', null, '5+ years building and scaling ', strong('AI-integrated SaaS platforms'),
       '. Architected ', strong('GravityWrite'), ' from zero to ',
       strong('300,000+ active users'),
@@ -114,7 +114,7 @@ export const DIALOGUES = {
   ],
 
   notice: () => [
-    titleBar('The Notice Board —', 'Resume'),
+    titleBar('The Notice Board -', 'Resume'),
     el('p', null,
       'A weathered scroll is pinned to the board. It contains the full resume: ',
       strong('skills'), ', ', strong('experience'), ', ', strong('projects'),
@@ -125,7 +125,7 @@ export const DIALOGUES = {
   ],
 
   forge: () => {
-    const out = [ titleBar('The Skill Forge —', 'Tech Stack') ];
+    const out = [ titleBar('The Skill Forge -', 'Tech Stack') ];
     for (const s of SKILLS) out.push(skillBar(s));
     out.push(el('p', { style: 'margin-top:14px' },
       chip('SOLID'), chip('REST API'), chip('MCP'), chip('Prompt Engineering'),
@@ -135,8 +135,8 @@ export const DIALOGUES = {
   },
 
   citadel: () => [
-    titleBar('GravityWrite Citadel —', 'Featured'),
-    el('p', null, strong(featured.name), ' — ', featured.tagline),
+    titleBar('GravityWrite Citadel -', 'Featured'),
+    el('p', null, strong(featured.name), ' - ', featured.tagline),
     el('p', null, featured.summary),
     row('Role', featured.role),
     row('Company', featured.company),
@@ -148,22 +148,22 @@ export const DIALOGUES = {
     closingHint()
   ],
 
-  broadcast:  () => projectDialogue('broadcast',  'Broadcast Tower —', 'GravitySocial'),
-  gateway:    () => projectDialogue('gateway',    'The Gateway —',     'GravityAuth'),
-  transport:  () => projectDialogue('transport',  'Transport Hub —',   'TransGenie'),
-  temple:     () => projectDialogue('temple',     'Open-Source Temple —', 'Laravel AI Agent'),
-  workshop:   () => projectDialogue('workshop',   'Builder\u2019s Workshop —', '1CLX'),
+  broadcast:  () => projectDialogue('broadcast',  'Broadcast Tower -', 'GravitySocial'),
+  gateway:    () => projectDialogue('gateway',    'The Gateway -',     'GravityAuth'),
+  transport:  () => projectDialogue('transport',  'Transport Hub -',   'TransGenie'),
+  temple:     () => projectDialogue('temple',     'Open-Source Temple -', 'Laravel AI Agent'),
+  workshop:   () => projectDialogue('workshop',   'Builder\u2019s Workshop -', '1CLX'),
 
   freshnote: () => {
     const job = experience.find(j => j.id === 'freshnote');
     return [
-      titleBar('Freshnote Studio —', 'Early Career'),
+      titleBar('Freshnote Studio -', 'Early Career'),
       el('div', { class: 'period' }, job.period + ' · ' + job.company),
       row('Role', job.title),
       row('Where', job.location),
       el('p', null, 'First full-stack chapter. Sole developer across ',
         strong('5+ client projects'),
-        ' from requirements gathering to production deployment — no oversight, no safety net.'),
+        ' from requirements gathering to production deployment - no oversight, no safety net.'),
       chipRow(job.stack),
       bulletList(job.bullets),
       closingHint()
@@ -171,7 +171,7 @@ export const DIALOGUES = {
   },
 
   library: () => {
-    const out = [ titleBar('The Library —', 'Experience') ];
+    const out = [ titleBar('The Library -', 'Experience') ];
     for (const job of experience) {
       const e = el('div', { class: 'entry' });
       e.appendChild(el('h3', null, job.title));
@@ -185,7 +185,7 @@ export const DIALOGUES = {
   },
 
   academy: () => {
-    const out = [ titleBar('The Academy —', 'Education') ];
+    const out = [ titleBar('The Academy -', 'Education') ];
     for (const ed of education) {
       out.push(el('div', { class: 'entry' },
         el('h3', null, ed.degree),
@@ -204,9 +204,9 @@ export const DIALOGUES = {
   },
 
   lighthouse: () => [
-    titleBar('The Lighthouse —', 'Contact'),
+    titleBar('The Lighthouse -', 'Contact'),
     el('p', null, 'Always up for ', strong('senior full-stack'),
-      ' or ', strong('AI-integrated product'), ' work. Reach any channel below — all active.'),
+      ' or ', strong('AI-integrated product'), ' work. Reach any channel below - all active.'),
     row('Email',    link('mailto:' + contact.email, contact.email, false)),
     row('Phone',    link('tel:' + contact.phone.replace(/\s/g, ''), contact.phone, false)),
     row('LinkedIn', link(contact.linkedin.url, contact.linkedin.label, true)),
@@ -216,8 +216,8 @@ export const DIALOGUES = {
   ],
 
   milestones: () => [
-    titleBar('Milestones —', 'Numbers'),
-    el('p', null, 'Five years of measurable outcomes — not output-of-effort bullet points, ',
+    titleBar('Milestones -', 'Numbers'),
+    el('p', null, 'Five years of measurable outcomes - not output-of-effort bullet points, ',
       'but real, verifiable delivery metrics.'),
     metricsGrid([
       { num: '300K+',  caption: 'GravityWrite active users' },
@@ -226,8 +226,8 @@ export const DIALOGUES = {
       { num: '15+',    caption: 'PRs reviewed per sprint' },
       { num: '50%',    caption: 'Media search time cut (GravitySocial)' },
       { num: '3',      caption: 'LLM providers unified' },
-      { num: 'OSS',    caption: 'Laravel AI Agent — public + maintained' },
-      { num: 'MCP',    caption: 'Custom n8n tool — automated pipelines' }
+      { num: 'OSS',    caption: 'Laravel AI Agent - public + maintained' },
+      { num: 'MCP',    caption: 'Custom n8n tool - automated pipelines' }
     ]),
     closingHint()
   ]
@@ -237,7 +237,7 @@ function projectDialogue(zoneId, titlePre, titleAccent) {
   const p = otherProjects.find(x => x.zoneId === zoneId) || featured;
   return [
     titleBar(titlePre, titleAccent),
-    el('p', null, strong(p.name), ' — ', p.tagline),
+    el('p', null, strong(p.name), ' - ', p.tagline),
     el('p', null, p.summary),
     row('Role', p.company === 'Personal · Open Source' ? 'Sole author' : 'Engineer'),
     row('Company', p.company),

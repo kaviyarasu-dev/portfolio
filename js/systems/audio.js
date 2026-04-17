@@ -1,4 +1,4 @@
-// Audio via Howler. All tracks are optional — missing files silent-fail.
+// Audio via Howler. All tracks are optional - missing files silent-fail.
 
 const ASSET_BASE = './assets/audio';
 const DEFAULT_TRACK = 'island_day';

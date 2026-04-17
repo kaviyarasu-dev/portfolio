@@ -1,9 +1,9 @@
-// Auto-generated from /js/*.js — do not edit. Run `node build.mjs` to regenerate.
+// Auto-generated from /js/*.js - do not edit. Run `node build.mjs` to regenerate.
 (function(){
 "use strict";
 
 // ===== js/config.js =====
-// Portfolio 2030 — 3D world config. All units are meters.
+// Portfolio 2030 - 3D world config. All units are meters.
 const WORLD_RADIUS = 180;          // island radius
 const TERRAIN_SIZE = 420;          // terrain plane edge
 const TERRAIN_SEGMENTS = 160;      // heightmap resolution
@@ -357,7 +357,7 @@ const game = {
 
   // Clock
   clock: {
-    dayFraction: 0.28,   // 0..1 — golden-hour-ish start
+    dayFraction: 0.28,   // 0..1 - golden-hour-ish start
     speed: 0,            // auto-advance speed (0 = static)
     sunDir: null         // THREE.Vector3
   },
@@ -434,7 +434,7 @@ const featured = {
   bullets: [
     'Architected and shipped GravityWrite end-to-end on Laravel + React.',
     'Multi-provider LLM stack (OpenAI · Claude · Gemini) with runtime model switching.',
-    'Custom MCP tool embedded into n8n workflows — prompt-to-post pipelines run unattended.',
+    'Custom MCP tool embedded into n8n workflows - prompt-to-post pipelines run unattended.',
     'Database design, API architecture, billing, workspaces, model orchestration.'
   ],
   metrics: [
@@ -481,7 +481,7 @@ const otherProjects = [
     accentColor: 0x7cc7ff,
     summary:
       'Single Sign-On gateway with Google OAuth. Shared identity across GravityWrite ' +
-      'and GravitySocial — one session, one account, every product.',
+      'and GravitySocial - one session, one account, every product.',
     bullets: [
       'Google OAuth flow with refresh handling and session orchestration.',
       'Shared-session bridge for GravityWrite and GravitySocial.',
@@ -574,52 +574,52 @@ const allProjects = [featured, ...otherProjects];
 const experience = [
   {
     id: 'website-learners',
-    period: 'Dec 2024 — Present',
+    period: 'Dec 2024 - Present',
     company: 'Website Learners (Pvt.) Ltd',
     title: 'Senior Full Stack Developer',
     location: 'Chennai, India',
     stack: ['Node.js', 'Laravel', 'Vue.js', 'React.js', 'n8n', 'OpenAI', 'Claude', 'Ideogram', 'Leonardo', 'Runware'],
     bullets: [
-      'Architected and shipped GravityWrite — AI content generation SaaS serving 300,000+ active users, built on Laravel + React with multi-provider LLM support (OpenAI, Claude, Gemini) and runtime model switching.',
-      'Built GravitySocial — multi-platform AI social media scheduler (Facebook, LinkedIn, X, Instagram, YouTube); integrated dynamic image generation with provider switching across OpenAI and Gemini; reduced media search time by 50%.',
+      'Architected and shipped GravityWrite - AI content generation SaaS serving 300,000+ active users, built on Laravel + React with multi-provider LLM support (OpenAI, Claude, Gemini) and runtime model switching.',
+      'Built GravitySocial - multi-platform AI social media scheduler (Facebook, LinkedIn, X, Instagram, YouTube); integrated dynamic image generation with provider switching across OpenAI and Gemini; reduced media search time by 50%.',
       'Engineered a custom MCP tool embedded into n8n workflows, enabling fully automated AI content pipelines from prompt to published post with zero manual intervention.',
-      'Built GravityAuth — centralized SSO system with Google OAuth, enabling seamless shared authentication across GravityWrite and GravitySocial.'
+      'Built GravityAuth - centralized SSO system with Google OAuth, enabling seamless shared authentication across GravityWrite and GravitySocial.'
     ]
   },
   {
     id: 'sparkout',
-    period: 'Sep 2023 — Nov 2024',
+    period: 'Sep 2023 - Nov 2024',
     company: 'Sparkout Tech Solutions (Pvt.) Ltd',
     title: 'Associate Software Developer',
     location: 'Chennai, India',
     stack: ['Laravel', 'Node.js', 'PHP', 'HTML', 'CSS', 'JavaScript', 'Bootstrap'],
     bullets: [
-      'Led architecture and delivery for TransGenie — a multi-service platform (food delivery, transport, on-demand) — building all vendor/admin APIs and real-time socket event infrastructure from scratch.',
+      'Led architecture and delivery for TransGenie - a multi-service platform (food delivery, transport, on-demand) - building all vendor/admin APIs and real-time socket event infrastructure from scratch.',
       'Established a modular Laravel/PHP framework following SOLID principles that reduced cross-team technical debt measurably across a 5-developer squad.',
       'Ran structured code reviews averaging 15+ PRs per sprint, catching architectural regressions before merge and enforcing consistent coding standards.'
     ]
   },
   {
     id: 'infinity-hub',
-    period: 'Dec 2021 — Aug 2023',
+    period: 'Dec 2021 - Aug 2023',
     company: 'The Infinity Hub',
     title: 'Senior PHP Laravel Developer',
     location: 'Erode, India',
     stack: ['Laravel', 'PHP', 'HTML', 'CSS', 'JavaScript', 'Bootstrap'],
     bullets: [
-      'Led architecture design and end-to-end delivery of 1CLX — a social media automation and website builder product — overseeing a 5-developer team and 15+ PRs per sprint to maintain release stability.',
+      'Led architecture design and end-to-end delivery of 1CLX - a social media automation and website builder product - overseeing a 5-developer team and 15+ PRs per sprint to maintain release stability.',
       'Built a drag-and-drop website builder in JavaScript with dynamic block-based editing, comparable in feature depth to lightweight WordPress page builders.'
     ]
   },
   {
     id: 'freshnote',
-    period: 'Nov 2020 — Dec 2021',
+    period: 'Nov 2020 - Dec 2021',
     company: 'Freshnote Technologies',
     title: 'Full Stack Developer',
     location: 'Erode, India',
     stack: ['PHP', 'HTML', 'CSS', 'JavaScript', 'Bootstrap'],
     bullets: [
-      'Sole developer across 5+ client projects — owned full-stack delivery from requirements gathering to production deployment with no technical oversight.',
+      'Sole developer across 5+ client projects - owned full-stack delivery from requirements gathering to production deployment with no technical oversight.',
       'Delivered each project end-to-end in PHP and JavaScript, building reusable component patterns that sped up subsequent client deliveries.'
     ]
   }
@@ -737,7 +737,7 @@ function closingHint() {
 }
 const DIALOGUES = {
   plaza: () => [
-    titleBar('', contact.name, '— Senior Full Stack Engineer'),
+    titleBar('', contact.name, '- Senior Full Stack Engineer'),
     el('p', null, '5+ years building and scaling ', strong('AI-integrated SaaS platforms'),
       '. Architected ', strong('GravityWrite'), ' from zero to ',
       strong('300,000+ active users'),
@@ -755,7 +755,7 @@ const DIALOGUES = {
   ],
 
   notice: () => [
-    titleBar('The Notice Board —', 'Resume'),
+    titleBar('The Notice Board -', 'Resume'),
     el('p', null,
       'A weathered scroll is pinned to the board. It contains the full resume: ',
       strong('skills'), ', ', strong('experience'), ', ', strong('projects'),
@@ -766,7 +766,7 @@ const DIALOGUES = {
   ],
 
   forge: () => {
-    const out = [ titleBar('The Skill Forge —', 'Tech Stack') ];
+    const out = [ titleBar('The Skill Forge -', 'Tech Stack') ];
     for (const s of SKILLS) out.push(skillBar(s));
     out.push(el('p', { style: 'margin-top:14px' },
       chip('SOLID'), chip('REST API'), chip('MCP'), chip('Prompt Engineering'),
@@ -776,8 +776,8 @@ const DIALOGUES = {
   },
 
   citadel: () => [
-    titleBar('GravityWrite Citadel —', 'Featured'),
-    el('p', null, strong(featured.name), ' — ', featured.tagline),
+    titleBar('GravityWrite Citadel -', 'Featured'),
+    el('p', null, strong(featured.name), ' - ', featured.tagline),
     el('p', null, featured.summary),
     row('Role', featured.role),
     row('Company', featured.company),
@@ -789,22 +789,22 @@ const DIALOGUES = {
     closingHint()
   ],
 
-  broadcast:  () => projectDialogue('broadcast',  'Broadcast Tower —', 'GravitySocial'),
-  gateway:    () => projectDialogue('gateway',    'The Gateway —',     'GravityAuth'),
-  transport:  () => projectDialogue('transport',  'Transport Hub —',   'TransGenie'),
-  temple:     () => projectDialogue('temple',     'Open-Source Temple —', 'Laravel AI Agent'),
-  workshop:   () => projectDialogue('workshop',   'Builder\u2019s Workshop —', '1CLX'),
+  broadcast:  () => projectDialogue('broadcast',  'Broadcast Tower -', 'GravitySocial'),
+  gateway:    () => projectDialogue('gateway',    'The Gateway -',     'GravityAuth'),
+  transport:  () => projectDialogue('transport',  'Transport Hub -',   'TransGenie'),
+  temple:     () => projectDialogue('temple',     'Open-Source Temple -', 'Laravel AI Agent'),
+  workshop:   () => projectDialogue('workshop',   'Builder\u2019s Workshop -', '1CLX'),
 
   freshnote: () => {
     const job = experience.find(j => j.id === 'freshnote');
     return [
-      titleBar('Freshnote Studio —', 'Early Career'),
+      titleBar('Freshnote Studio -', 'Early Career'),
       el('div', { class: 'period' }, job.period + ' · ' + job.company),
       row('Role', job.title),
       row('Where', job.location),
       el('p', null, 'First full-stack chapter. Sole developer across ',
         strong('5+ client projects'),
-        ' from requirements gathering to production deployment — no oversight, no safety net.'),
+        ' from requirements gathering to production deployment - no oversight, no safety net.'),
       chipRow(job.stack),
       bulletList(job.bullets),
       closingHint()
@@ -812,7 +812,7 @@ const DIALOGUES = {
   },
 
   library: () => {
-    const out = [ titleBar('The Library —', 'Experience') ];
+    const out = [ titleBar('The Library -', 'Experience') ];
     for (const job of experience) {
       const e = el('div', { class: 'entry' });
       e.appendChild(el('h3', null, job.title));
@@ -826,7 +826,7 @@ const DIALOGUES = {
   },
 
   academy: () => {
-    const out = [ titleBar('The Academy —', 'Education') ];
+    const out = [ titleBar('The Academy -', 'Education') ];
     for (const ed of education) {
       out.push(el('div', { class: 'entry' },
         el('h3', null, ed.degree),
@@ -845,9 +845,9 @@ const DIALOGUES = {
   },
 
   lighthouse: () => [
-    titleBar('The Lighthouse —', 'Contact'),
+    titleBar('The Lighthouse -', 'Contact'),
     el('p', null, 'Always up for ', strong('senior full-stack'),
-      ' or ', strong('AI-integrated product'), ' work. Reach any channel below — all active.'),
+      ' or ', strong('AI-integrated product'), ' work. Reach any channel below - all active.'),
     row('Email',    link('mailto:' + contact.email, contact.email, false)),
     row('Phone',    link('tel:' + contact.phone.replace(/\s/g, ''), contact.phone, false)),
     row('LinkedIn', link(contact.linkedin.url, contact.linkedin.label, true)),
@@ -857,8 +857,8 @@ const DIALOGUES = {
   ],
 
   milestones: () => [
-    titleBar('Milestones —', 'Numbers'),
-    el('p', null, 'Five years of measurable outcomes — not output-of-effort bullet points, ',
+    titleBar('Milestones -', 'Numbers'),
+    el('p', null, 'Five years of measurable outcomes - not output-of-effort bullet points, ',
       'but real, verifiable delivery metrics.'),
     metricsGrid([
       { num: '300K+',  caption: 'GravityWrite active users' },
@@ -867,8 +867,8 @@ const DIALOGUES = {
       { num: '15+',    caption: 'PRs reviewed per sprint' },
       { num: '50%',    caption: 'Media search time cut (GravitySocial)' },
       { num: '3',      caption: 'LLM providers unified' },
-      { num: 'OSS',    caption: 'Laravel AI Agent — public + maintained' },
-      { num: 'MCP',    caption: 'Custom n8n tool — automated pipelines' }
+      { num: 'OSS',    caption: 'Laravel AI Agent - public + maintained' },
+      { num: 'MCP',    caption: 'Custom n8n tool - automated pipelines' }
     ]),
     closingHint()
   ]
@@ -878,7 +878,7 @@ function projectDialogue(zoneId, titlePre, titleAccent) {
   const p = otherProjects.find(x => x.zoneId === zoneId) || featured;
   return [
     titleBar(titlePre, titleAccent),
-    el('p', null, strong(p.name), ' — ', p.tagline),
+    el('p', null, strong(p.name), ' - ', p.tagline),
     el('p', null, p.summary),
     row('Role', p.company === 'Personal · Open Source' ? 'Sole author' : 'Engineer'),
     row('Company', p.company),
@@ -1300,7 +1300,7 @@ function updateCamera(dt) {
     cam.updateProjectionMatrix();
   }
 
-  // Zoom ease — mouse wheel / pinch feed rig.targetDistance.
+  // Zoom ease - mouse wheel / pinch feed rig.targetDistance.
   if (rig.targetDistance != null && rig.targetDistance !== rig.distance) {
     rig.distance = damp(rig.distance, rig.targetDistance, CAMERA_ZOOM_DAMP, dtS);
   }
@@ -1462,7 +1462,7 @@ function pointInsideCollider(x, z, pad) {
 }
 
 // ===== js/world/terrain.js =====
-// 3D island terrain — PlaneGeometry displaced by island shape + multi-octave noise.
+// 3D island terrain - PlaneGeometry displaced by island shape + multi-octave noise.
 // Vertex colors blend grass, sand, stone. A sampleHeight(x, z) closure is attached
 // to the mesh for camera/player/interaction sampling.
 
@@ -1512,7 +1512,7 @@ function islandShape(x, z) {
   return -2.5 * (nd - 0.95) / 0.2; // underwater slope
 }
 
-// Pathways — soft tint on the ground between plaza and each zone.
+// Pathways - soft tint on the ground between plaza and each zone.
 function pathInfluence(x, z) {
   let maxInfl = 0;
   for (let i = 0; i < ZONE_LAYOUT.length; i++) {
@@ -1536,7 +1536,7 @@ function pathInfluence(x, z) {
 }
 
 function flattenNearZones(x, z) {
-  // Returns [flatten, height] — inside a zone radius we zero noise and lift to 2.5
+  // Returns [flatten, height] - inside a zone radius we zero noise and lift to 2.5
   for (let i = 0; i < ZONE_LAYOUT.length; i++) {
     const zone = ZONE_LAYOUT[i];
     const dx = x - zone.x, dz = z - zone.z;
@@ -1650,7 +1650,7 @@ function buildTerrain() {
 }
 
 // ===== js/world/water.js =====
-// Animated water — single plane at WATER_LEVEL with a custom shader that
+// Animated water - single plane at WATER_LEVEL with a custom shader that
 // samples a scrolling normal map and fakes fresnel-tinted reflection using
 // the scene envMap.
 function buildWater() {
@@ -1691,7 +1691,7 @@ function updateWater(dt, time) {
 }
 
 // ===== js/world/sky.js =====
-// Sky dome — large inward-facing sphere with a vertical gradient shader.
+// Sky dome - large inward-facing sphere with a vertical gradient shader.
 // Also spawns a sun billboard (always facing camera) for visual anchor.
 // Scatters low-poly drifting clouds below the dome (see buildClouds).
 
@@ -1987,7 +1987,7 @@ function glow(color, intensity) {
   });
 }
 
-// Signpost sign board — flat plank with title (no text here; text is on the HUD when you trigger it).
+// Signpost sign board - flat plank with title (no text here; text is on the HUD when you trigger it).
 function sign(w, h, color) {
   const board = makeBox(w, h, 0.12, color, { roughness: 0.7 });
   const edge = makeBox(w + 0.1, h + 0.1, 0.06, PALETTE.woodDark, { roughness: 0.9 });
@@ -2200,7 +2200,7 @@ function buildForge(x, z) {
   fireLight.position.set(-1.5, y0 + 1.4, 0);
   g.add(fireLight);
 
-  // Floating gems — skill-themed
+  // Floating gems - skill-themed
   const gemColors = [PALETTE.accentBlue, PALETTE.accentViolet, PALETTE.accentGold, PALETTE.accentGreen];
   const gems = [];
   for (let i = 0; i < 4; i++) {
@@ -2262,7 +2262,7 @@ function buildCitadel(x, z) {
     g.add(ring);
   }
 
-  // Crown — floating rings
+  // Crown - floating rings
   const rings = [];
   for (let i = 0; i < 3; i++) {
     const r = makeTorus(3.2 - i * 0.4, 0.08, 8, 40, accent, { emissive: accent, emissiveIntensity: 1.6 });
@@ -2403,7 +2403,7 @@ function buildGateway(x, z) {
   const pillarB = pillarA.clone(); pillarB.position.x = 2.2; g.add(pillarB);
 
   // Arch top: half-torus in XY plane. Default orientation has arc 0..π
-  // span from (+r, 0, 0) over (0, r, 0) to (-r, 0, 0) — exactly the archway shape.
+  // span from (+r, 0, 0) over (0, r, 0) to (-r, 0, 0) - exactly the archway shape.
   const arch = new THREE.Mesh(
     new THREE.TorusGeometry(2.2, 0.45, 10, 30, Math.PI),
     makeStandard(PALETTE.stone)
@@ -2480,7 +2480,7 @@ function buildTransportHub(x, z) {
   soffit.position.y = canopyEaveY - 0.11;
   g.add(soffit);
 
-  // Lantern strips — dim basic color, bloom-safe
+  // Lantern strips - dim basic color, bloom-safe
   const lanternCol = new THREE.Color(accent).multiplyScalar(0.35);
   const lanternMat = new THREE.MeshBasicMaterial({ color: lanternCol, toneMapped: true });
   const lanternFront = new THREE.Mesh(new THREE.BoxGeometry(8.0, 0.04, 0.08), lanternMat);
@@ -2964,7 +2964,7 @@ function buildPineTierGeo(radius, height, segments, centerY, jitterFreqX, jitter
 }
 
 function buildPineCanopyGeo() {
-  // Three skirted tiers — classic conifer silhouette. Each upper tier's base
+  // Three skirted tiers - classic conifer silhouette. Each upper tier's base
   // peeks below the next tier's apex, creating visible branch layers.
   const bottom = buildPineTierGeo(1.45, 1.6, 10, 2.0, 4.2, 3.1, 0.22);
   const middle = buildPineTierGeo(1.15, 1.4, 9,  2.8, 4.8, 3.6, 0.2);
@@ -2992,7 +2992,7 @@ function buildBroadleafPuffGeo(radius, centerX, centerY, centerZ) {
 }
 
 function buildBroadleafCanopyGeo() {
-  // Four asymmetric puffs merged into a lobed crown — breaks the old lollipop
+  // Four asymmetric puffs merged into a lobed crown - breaks the old lollipop
   // silhouette. Subdiv 2 icosphere gives smoother edges; jitter stays per-puff
   // so each lobe feels independently wind-blown.
   const puffs = [
@@ -3193,7 +3193,7 @@ function scatterRocks(count) {
   }
 }
 
-// Grass tufts — simple two-triangle cross billboards (cheap)
+// Grass tufts - simple two-triangle cross billboards (cheap)
 function scatterGrass(count) {
   const geo = new THREE.PlaneGeometry(0.55, 0.5);
   // Duplicate cross for full-billboard volume
@@ -3287,7 +3287,7 @@ function buildFaceTexture() {
   canvas.height = size;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, size, size);
-  // Eyes — dark almond dots
+  // Eyes - dark almond dots
   ctx.fillStyle = '#1c120c';
   ctx.beginPath();
   ctx.arc(22, 28, 3.6, 0, Math.PI * 2);
@@ -3295,11 +3295,11 @@ function buildFaceTexture() {
   ctx.beginPath();
   ctx.arc(42, 28, 3.6, 0, Math.PI * 2);
   ctx.fill();
-  // Eyebrow hints — short strokes
+  // Eyebrow hints - short strokes
   ctx.fillStyle = '#3a2820';
   ctx.fillRect(17, 21, 10, 2);
   ctx.fillRect(37, 21, 10, 2);
-  // Mouth — gentle arc
+  // Mouth - gentle arc
   ctx.strokeStyle = '#6a2e1e';
   ctx.lineWidth = 1.8;
   ctx.lineCap = 'round';
@@ -3358,7 +3358,7 @@ function buildPlayer() {
 
   const fabricRough = buildFabricRoughnessTexture();
 
-  // Torso — capsule widened at shoulders, flattened front-to-back
+  // Torso - capsule widened at shoulders, flattened front-to-back
   const torsoGeo = new THREE.CapsuleGeometry(0.24, 0.42, 6, 14);
   const torsoMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(shirtCol),
@@ -3367,7 +3367,7 @@ function buildPlayer() {
     metalness: 0
   });
   const torso = new THREE.Mesh(torsoGeo, torsoMat);
-  // Slimmer, slightly taller torso — shoulders wider than waist for adult proportions.
+  // Slimmer, slightly taller torso - shoulders wider than waist for adult proportions.
   // Width ratio < 1.25 means shoulder balls actually read as "broader" than chest.
   torso.scale.set(1.08, 1.05, 0.7);
   torso.position.y = 1.05;
@@ -3376,7 +3376,7 @@ function buildPlayer() {
   body.add(torso);
   PlayerRig.torso = torso;
 
-  // Upper-chest pad — attached to BODY (not scaled torso) so it reads as a
+  // Upper-chest pad - attached to BODY (not scaled torso) so it reads as a
   // pectoral bulge rather than a squished capsule. Gives the character a less
   // egg-shaped silhouette from the front.
   const chestGeo = new THREE.SphereGeometry(0.22, 16, 12);
@@ -3386,7 +3386,7 @@ function buildPlayer() {
   chest.castShadow = true;
   body.add(chest);
 
-  // Shoulder caps — spheres attached to BODY (not the scaled torso), matching
+  // Shoulder caps - spheres attached to BODY (not the scaled torso), matching
   // the arm-group origins so the shoulder joint reads as one continuous shape.
   const shoulderGeo = new THREE.SphereGeometry(0.12, 14, 10);
   const leftShoulder = new THREE.Mesh(shoulderGeo, torsoMat);
@@ -3408,14 +3408,14 @@ function buildPlayer() {
   neck.castShadow = true;
   body.add(neck);
 
-  // Head — elongated sphere + layered tuft + thin face plane (eyes/brow/mouth)
+  // Head - elongated sphere + layered tuft + thin face plane (eyes/brow/mouth)
   const head = new THREE.Group();
   const skull = new THREE.Mesh(new THREE.SphereGeometry(0.23, 24, 18), skinMat);
   skull.scale.y = 1.05;
   skull.castShadow = true;
   head.add(skull);
 
-  // Face plane — sits just outside the skull surface (r=0.23, plane at z=0.236)
+  // Face plane - sits just outside the skull surface (r=0.23, plane at z=0.236)
   // with polygonOffset as z-fight insurance. Smaller than head width so fringe
   // puffs above y=+0.09 never intersect its bbox.
   const faceTex = buildFaceTexture();
@@ -3457,17 +3457,17 @@ function buildPlayer() {
 
   function buildArm(side) {
     const group = new THREE.Group();
-    // Longer sleeve so hand reaches upper-thigh when arm hangs — more adult proportions.
+    // Longer sleeve so hand reaches upper-thigh when arm hangs - more adult proportions.
     const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.48, 4, 10), sleeveMat);
     arm.position.y = -0.33;
     arm.castShadow = true;
     group.add(arm);
-    // Elbow joint bulge — slightly thicker than sleeve so it pokes through visually.
+    // Elbow joint bulge - slightly thicker than sleeve so it pokes through visually.
     const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.082, 12, 10), sleeveMat);
     elbow.position.y = -0.33;
     elbow.castShadow = true;
     group.add(elbow);
-    // Hand — horizontal capsule reads as a closed fist (visible at default zoom).
+    // Hand - horizontal capsule reads as a closed fist (visible at default zoom).
     const handGeo = new THREE.CapsuleGeometry(0.062, 0.05, 4, 10);
     const hand = new THREE.Mesh(handGeo, skinMat);
     hand.rotation.x = Math.PI / 2;
@@ -3482,12 +3482,12 @@ function buildPlayer() {
 
   function buildLeg(side) {
     const group = new THREE.Group();
-    // Longer leg capsule — lowers foot closer to ground, reduces the "floating" look.
+    // Longer leg capsule - lowers foot closer to ground, reduces the "floating" look.
     const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.56, 4, 10), pantsMat);
     leg.position.y = -0.35;
     leg.castShadow = true;
     group.add(leg);
-    // Knee joint bulge — fabric-colored sphere at mid-leg.
+    // Knee joint bulge - fabric-colored sphere at mid-leg.
     const knee = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), pantsMat);
     knee.position.y = -0.32;
     knee.castShadow = true;
@@ -3502,7 +3502,7 @@ function buildPlayer() {
   const lleg = buildLeg(-1); body.add(lleg); PlayerRig.lleg = lleg;
   const rleg = buildLeg( 1); body.add(rleg); PlayerRig.rleg = rleg;
 
-  // Belt — attached to BODY group (not scaled torso) so it doesn't distort.
+  // Belt - attached to BODY group (not scaled torso) so it doesn't distort.
   // Slightly wider/deeper than the torso cross-section at waist height so it
   // reads as a thin leather band around the outside.
   const beltMat = new THREE.MeshStandardMaterial({
@@ -3516,14 +3516,14 @@ function buildPlayer() {
   belt.receiveShadow = true;
   body.add(belt);
 
-  // Satchel — slung over right shoulder
+  // Satchel - slung over right shoulder
   const satchel = makeBox(0.22, 0.3, 0.12, PALETTE.woodDark, { roughness: 0.85 });
   satchel.position.set(-0.2, 0.95, 0.12);
   satchel.rotation.z = 0.15;
   body.add(satchel);
   PlayerRig.satchel = satchel;
 
-  // Cape — 4 segmented planes (3x2 subdiv for subtle bend), verlet-animated
+  // Cape - 4 segmented planes (3x2 subdiv for subtle bend), verlet-animated
   const capeMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(capeCol),
     roughness: 0.78,
@@ -3673,7 +3673,7 @@ function updateCape(dtS) {
 }
 
 // ===== js/systems/audio.js =====
-// Audio via Howler. All tracks are optional — missing files silent-fail.
+// Audio via Howler. All tracks are optional - missing files silent-fail.
 
 const ASSET_BASE = './assets/audio';
 const DEFAULT_TRACK = 'island_day';
@@ -3816,7 +3816,7 @@ function wireInput() {
     document.addEventListener('mousemove', e => {
       if (game.pointer.locked) applyLookInput(e.movementX, e.movementY, false);
     });
-    // Wheel zoom — works whether or not pointer is locked. preventDefault stops
+    // Wheel zoom - works whether or not pointer is locked. preventDefault stops
     // the page from scrolling underneath the canvas.
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
@@ -3949,7 +3949,7 @@ function getMoveIntent() {
 
 // ===== js/ui/hud.js =====
 // HUD: dialogue modal, prompt, zone label, toast, typewriter effect.
-// Pure DOM manipulation — all nodes built via el() from dialogues.js.
+// Pure DOM manipulation - all nodes built via el() from dialogues.js.
 function openDialogue(zoneId) {
   const gen = DIALOGUES[zoneId];
   if (!gen || !game.dialogueEl) return;
@@ -4008,7 +4008,7 @@ function updateToast(dt) {
   }
 }
 
-// Typewriter — walks all text nodes inside the dialogue and fades characters in.
+// Typewriter - walks all text nodes inside the dialogue and fades characters in.
 function startTypewriter() {
   if (!game.dialogueEl) return;
   const walker = document.createTreeWalker(game.dialogueEl, NodeFilter.SHOW_TEXT, null);
@@ -4046,7 +4046,7 @@ function advanceTyping(dt) {
 }
 
 // ===== js/ui/minimap.js =====
-// Minimap — 2D canvas rendered once per frame (cheap). Shows island silhouette,
+// Minimap - 2D canvas rendered once per frame (cheap). Shows island silhouette,
 // zones as icons, player as a glowing dot + facing wedge.
 
 
@@ -4204,7 +4204,7 @@ function updateController(dt, time) {
     const fixed = resolveCollision(ppx, ppz, PLAYER_RADIUS);
     ppx = fixed.x; ppz = fixed.z;
 
-    // Keep on island — clamp to max radius ~170m
+    // Keep on island - clamp to max radius ~170m
     const rad = Math.hypot(ppx, ppz);
     const MAX = 168;
     if (rad > MAX) {

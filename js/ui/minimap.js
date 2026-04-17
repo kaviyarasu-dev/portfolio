@@ -1,4 +1,4 @@
-// Minimap — 2D canvas rendered once per frame (cheap). Shows island silhouette,
+// Minimap - 2D canvas rendered once per frame (cheap). Shows island silhouette,
 // zones as icons, player as a glowing dot + facing wedge.
 
 import { game } from '../state.js';

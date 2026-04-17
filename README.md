@@ -4,24 +4,6 @@
 
 An explorable low-poly island, built in Three.js, that **is** the developer portfolio for Kaviyarasu (Senior Full Stack Engineer). Walk up to any landmark and it opens a dialogue with the matching resume section.
 
-## Run it
-
-- Double-click `index.html` (works over `file://`), **or**
-- XAMPP: `http://localhost/gggg/`, **or**
-- `python -m http.server 8000` then open `http://localhost:8000/`
-
-Any modern WebGL browser. Needs internet the first time — Three.js r147, Howler.js, and the Google Font load from CDNs.
-
-## Build
-
-Source is ES modules under `/js/`. The page loads the concatenated `dist/bundle.js`. After editing any module:
-
-```
-node build.mjs
-```
-
-Finishes in <100 ms.
-
 ## Controls
 
 **Desktop**
@@ -65,4 +47,3 @@ Walking close to a landmark auto-opens its dialogue; walking away closes it. Aud
 
 - The Notice Board downloads `./Kaviyarasu Full Stack Engineer Resume.pdf`. The filename is hard-coded in `RESUME_HREF` (`js/config.js`) — replace the file to swap the download.
 - Audio under `assets/audio/` is optional; missing files fail silently.
-- Architecture map, module graph, and bootstrap order live in [`CLAUDE.md`](./CLAUDE.md).

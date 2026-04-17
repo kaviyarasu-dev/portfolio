@@ -1,0 +1,76 @@
+[    5428ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/favicon.ico:0
+[    5431ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5432ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5433ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5433ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5433ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5435ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5436ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5436ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5436ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5436ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5437ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5437ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5437ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5437ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5438ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5439ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5439ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5439ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5439ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5439ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5440ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5440ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5440ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5440ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5440ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5440ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5440ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5440ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5441ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    5442ms] [WARNING] THREE.Material: 'flatShading' parameter is undefined. @ https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js:5
+[    6274ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/sfx/footstep_grass.ogg:0
+[    6275ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/sfx/footstep_sand.ogg:0
+[    6275ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/sfx/type_tick.ogg:0
+[    6275ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/sfx/interact.ogg:0
+[    6276ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/sfx/ocean_loop.ogg:0
+[    6276ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/sfx/scroll_pickup.ogg:0
+[    6277ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/sfx/wind_loop.ogg:0
+[    6278ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/island_day.ogg:0
+[    6279ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/castle.ogg:0
+[    6280ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/forge.ogg:0
+[    6280ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/library.ogg:0
+[    6281ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/lighthouse.ogg:0
+[    6281ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/island_night.ogg:0
+[   45956ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ http://127.0.0.1:8088/assets/audio/music/castle.ogg:0
+[   45958ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/island_day.ogg:0
+[   45966ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/forge.ogg:0
+[   45966ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/island_night.ogg:0
+[   45966ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/lighthouse.ogg:0
+[   45966ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8088/assets/audio/music/library.ogg:0

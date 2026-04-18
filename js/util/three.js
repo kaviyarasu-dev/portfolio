@@ -7,9 +7,12 @@ export function makeStandard(color, opts) {
   const mat = new THREE.MeshStandardMaterial({
     color: hexToColor(color),
     roughness: opts && opts.roughness != null ? opts.roughness : 0.78,
-    metalness: opts && opts.metalness != null ? opts.metalness : 0.05,
-    flatShading: opts && opts.flat === true
+    metalness: opts && opts.metalness != null ? opts.metalness : 0.05
   });
+  if (opts && opts.flat === true) {
+    mat.flatShading = true;
+    mat.needsUpdate = true;
+  }
   if (opts && opts.emissive != null) {
     mat.emissive = hexToColor(opts.emissive);
     mat.emissiveIntensity = opts.emissiveIntensity != null ? opts.emissiveIntensity : 0.6;

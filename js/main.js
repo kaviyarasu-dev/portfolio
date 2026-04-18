@@ -39,7 +39,7 @@ async function boot() {
     { hint: 'Raising sky',          run: () => { buildSky(); } },
     { hint: 'Erecting landmarks',   run: () => { clearColliders(); placeBuildings(); } },
     { hint: 'Scattering props',     run: () => { scatterProps(); } },
-    { hint: 'Summoning traveler',   run: () => { buildPlayer(); } },
+    { hint: 'Summoning traveler',   run: () => buildPlayer() },
     { hint: 'Attaching camera',     run: () => { initCameraRig(); } },
     { hint: 'Post-processing',      run: () => { initComposer(game.scene, game.camera); } },
     { hint: 'Wiring controls',      run: () => { wireInput(); } },

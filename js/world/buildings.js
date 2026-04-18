@@ -9,6 +9,7 @@ import {
   makeBox, makeCylinder, makeCone, makeSphere, makeTorus, makeGroup, hexToColor, makeStandard
 } from '../util/three.js';
 import { featured, otherProjects } from '../content/projects.js';
+import { makeFlag, makeSmokeEmitter, makeWindVane, makeDoorHinge, makeHoverBob, makePulseRing, makePendulum } from './buildingAnims.js';
 
 function sampleH(x, z) {
   if (game.terrainMesh && game.terrainMesh.userData.sampleHeight) {
@@ -191,6 +192,8 @@ function buildNotice(x, z) {
   parchment.position.set(0, y0 + 1.55, 0.1);
   g.add(parchment);
 
+  const noticeFlutter = makePendulum(parchment, 0.03, 2000);
+
   const icon = new THREE.Mesh(
     new THREE.TorusGeometry(0.22, 0.05, 8, 16),
     glow(PALETTE.accentViolet, 1.4)
@@ -198,6 +201,8 @@ function buildNotice(x, z) {
   icon.rotation.x = Math.PI / 2;
   icon.position.set(0, y0 + 2.5, 0);
   g.add(icon);
+
+  g.userData.update = (dt, t) => { noticeFlutter.update(dt, t); };
 
   addCollider(x, z, 1.1);
   return g;
@@ -225,6 +230,9 @@ function buildForge(x, z) {
   const chim = makeBox(1.1, 3.5, 1.1, PALETTE.stoneDark);
   chim.position.set(1.5, y0 + 3.1, -1.4);
   g.add(chim);
+
+  const forgeSmoke = makeSmokeEmitter(y0 + 4.8, 0x888888, 8);
+  forgeSmoke.meshes.forEach(m => { m.position.x = 1.5; m.position.z = -1.4; g.add(m); });
 
   // Anvil
   const anvilBase = makeCylinder(0.45, 0.55, 0.55, PALETTE.stoneDark, 10);
@@ -270,6 +278,11 @@ function buildForge(x, z) {
       gem.rotation.y = t * 0.002;
       gem.rotation.x = t * 0.003;
     }
+  };
+  const forgeBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    forgeBaseUpdate(dt, t);
+    if (game.perfMode !== 'low' && game.perfMode !== 'ultralow') forgeSmoke.update(dt, t);
   };
 
   addCollider(x, z, 3.6);
@@ -319,6 +332,9 @@ function buildCitadel(x, z) {
   spire.position.y = y0 + 16.5;
   g.add(spire);
 
+  const citadelFlag = makeFlag(2.5, 1.2, 0.8, featured.themeColor);
+  citadelFlag.meshes.forEach(m => { m.position.y += y0 + 18.1; g.add(m); });
+
   // Top orb
   const orb = makeSphere(0.8, theme, 24, 18, { emissive: theme, emissiveIntensity: 2.2 });
   orb.position.y = y0 + 18.6;
@@ -352,6 +368,11 @@ function buildCitadel(x, z) {
       );
     }
     orbLight.intensity = 2.8 + Math.sin(t * 0.0015) * 0.3;
+  };
+  const citadelBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    citadelBaseUpdate(dt, t);
+    citadelFlag.update(dt, t);
   };
 
   addCollider(x, z, 4.2);
@@ -415,6 +436,9 @@ function buildBroadcastTower(x, z) {
   g.add(pulse);
   const light = new THREE.PointLight(accent, 1.8, 18, 2); light.position.y = y0 + towerH + 0.3; g.add(light);
 
+  const broadcastPulseRing = makePulseRing(y0 + 10.3, accent, 4.0, 3000);
+  broadcastPulseRing.meshes.forEach(m => g.add(m));
+
   g.userData.update = (dt, t) => {
     for (let i = 0; i < platforms.length; i++) {
       const d = platforms[i];
@@ -427,6 +451,11 @@ function buildBroadcastTower(x, z) {
       d.rotation.z = t * 0.004;
     }
     pulse.scale.setScalar(1 + Math.sin(t * 0.005) * 0.15);
+  };
+  const broadcastBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    broadcastBaseUpdate(dt, t);
+    broadcastPulseRing.update(dt, t);
   };
 
   addCollider(x, z, 2.4);
@@ -535,6 +564,9 @@ function buildTransportHub(x, z) {
   const v1 = makeBox(1.0, 0.5, 0.4, accent); v1.position.set(-2.5, y0 + 0.8, 0); g.add(v1);
   const v2 = makeBox(1.6, 0.7, 0.7, theme);  v2.position.set(0, y0 + 0.85, 0); g.add(v2);
   const v3 = makeBox(0.9, 0.4, 0.35, accent); v3.position.set(2.3, y0 + 0.8, 0); g.add(v3);
+  const transportBob1 = makeHoverBob(v1, 0.04, 0.003, 0);
+  const transportBob2 = makeHoverBob(v2, 0.05, 0.0025, 1.0);
+  const transportBob3 = makeHoverBob(v3, 0.04, 0.003, 2.0);
   for (const v of [v1, v2, v3]) {
     const wheelMat = makeStandard(PALETTE.stoneDark);
     const w1 = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.06, 6, 12), wheelMat);
@@ -556,6 +588,13 @@ function buildTransportHub(x, z) {
   g.userData.update = (dt, t) => {
     dot.position.y = y0 + 5.2 + Math.sin(t * 0.003) * 0.3;
     dotL.intensity = 1.2 + Math.sin(t * 0.006) * 0.4;
+  };
+  const transportBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    transportBaseUpdate(dt, t);
+    transportBob1.update(dt, t);
+    transportBob2.update(dt, t);
+    transportBob3.update(dt, t);
   };
 
   addCollider(x, z, 3.6);
@@ -631,6 +670,8 @@ function buildWorkshop(x, z) {
   // Door
   const door = makeBox(1.0, 1.7, 0.1, PALETTE.woodDark);
   door.position.set(0, y0 + 0.85, 2.01); g.add(door);
+  const workshopHinge = makeDoorHinge(door, -Math.PI / 2, 2000, 'workshop');
+  workshopHinge.meshes.forEach(m => g.add(m));
 
   // Stacked floating blocks (drag-drop metaphor)
   const blockColors = [theme, accent, 0x7cc7ff, 0xb48cff, 0x5ee0a0];
@@ -653,6 +694,11 @@ function buildWorkshop(x, z) {
       );
       b.rotation.y = t * 0.0008 + i;
     }
+  };
+  const workshopBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    workshopBaseUpdate(dt, t);
+    workshopHinge.update(dt, t);
   };
 
   addCollider(x, z, 2.8);
@@ -731,6 +777,9 @@ function buildAcademy(x, z) {
   const bell = makeSphere(0.35, PALETTE.accentGold, 14, 10, { metalness: 0.5, roughness: 0.3 });
   bell.position.set(2.0, y0 + 4.8, 0); g.add(bell);
 
+  const bellSwing = makePendulum(bell, 0.15, 1200);
+  g.userData.update = (dt, t) => { bellSwing.update(dt, t); };
+
   // Windows
   for (let i = -1; i <= 1; i++) {
     const w = makeBox(0.6, 0.9, 0.06, 0xd9e9ff, { emissive: 0xbbd4ff, emissiveIntensity: 0.5 });
@@ -748,6 +797,9 @@ function buildLighthouse(x, z) {
 
   const base = makeCylinder(2.2, 2.6, 1.2, PALETTE.stoneDark, 14);
   base.position.y = y0 + 0.6; g.add(base);
+
+  const lighthouseVane = makeWindVane(0.8, PALETTE.stoneDark);
+  lighthouseVane.meshes.forEach(m => { m.position.y = y0 + 1.2 + 5 * 2.0 + 2.8; g.add(m); });
 
   // Striped tower
   const segs = 5;
@@ -795,6 +847,11 @@ function buildLighthouse(x, z) {
   g.userData.update = (dt, t) => {
     beamPivot.rotation.y = t * 0.0006;
     lampLight.intensity = 2.6 + Math.sin(t * 0.002) * 0.3;
+  };
+  const lighthouseBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    lighthouseBaseUpdate(dt, t);
+    lighthouseVane.update(dt, t);
   };
 
   addCollider(x, z, 2.2);
@@ -893,6 +950,7 @@ export function placeBuildings() {
 export function updateBuildings(dt, time) {
   const root = game.buildingsRoot;
   if (!root) return;
+  if (game.perfMode === 'ultralow') return;
   for (let i = 0; i < root.children.length; i++) {
     const c = root.children[i];
     if (c.userData && c.userData.update) c.userData.update(dt, time);

@@ -121,9 +121,12 @@ function makeStandard(color, opts) {
   const mat = new THREE.MeshStandardMaterial({
     color: hexToColor(color),
     roughness: opts && opts.roughness != null ? opts.roughness : 0.78,
-    metalness: opts && opts.metalness != null ? opts.metalness : 0.05,
-    flatShading: opts && opts.flat === true
+    metalness: opts && opts.metalness != null ? opts.metalness : 0.05
   });
+  if (opts && opts.flat === true) {
+    mat.flatShading = true;
+    mat.needsUpdate = true;
+  }
   if (opts && opts.emissive != null) {
     mat.emissive = hexToColor(opts.emissive);
     mat.emissiveIntensity = opts.emissiveIntensity != null ? opts.emissiveIntensity : 0.6;
@@ -1461,6 +1464,183 @@ function pointInsideCollider(x, z, pad) {
   return false;
 }
 
+// ===== js/world/buildingAnims.js =====
+function makeFlag(poleHeight, clothWidth, clothHeight, color) {
+  const pole = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.03, 0.03, poleHeight, 6),
+    new THREE.MeshStandardMaterial({ color: 0x666666, roughness: 0.6, metalness: 0.3 })
+  );
+  pole.position.y = poleHeight / 2;
+  pole.castShadow = true;
+
+  const clothGeo = new THREE.PlaneGeometry(clothWidth, clothHeight, 12, 8);
+  const clothMat = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(color),
+    roughness: 0.8,
+    side: THREE.DoubleSide
+  });
+  const cloth = new THREE.Mesh(clothGeo, clothMat);
+  cloth.position.set(clothWidth / 2, poleHeight - clothHeight / 2, 0);
+  cloth.castShadow = true;
+
+  const basePositions = new Float32Array(clothGeo.attributes.position.array);
+
+  function update(dt, time) {
+    const pos = clothGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const bx = basePositions[i * 3];
+      const normalizedX = (bx + clothWidth / 2) / clothWidth;
+      const amp = normalizedX * 0.12;
+      pos.array[i * 3 + 2] = basePositions[i * 3 + 2] + Math.sin(bx * 3 + time * 0.004) * amp;
+    }
+    pos.needsUpdate = true;
+  }
+
+  return { meshes: [pole, cloth], update };
+}
+function makeSmokeEmitter(originY, color, count) {
+  count = count || 10;
+  const particles = [];
+  for (let i = 0; i < count; i++) {
+    const r = 0.08 + Math.random() * 0.04;
+    const geo = new THREE.SphereGeometry(r, 6, 4);
+    const mat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(color),
+      transparent: true,
+      opacity: 0.6,
+      roughness: 0.9
+    });
+    const m = new THREE.Mesh(geo, mat);
+    m.castShadow = false;
+    m.receiveShadow = false;
+    m.userData.phase = Math.random() * Math.PI * 2;
+    m.userData.speed = 0.3 + Math.random() * 0.4;
+    m.userData.lifetime = 2000 + Math.random() * 2000;
+    m.userData.age = Math.random() * m.userData.lifetime;
+    m.userData.driftX = (Math.random() - 0.5) * 0.3;
+    m.userData.driftZ = (Math.random() - 0.5) * 0.3;
+    m.position.y = originY;
+    particles.push(m);
+  }
+
+  function update(dt, time) {
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.userData.age += dt;
+      if (p.userData.age >= p.userData.lifetime) {
+        p.userData.age = 0;
+        p.userData.speed = 0.3 + Math.random() * 0.4;
+        p.userData.lifetime = 2000 + Math.random() * 2000;
+        p.userData.driftX = (Math.random() - 0.5) * 0.3;
+        p.userData.driftZ = (Math.random() - 0.5) * 0.3;
+        p.scale.setScalar(1);
+        p.material.opacity = 0.6;
+        p.position.y = originY;
+        continue;
+      }
+      const frac = p.userData.age / p.userData.lifetime;
+      p.position.y = originY + frac * p.userData.speed * 4;
+      p.position.x += p.userData.driftX * dt * 0.001;
+      p.position.z += p.userData.driftZ * dt * 0.001;
+      p.scale.setScalar(1 + frac * 1.5);
+      p.material.opacity = 0.6 * (1 - frac);
+    }
+  }
+
+  return { meshes: particles, update };
+}
+function makeWindVane(radius, color) {
+  const group = new THREE.Group();
+  for (let i = 0; i < 4; i++) {
+    const blade = new THREE.Mesh(
+      new THREE.BoxGeometry(radius, 0.3, 0.03),
+      new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.7 })
+    );
+    blade.position.x = radius / 2;
+    const arm = new THREE.Group();
+    arm.add(blade);
+    arm.rotation.y = i * Math.PI / 2;
+    group.add(arm);
+  }
+  group.castShadow = true;
+
+  function update(dt, time) {
+    const speed = 1.5 + Math.sin(time * 0.001) * 0.5;
+    group.rotation.y += speed * dt * 0.001;
+  }
+
+  return { meshes: [group], update };
+}
+function makeDoorHinge(doorMesh, openAngle, openDuration, zoneId) {
+  const pivot = new THREE.Group();
+  const parent = doorMesh.parent;
+
+  const doorWorldPos = new THREE.Vector3();
+  doorMesh.getWorldPosition(doorWorldPos);
+
+  const geo = doorMesh.geometry;
+  geo.computeBoundingBox();
+  const halfW = (geo.boundingBox.max.x - geo.boundingBox.min.x) / 2;
+
+  pivot.position.copy(doorMesh.position);
+  pivot.position.x -= halfW;
+
+  if (parent) parent.remove(doorMesh);
+
+  doorMesh.position.set(halfW, 0, 0);
+  pivot.add(doorMesh);
+
+  function update(dt, time) {
+    const nz = game.nearestZone;
+    let target = 0;
+    if (nz && nz.id === zoneId) {
+      target = openAngle;
+    }
+    pivot.rotation.y += (target - pivot.rotation.y) * Math.min(1, dt * 0.003);
+  }
+
+  return { meshes: [pivot], update };
+}
+function makeHoverBob(mesh, amplitude, frequency, phaseOffset) {
+  const originalY = mesh.position.y;
+
+  function update(dt, time) {
+    mesh.position.y = originalY + Math.sin(time * frequency + phaseOffset) * amplitude;
+  }
+
+  return { meshes: [], update };
+}
+function makePulseRing(y, color, maxRadius, period) {
+  const geo = new THREE.TorusGeometry(1, 0.04, 6, 32);
+  const mat = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(color),
+    transparent: true,
+    opacity: 0.8,
+    depthWrite: false
+  });
+  const ring = new THREE.Mesh(geo, mat);
+  ring.rotation.x = Math.PI / 2;
+  ring.position.y = y;
+  ring.castShadow = false;
+  ring.receiveShadow = false;
+
+  function update(dt, time) {
+    const phase = (time % period) / period;
+    const s = 0.1 + phase * (maxRadius - 0.1);
+    ring.scale.setScalar(s);
+    ring.material.opacity = 0.8 * (1 - phase);
+  }
+
+  return { meshes: [ring], update };
+}
+function makePendulum(mesh, maxAngle, period) {
+  function update(dt, time) {
+    mesh.rotation.z = Math.sin(time / period * Math.PI * 2) * maxAngle;
+  }
+
+  return { meshes: [], update };
+}
+
 // ===== js/world/terrain.js =====
 // 3D island terrain - PlaneGeometry displaced by island shape + multi-octave noise.
 // Vertex colors blend grass, sand, stone. A sampleHeight(x, z) closure is attached
@@ -1968,6 +2148,7 @@ function updateSky(sunDir, phase) {
 
 
 
+
 function sampleH(x, z) {
   if (game.terrainMesh && game.terrainMesh.userData.sampleHeight) {
     return game.terrainMesh.userData.sampleHeight(x, z);
@@ -2149,6 +2330,8 @@ function buildNotice(x, z) {
   parchment.position.set(0, y0 + 1.55, 0.1);
   g.add(parchment);
 
+  const noticeFlutter = makePendulum(parchment, 0.03, 2000);
+
   const icon = new THREE.Mesh(
     new THREE.TorusGeometry(0.22, 0.05, 8, 16),
     glow(PALETTE.accentViolet, 1.4)
@@ -2156,6 +2339,8 @@ function buildNotice(x, z) {
   icon.rotation.x = Math.PI / 2;
   icon.position.set(0, y0 + 2.5, 0);
   g.add(icon);
+
+  g.userData.update = (dt, t) => { noticeFlutter.update(dt, t); };
 
   addCollider(x, z, 1.1);
   return g;
@@ -2183,6 +2368,9 @@ function buildForge(x, z) {
   const chim = makeBox(1.1, 3.5, 1.1, PALETTE.stoneDark);
   chim.position.set(1.5, y0 + 3.1, -1.4);
   g.add(chim);
+
+  const forgeSmoke = makeSmokeEmitter(y0 + 4.8, 0x888888, 8);
+  forgeSmoke.meshes.forEach(m => { m.position.x = 1.5; m.position.z = -1.4; g.add(m); });
 
   // Anvil
   const anvilBase = makeCylinder(0.45, 0.55, 0.55, PALETTE.stoneDark, 10);
@@ -2228,6 +2416,11 @@ function buildForge(x, z) {
       gem.rotation.y = t * 0.002;
       gem.rotation.x = t * 0.003;
     }
+  };
+  const forgeBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    forgeBaseUpdate(dt, t);
+    if (game.perfMode !== 'low' && game.perfMode !== 'ultralow') forgeSmoke.update(dt, t);
   };
 
   addCollider(x, z, 3.6);
@@ -2277,6 +2470,9 @@ function buildCitadel(x, z) {
   spire.position.y = y0 + 16.5;
   g.add(spire);
 
+  const citadelFlag = makeFlag(2.5, 1.2, 0.8, featured.themeColor);
+  citadelFlag.meshes.forEach(m => { m.position.y += y0 + 18.1; g.add(m); });
+
   // Top orb
   const orb = makeSphere(0.8, theme, 24, 18, { emissive: theme, emissiveIntensity: 2.2 });
   orb.position.y = y0 + 18.6;
@@ -2310,6 +2506,11 @@ function buildCitadel(x, z) {
       );
     }
     orbLight.intensity = 2.8 + Math.sin(t * 0.0015) * 0.3;
+  };
+  const citadelBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    citadelBaseUpdate(dt, t);
+    citadelFlag.update(dt, t);
   };
 
   addCollider(x, z, 4.2);
@@ -2373,6 +2574,9 @@ function buildBroadcastTower(x, z) {
   g.add(pulse);
   const light = new THREE.PointLight(accent, 1.8, 18, 2); light.position.y = y0 + towerH + 0.3; g.add(light);
 
+  const broadcastPulseRing = makePulseRing(y0 + 10.3, accent, 4.0, 3000);
+  broadcastPulseRing.meshes.forEach(m => g.add(m));
+
   g.userData.update = (dt, t) => {
     for (let i = 0; i < platforms.length; i++) {
       const d = platforms[i];
@@ -2385,6 +2589,11 @@ function buildBroadcastTower(x, z) {
       d.rotation.z = t * 0.004;
     }
     pulse.scale.setScalar(1 + Math.sin(t * 0.005) * 0.15);
+  };
+  const broadcastBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    broadcastBaseUpdate(dt, t);
+    broadcastPulseRing.update(dt, t);
   };
 
   addCollider(x, z, 2.4);
@@ -2493,6 +2702,9 @@ function buildTransportHub(x, z) {
   const v1 = makeBox(1.0, 0.5, 0.4, accent); v1.position.set(-2.5, y0 + 0.8, 0); g.add(v1);
   const v2 = makeBox(1.6, 0.7, 0.7, theme);  v2.position.set(0, y0 + 0.85, 0); g.add(v2);
   const v3 = makeBox(0.9, 0.4, 0.35, accent); v3.position.set(2.3, y0 + 0.8, 0); g.add(v3);
+  const transportBob1 = makeHoverBob(v1, 0.04, 0.003, 0);
+  const transportBob2 = makeHoverBob(v2, 0.05, 0.0025, 1.0);
+  const transportBob3 = makeHoverBob(v3, 0.04, 0.003, 2.0);
   for (const v of [v1, v2, v3]) {
     const wheelMat = makeStandard(PALETTE.stoneDark);
     const w1 = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.06, 6, 12), wheelMat);
@@ -2514,6 +2726,13 @@ function buildTransportHub(x, z) {
   g.userData.update = (dt, t) => {
     dot.position.y = y0 + 5.2 + Math.sin(t * 0.003) * 0.3;
     dotL.intensity = 1.2 + Math.sin(t * 0.006) * 0.4;
+  };
+  const transportBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    transportBaseUpdate(dt, t);
+    transportBob1.update(dt, t);
+    transportBob2.update(dt, t);
+    transportBob3.update(dt, t);
   };
 
   addCollider(x, z, 3.6);
@@ -2589,6 +2808,8 @@ function buildWorkshop(x, z) {
   // Door
   const door = makeBox(1.0, 1.7, 0.1, PALETTE.woodDark);
   door.position.set(0, y0 + 0.85, 2.01); g.add(door);
+  const workshopHinge = makeDoorHinge(door, -Math.PI / 2, 2000, 'workshop');
+  workshopHinge.meshes.forEach(m => g.add(m));
 
   // Stacked floating blocks (drag-drop metaphor)
   const blockColors = [theme, accent, 0x7cc7ff, 0xb48cff, 0x5ee0a0];
@@ -2611,6 +2832,11 @@ function buildWorkshop(x, z) {
       );
       b.rotation.y = t * 0.0008 + i;
     }
+  };
+  const workshopBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    workshopBaseUpdate(dt, t);
+    workshopHinge.update(dt, t);
   };
 
   addCollider(x, z, 2.8);
@@ -2689,6 +2915,9 @@ function buildAcademy(x, z) {
   const bell = makeSphere(0.35, PALETTE.accentGold, 14, 10, { metalness: 0.5, roughness: 0.3 });
   bell.position.set(2.0, y0 + 4.8, 0); g.add(bell);
 
+  const bellSwing = makePendulum(bell, 0.15, 1200);
+  g.userData.update = (dt, t) => { bellSwing.update(dt, t); };
+
   // Windows
   for (let i = -1; i <= 1; i++) {
     const w = makeBox(0.6, 0.9, 0.06, 0xd9e9ff, { emissive: 0xbbd4ff, emissiveIntensity: 0.5 });
@@ -2706,6 +2935,9 @@ function buildLighthouse(x, z) {
 
   const base = makeCylinder(2.2, 2.6, 1.2, PALETTE.stoneDark, 14);
   base.position.y = y0 + 0.6; g.add(base);
+
+  const lighthouseVane = makeWindVane(0.8, PALETTE.stoneDark);
+  lighthouseVane.meshes.forEach(m => { m.position.y = y0 + 1.2 + 5 * 2.0 + 2.8; g.add(m); });
 
   // Striped tower
   const segs = 5;
@@ -2753,6 +2985,11 @@ function buildLighthouse(x, z) {
   g.userData.update = (dt, t) => {
     beamPivot.rotation.y = t * 0.0006;
     lampLight.intensity = 2.6 + Math.sin(t * 0.002) * 0.3;
+  };
+  const lighthouseBaseUpdate = g.userData.update;
+  g.userData.update = (dt, t) => {
+    lighthouseBaseUpdate(dt, t);
+    lighthouseVane.update(dt, t);
   };
 
   addCollider(x, z, 2.2);
@@ -2849,6 +3086,7 @@ function placeBuildings() {
 function updateBuildings(dt, time) {
   const root = game.buildingsRoot;
   if (!root) return;
+  if (game.perfMode === 'ultralow') return;
   for (let i = 0; i < root.children.length; i++) {
     const c = root.children[i];
     if (c.userData && c.userData.update) c.userData.update(dt, time);
@@ -3236,315 +3474,111 @@ function scatterGrass(count) {
 }
 
 // ===== js/entity/player.js =====
-// Procedural third-person character. Smooth humanoid built from capsule limbs
-// and a flattened capsule torso; trailing cape simulated as a 4-segment verlet
-// chain. Animation operates on limb-group rotations so the anatomy swap leaves
-// the walk/sprint cycle untouched.
+// Rigged GLTF character loaded from Xbot.glb with skeletal animation.
+// Uses AnimationMixer with crossfading between idle/walk/run base actions
+// and additive blending for gesture overlays (agree, headShake).
 const PlayerRig = {
   root: null,
   body: null,
-  torso: null,
-  head: null,
-  larm: null,
-  rarm: null,
-  lleg: null,
-  rleg: null,
-  satchel: null,
-  capeSegs: []
+  mixer: null,
+  headBone: null,
+  baseActions: {},
+  additiveActions: {},
+  currentBase: 'idle',
+  allActions: []
 };
 
-function buildFabricRoughnessTexture() {
-  const size = 128;
-  const canvas = document.createElement('canvas');
-  canvas.width = size; canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  const img = ctx.createImageData(size, size);
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const weave = 0.5 + 0.5 * Math.sin(x * 0.8 + Math.sin(y * 0.6) * 1.5);
-      const rnd = Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5) % 1;
-      const value = Math.max(0, Math.min(1, weave * 0.55 + rnd * 0.45));
-      const grey = 110 + Math.round(value * 110);
-      const idx = (y * size + x) * 4;
-      img.data[idx]     = grey;
-      img.data[idx + 1] = grey;
-      img.data[idx + 2] = grey;
-      img.data[idx + 3] = 255;
-    }
-  }
-  ctx.putImageData(img, 0, 0);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(2, 3);
-  return tex;
+function setActionWeight(action, weight) {
+  action.enabled = true;
+  action.setEffectiveTimeScale(1);
+  action.setEffectiveWeight(weight);
 }
 
-function buildFaceTexture() {
-  const size = 64;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, size, size);
-  // Eyes - dark almond dots
-  ctx.fillStyle = '#1c120c';
-  ctx.beginPath();
-  ctx.arc(22, 28, 3.6, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(42, 28, 3.6, 0, Math.PI * 2);
-  ctx.fill();
-  // Eyebrow hints - short strokes
-  ctx.fillStyle = '#3a2820';
-  ctx.fillRect(17, 21, 10, 2);
-  ctx.fillRect(37, 21, 10, 2);
-  // Mouth - gentle arc
-  ctx.strokeStyle = '#6a2e1e';
-  ctx.lineWidth = 1.8;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.arc(32, 42, 6.5, 0.18 * Math.PI, 0.82 * Math.PI);
-  ctx.stroke();
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.anisotropy = 4;
-  return tex;
-}
+function crossFadeBase(toName, duration) {
+  if (toName === PlayerRig.currentBase) return;
+  const fromAction = PlayerRig.baseActions[PlayerRig.currentBase];
+  const toAction = PlayerRig.baseActions[toName];
+  if (!toAction) return;
 
-function buildHairTuft(colorHex) {
-  const group = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(colorHex),
-    roughness: 0.88,
-    flatShading: true
-  });
-  // First 5 puffs form the crown/back; last 2 are front fringe pieces sitting
-  // ABOVE the face plane (y >= 0.16) so they never overlap the eyes/mouth.
-  const puffs = [
-    { r: 0.19, x:  0.00, y: 0.10, z:  0.00 },
-    { r: 0.14, x: -0.10, y: 0.07, z:  0.05 },
-    { r: 0.14, x:  0.10, y: 0.07, z:  0.05 },
-    { r: 0.12, x:  0.00, y: 0.14, z: -0.08 },
-    { r: 0.10, x:  0.08, y: 0.17, z: -0.02 },
-    { r: 0.09, x:  0.04, y: 0.19, z:  0.14 },
-    { r: 0.07, x: -0.08, y: 0.21, z:  0.12 }
-  ];
-  for (const p of puffs) {
-    const geo = new THREE.IcosahedronGeometry(p.r, 1);
-    const pos = geo.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      pos.setX(i, pos.getX(i) + Math.sin(i * 1.7) * 0.02);
-      pos.setY(i, pos.getY(i) + Math.sin(i * 2.3) * 0.02);
-      pos.setZ(i, pos.getZ(i) + Math.sin(i * 3.1) * 0.02);
-    }
-    geo.computeVertexNormals();
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.castShadow = true;
-    mesh.position.set(p.x, p.y, p.z);
-    group.add(mesh);
+  setActionWeight(toAction, 1);
+  toAction.time = 0;
+
+  if (fromAction) {
+    fromAction.crossFadeTo(toAction, duration, true);
+  } else {
+    toAction.fadeIn(duration);
   }
-  return group;
+
+  PlayerRig.currentBase = toName;
 }
-function buildPlayer() {
-  const root = new THREE.Group(); root.name = 'player';
-  const body = new THREE.Group(); body.name = 'body';
+function triggerGesture(clipName) {
+  const entry = PlayerRig.additiveActions[clipName];
+  if (!entry || !entry.action) return;
+  const action = entry.action;
+  action.reset();
+  setActionWeight(action, 1);
+  action.play();
+  action.fadeOut(0.8);
+}
+async function buildPlayer() {
+  const root = new THREE.Group();
+  root.name = 'player';
+
+  const body = new THREE.Group();
+  body.name = 'body';
   root.add(body);
 
-  const skinCol = 0xf1c27d;
-  const shirtCol = 0x2b6fc7;
-  const pantsCol = 0x2a3045;
-  const hairCol = 0x3a2820;
-  const capeCol = PALETTE.accentViolet;
-
-  const fabricRough = buildFabricRoughnessTexture();
-
-  // Torso - capsule widened at shoulders, flattened front-to-back
-  const torsoGeo = new THREE.CapsuleGeometry(0.24, 0.42, 6, 14);
-  const torsoMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(shirtCol),
-    roughness: 0.92,
-    roughnessMap: fabricRough,
-    metalness: 0
-  });
-  const torso = new THREE.Mesh(torsoGeo, torsoMat);
-  // Slimmer, slightly taller torso - shoulders wider than waist for adult proportions.
-  // Width ratio < 1.25 means shoulder balls actually read as "broader" than chest.
-  torso.scale.set(1.08, 1.05, 0.7);
-  torso.position.y = 1.05;
-  torso.castShadow = true;
-  torso.receiveShadow = true;
-  body.add(torso);
-  PlayerRig.torso = torso;
-
-  // Upper-chest pad - attached to BODY (not scaled torso) so it reads as a
-  // pectoral bulge rather than a squished capsule. Gives the character a less
-  // egg-shaped silhouette from the front.
-  const chestGeo = new THREE.SphereGeometry(0.22, 16, 12);
-  const chest = new THREE.Mesh(chestGeo, torsoMat);
-  chest.scale.set(1.15, 0.6, 0.7);
-  chest.position.set(0, 1.32, 0.02);
-  chest.castShadow = true;
-  body.add(chest);
-
-  // Shoulder caps - spheres attached to BODY (not the scaled torso), matching
-  // the arm-group origins so the shoulder joint reads as one continuous shape.
-  const shoulderGeo = new THREE.SphereGeometry(0.12, 14, 10);
-  const leftShoulder = new THREE.Mesh(shoulderGeo, torsoMat);
-  leftShoulder.position.set(-0.34, 1.42, 0);
-  leftShoulder.castShadow = true;
-  body.add(leftShoulder);
-  const rightShoulder = new THREE.Mesh(shoulderGeo, torsoMat);
-  rightShoulder.position.set(0.34, 1.42, 0);
-  rightShoulder.castShadow = true;
-  body.add(rightShoulder);
-
-  // Neck
-  const skinMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(skinCol),
-    roughness: 0.55
-  });
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.085, 0.13, 14), skinMat);
-  neck.position.y = 1.52;
-  neck.castShadow = true;
-  body.add(neck);
-
-  // Head - elongated sphere + layered tuft + thin face plane (eyes/brow/mouth)
-  const head = new THREE.Group();
-  const skull = new THREE.Mesh(new THREE.SphereGeometry(0.23, 24, 18), skinMat);
-  skull.scale.y = 1.05;
-  skull.castShadow = true;
-  head.add(skull);
-
-  // Face plane - sits just outside the skull surface (r=0.23, plane at z=0.236)
-  // with polygonOffset as z-fight insurance. Smaller than head width so fringe
-  // puffs above y=+0.09 never intersect its bbox.
-  const faceTex = buildFaceTexture();
-  const faceMat = new THREE.MeshStandardMaterial({
-    map: faceTex,
-    transparent: true,
-    alphaTest: 0.5,
-    roughness: 0.7,
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
-    polygonOffsetUnits: -1
-  });
-  const facePlane = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.2), faceMat);
-  facePlane.position.set(0, -0.04, 0.236);
-  facePlane.castShadow = false;
-  facePlane.receiveShadow = false;
-  head.add(facePlane);
-
-  head.add(buildHairTuft(hairCol));
-  head.position.y = 1.66;
-  body.add(head);
-  PlayerRig.head = head;
-
-  const sleeveMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(shirtCol),
-    roughness: 0.9,
-    roughnessMap: fabricRough
-  });
-  const pantsMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(pantsCol),
-    roughness: 0.94,
-    roughnessMap: fabricRough
-  });
-  const bootMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(PALETTE.woodDark),
-    roughness: 0.62,
-    metalness: 0.15
+  const gltf = await new Promise((resolve, reject) => {
+    const loader = new THREE.GLTFLoader();
+    const binary = Uint8Array.from(atob(XBOT_MODEL_DATA), c => c.charCodeAt(0));
+    loader.parse(binary.buffer, '', resolve, reject);
   });
 
-  function buildArm(side) {
-    const group = new THREE.Group();
-    // Longer sleeve so hand reaches upper-thigh when arm hangs - more adult proportions.
-    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.48, 4, 10), sleeveMat);
-    arm.position.y = -0.33;
-    arm.castShadow = true;
-    group.add(arm);
-    // Elbow joint bulge - slightly thicker than sleeve so it pokes through visually.
-    const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.082, 12, 10), sleeveMat);
-    elbow.position.y = -0.33;
-    elbow.castShadow = true;
-    group.add(elbow);
-    // Hand - horizontal capsule reads as a closed fist (visible at default zoom).
-    const handGeo = new THREE.CapsuleGeometry(0.062, 0.05, 4, 10);
-    const hand = new THREE.Mesh(handGeo, skinMat);
-    hand.rotation.x = Math.PI / 2;
-    hand.position.set(0, -0.64, 0.015);
-    hand.castShadow = true;
-    group.add(hand);
-    group.position.set(side * 0.34, 1.42, 0);
-    return group;
-  }
-  const larm = buildArm(-1); body.add(larm); PlayerRig.larm = larm;
-  const rarm = buildArm( 1); body.add(rarm); PlayerRig.rarm = rarm;
-
-  function buildLeg(side) {
-    const group = new THREE.Group();
-    // Longer leg capsule - lowers foot closer to ground, reduces the "floating" look.
-    const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.56, 4, 10), pantsMat);
-    leg.position.y = -0.35;
-    leg.castShadow = true;
-    group.add(leg);
-    // Knee joint bulge - fabric-colored sphere at mid-leg.
-    const knee = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), pantsMat);
-    knee.position.y = -0.32;
-    knee.castShadow = true;
-    group.add(knee);
-    const boot = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.15, 0.3), bootMat);
-    boot.position.set(0, -0.73, 0.05);
-    boot.castShadow = true;
-    group.add(boot);
-    group.position.set(side * 0.14, 0.85, 0);
-    return group;
-  }
-  const lleg = buildLeg(-1); body.add(lleg); PlayerRig.lleg = lleg;
-  const rleg = buildLeg( 1); body.add(rleg); PlayerRig.rleg = rleg;
-
-  // Belt - attached to BODY group (not scaled torso) so it doesn't distort.
-  // Slightly wider/deeper than the torso cross-section at waist height so it
-  // reads as a thin leather band around the outside.
-  const beltMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(PALETTE.woodDark),
-    roughness: 0.72,
-    metalness: 0.1
+  const model = gltf.scene;
+  model.traverse(obj => {
+    if (obj.isMesh) {
+      obj.castShadow = true;
+      obj.receiveShadow = true;
+    }
+    // Xbot uses Mixamo bone naming: mixamorigHead
+    if (obj.isBone && obj.name.toLowerCase().includes('head') && !obj.name.toLowerCase().includes('top')) {
+      PlayerRig.headBone = obj;
+    }
   });
-  const belt = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.06, 0.42), beltMat);
-  belt.position.set(0, 0.96, 0);
-  belt.castShadow = true;
-  belt.receiveShadow = true;
-  body.add(belt);
+  body.add(model);
 
-  // Satchel - slung over right shoulder
-  const satchel = makeBox(0.22, 0.3, 0.12, PALETTE.woodDark, { roughness: 0.85 });
-  satchel.position.set(-0.2, 0.95, 0.12);
-  satchel.rotation.z = 0.15;
-  body.add(satchel);
-  PlayerRig.satchel = satchel;
+  const mixer = new THREE.AnimationMixer(model);
+  PlayerRig.mixer = mixer;
+  PlayerRig.allActions = [];
 
-  // Cape - 4 segmented planes (3x2 subdiv for subtle bend), verlet-animated
-  const capeMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(capeCol),
-    roughness: 0.78,
-    roughnessMap: fabricRough,
-    side: THREE.DoubleSide,
-    emissive: new THREE.Color(capeCol),
-    emissiveIntensity: 0.12
-  });
-  PlayerRig.capeSegs = [];
-  for (let i = 0; i < 4; i++) {
-    const seg = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.28, 3, 2), capeMat);
-    seg.castShadow = true;
-    body.add(seg);
-    PlayerRig.capeSegs.push({
-      mesh: seg,
-      x: 0, y: 1.4 - i * 0.3, z: -0.2,
-      px: 0, py: 1.4 - i * 0.3, pz: -0.2
-    });
+  const baseWeights = { idle: 1, walk: 0, run: 0 };
+  const additiveNames = { sneak_pose: 0, sad_pose: 0, agree: 0, headShake: 0 };
+
+  for (const clip of gltf.animations) {
+    const name = clip.name;
+
+    if (name in baseWeights) {
+      const action = mixer.clipAction(clip);
+      setActionWeight(action, baseWeights[name]);
+      action.play();
+      PlayerRig.baseActions[name] = action;
+      PlayerRig.allActions.push(action);
+    } else if (name in additiveNames) {
+      THREE.AnimationUtils.makeClipAdditive(clip);
+      let processedClip = clip;
+      if (name.endsWith('_pose')) {
+        processedClip = THREE.AnimationUtils.subclip(clip, name, 2, 3, 30);
+      }
+      const action = mixer.clipAction(processedClip);
+      setActionWeight(action, 0);
+      action.play();
+      PlayerRig.additiveActions[name] = { action, weight: 0 };
+      PlayerRig.allActions.push(action);
+    }
   }
 
-  // Spawn
+  PlayerRig.currentBase = 'idle';
+
   root.position.set(0, 0, 10);
   game.scene.add(root);
 
@@ -3568,108 +3602,39 @@ function animatePlayer(dt) {
   if (!p.body) return;
 
   const dtS = dt / 1000;
-  const speedNorm = Math.min(1.2, p.speed / 4.0);
 
-  // Smooth walkPhase advance. Idle still bobs gently.
-  const freq = 1.8 + speedNorm * 3.6;
-  if (p.moving) p.walkPhase += dtS * freq;
+  // Crossfade base action based on movement state
+  let targetBase = 'idle';
+  if (p.moving && p.sprinting) {
+    targetBase = 'run';
+  } else if (p.moving) {
+    targetBase = 'walk';
+  }
+  crossFadeBase(targetBase, 0.35);
 
-  const sw = Math.sin(p.walkPhase);
-  const swR = Math.cos(p.walkPhase);
-
-  // Legs
-  if (p.moving) {
-    PlayerRig.lleg.rotation.x = sw * 0.9;
-    PlayerRig.rleg.rotation.x = -sw * 0.9;
-  } else {
-    PlayerRig.lleg.rotation.x *= 0.85;
-    PlayerRig.rleg.rotation.x *= 0.85;
+  // Update the animation mixer
+  if (PlayerRig.mixer) {
+    PlayerRig.mixer.update(dtS);
   }
 
-  // Arms (counter-swing)
-  const armAmp = p.moving ? 0.7 : 0.05;
-  PlayerRig.larm.rotation.x = -sw * armAmp;
-  PlayerRig.rarm.rotation.x = sw * armAmp;
-  PlayerRig.larm.rotation.z = 0.05 + (p.sprinting ? 0.08 : 0);
-  PlayerRig.rarm.rotation.z = -0.05 - (p.sprinting ? 0.08 : 0);
-
-  // Slight body lean forward when sprinting
-  const leanTarget = p.sprinting && p.moving ? 0.12 : 0;
-  p.body.rotation.x += (leanTarget - p.body.rotation.x) * Math.min(1, dtS * 6);
-
-  // Head bob
-  if (PlayerRig.head) {
-    PlayerRig.head.position.y = 1.66 + (p.moving ? Math.abs(sw) * 0.03 : 0);
-  }
-
-  // Vertical bob of whole body
-  p.body.position.y = p.moving ? Math.abs(sw) * 0.07 : 0;
-
-  // Cape simulation (verlet)
-  updateCape(dtS);
-
-  // Face player body toward facing angle (with smoothing from controller).
-  p.body.rotation.y = p.facing;
-}
-
-function updateCape(dtS) {
-  // Anchor at player center-back, segments fall behind.
-  const root = PlayerRig.root;
-  if (!root) return;
-  const anchorX = 0;
-  const anchorY = 1.35;
-  const anchorZ = -0.15;
-
-  const segs = PlayerRig.capeSegs;
-  const gravity = -9.8;
-  const wind = Math.sin(performance.now() * 0.001) * 0.8;
-  // Player motion creates drag; simulate drag backward in local space.
-  const back = -Math.min(1, game.player.speed / 3) * 1.4;
-
-  // Integrate each segment (verlet) in local body-space.
-  for (let i = 0; i < segs.length; i++) {
-    const s = segs[i];
-    const vx = (s.x - s.px);
-    const vy = (s.y - s.py);
-    const vz = (s.z - s.pz);
-    s.px = s.x;
-    s.py = s.y;
-    s.pz = s.z;
-    s.x += vx * 0.92 + wind * 0.002;
-    s.y += vy * 0.92 + gravity * dtS * dtS * 0.25;
-    s.z += vz * 0.92 + back * dtS * 0.35;
-  }
-
-  // Constraint: anchor the first seg near attachment, chain with fixed length.
-  const linkLen = 0.3;
-  // Anchor
-  segs[0].x = (segs[0].x + anchorX) * 0.5;
-  segs[0].y = (segs[0].y + anchorY) * 0.5;
-  segs[0].z = (segs[0].z + anchorZ) * 0.5;
-
-  for (let iter = 0; iter < 2; iter++) {
-    for (let i = 0; i < segs.length - 1; i++) {
-      const a = segs[i], b = segs[i + 1];
-      const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
-      const d = Math.max(0.0001, Math.sqrt(dx * dx + dy * dy + dz * dz));
-      const diff = (d - linkLen) / d;
-      const half = diff * 0.5;
-      if (i > 0) { a.x += dx * half; a.y += dy * half; a.z += dz * half; }
-      b.x -= dx * half; b.y -= dy * half; b.z -= dz * half;
+  // Head look-at via skeleton bone
+  if (PlayerRig.headBone && game.perfMode !== 'ultralow') {
+    if (game.nearestZone) {
+      const dx = game.nearestZone.x - game.player.position.x;
+      const dz = game.nearestZone.z - game.player.position.z;
+      const worldYaw = Math.atan2(dx, dz);
+      let localYaw = worldYaw - p.facing;
+      while (localYaw > Math.PI) localYaw -= Math.PI * 2;
+      while (localYaw < -Math.PI) localYaw += Math.PI * 2;
+      localYaw = Math.max(-1.05, Math.min(1.05, localYaw));
+      PlayerRig.headBone.rotation.y += (localYaw - PlayerRig.headBone.rotation.y) * Math.min(1, dtS * 3);
+    } else {
+      PlayerRig.headBone.rotation.y += (0 - PlayerRig.headBone.rotation.y) * Math.min(1, dtS * 3);
     }
   }
 
-  // Apply positions + orientation to meshes
-  for (let i = 0; i < segs.length; i++) {
-    const s = segs[i];
-    s.mesh.position.set(s.x, s.y, s.z);
-    // Tilt so the plane faces outward from body center
-    const dx = s.x - 0;
-    const dz = s.z - 0;
-    s.mesh.rotation.y = Math.atan2(dx, dz) + Math.PI;
-    // Tilt forward based on drop
-    s.mesh.rotation.x = -0.3;
-  }
+  // Rotate body to face movement direction
+  p.body.rotation.y = p.facing;
 }
 
 // ===== js/systems/audio.js =====
@@ -4302,6 +4267,7 @@ function tryAction() {
   game.activeZoneTimer = 0;
   onZoneEnter(z.id);
   onInteract();
+  triggerGesture('agree');
 }
 
 // ===== js/systems/clock.js =====
@@ -4495,7 +4461,7 @@ async function boot() {
     { hint: 'Raising sky',          run: () => { buildSky(); } },
     { hint: 'Erecting landmarks',   run: () => { clearColliders(); placeBuildings(); } },
     { hint: 'Scattering props',     run: () => { scatterProps(); } },
-    { hint: 'Summoning traveler',   run: () => { buildPlayer(); } },
+    { hint: 'Summoning traveler',   run: () => buildPlayer() },
     { hint: 'Attaching camera',     run: () => { initCameraRig(); } },
     { hint: 'Post-processing',      run: () => { initComposer(game.scene, game.camera); } },
     { hint: 'Wiring controls',      run: () => { wireInput(); } },

@@ -29,6 +29,7 @@ const ORDER = [
   // world
   'js/world/zones.js',
   'js/world/collision.js',
+  'js/world/buildingAnims.js',
   'js/world/terrain.js',
   'js/world/water.js',
   'js/world/sky.js',

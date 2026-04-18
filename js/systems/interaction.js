@@ -6,6 +6,7 @@ import { RESUME_HREF, INTERACT_RADIUS_DEFAULT } from '../config.js';
 import { openDialogue, closeDialogue, showPrompt, hidePrompt, showToast, setZoneLabel, clearZoneLabel } from '../ui/hud.js';
 import { cameraShake } from '../engine/camera.js';
 import { onZoneEnter, onInteract } from './audio.js';
+import { triggerGesture } from '../entity/player.js';
 
 export function initInteraction() {
   Input.actionCallback = tryAction;
@@ -77,4 +78,5 @@ export function tryAction() {
   game.activeZoneTimer = 0;
   onZoneEnter(z.id);
   onInteract();
+  triggerGesture('agree');
 }

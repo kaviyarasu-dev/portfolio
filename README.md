@@ -2,6 +2,8 @@
 
 ![Plaza of Kaviyarasu](./assets/screenshot.png)
 
+**[View Live](https://kaviyarasu-dev.github.io/portfolio/)**
+
 An explorable low-poly island, built in Three.js, that **is** the developer portfolio for Kaviyarasu (Senior Full Stack Engineer). Walk up to any landmark and it opens a dialogue with the matching resume section.
 
 ## Controls

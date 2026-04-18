@@ -63,7 +63,12 @@ export async function buildPlayer() {
       PlayerRig.headBone = obj;
     }
   });
-  body.add(model);
+  // Wrapper group for orientation — AnimationMixer overwrites model.rotation
+  // so this offset must live on a parent the mixer doesn't control
+  const modelPivot = new THREE.Group();
+  modelPivot.rotation.y = 0;
+  modelPivot.add(model);
+  body.add(modelPivot);
 
   const mixer = new THREE.AnimationMixer(model);
   PlayerRig.mixer = mixer;

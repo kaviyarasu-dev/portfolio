@@ -1,6 +1,5 @@
-// Rigged GLTF character loaded from Xbot.glb with skeletal animation.
-// Uses AnimationMixer with crossfading between idle/walk/run base actions
-// and additive blending for gesture overlays (agree, headShake).
+// Rigged GLTF character (Soldier.glb) with skeletal animation.
+// Uses AnimationMixer with crossfading between idle/walk/run.
 
 import { game } from '../state.js';
 
@@ -10,7 +9,6 @@ export const PlayerRig = {
   mixer: null,
   headBone: null,
   baseActions: {},
-  additiveActions: {},
   currentBase: 'idle',
   allActions: []
 };
@@ -39,15 +37,7 @@ function crossFadeBase(toName, duration) {
   PlayerRig.currentBase = toName;
 }
 
-export function triggerGesture(clipName) {
-  const entry = PlayerRig.additiveActions[clipName];
-  if (!entry || !entry.action) return;
-  const action = entry.action;
-  action.reset();
-  setActionWeight(action, 1);
-  action.play();
-  action.fadeOut(0.8);
-}
+export function triggerGesture() {}
 
 export async function buildPlayer() {
   const root = new THREE.Group();
@@ -69,7 +59,6 @@ export async function buildPlayer() {
       obj.castShadow = true;
       obj.receiveShadow = true;
     }
-    // Xbot uses Mixamo bone naming: mixamorigHead
     if (obj.isBone && obj.name.toLowerCase().includes('head') && !obj.name.toLowerCase().includes('top')) {
       PlayerRig.headBone = obj;
     }
@@ -80,30 +69,30 @@ export async function buildPlayer() {
   PlayerRig.mixer = mixer;
   PlayerRig.allActions = [];
 
+  // Soldier.glb animations are index-based: [0]=Idle, [1]=Run, [3]=Walk
+  // Map them by scanning clip names (case-insensitive) with index fallback
+  const animations = gltf.animations;
+  const clipMap = { idle: null, walk: null, run: null };
+
+  for (const clip of animations) {
+    const lower = clip.name.toLowerCase();
+    if (lower.includes('idle')) clipMap.idle = clip;
+    else if (lower.includes('walk')) clipMap.walk = clip;
+    else if (lower.includes('run')) clipMap.run = clip;
+  }
+  // Index fallback if name matching failed
+  if (!clipMap.idle && animations[0]) clipMap.idle = animations[0];
+  if (!clipMap.run && animations[1]) clipMap.run = animations[1];
+  if (!clipMap.walk && animations[3]) clipMap.walk = animations[3];
+
   const baseWeights = { idle: 1, walk: 0, run: 0 };
-  const additiveNames = { sneak_pose: 0, sad_pose: 0, agree: 0, headShake: 0 };
-
-  for (const clip of gltf.animations) {
-    const name = clip.name;
-
-    if (name in baseWeights) {
-      const action = mixer.clipAction(clip);
-      setActionWeight(action, baseWeights[name]);
-      action.play();
-      PlayerRig.baseActions[name] = action;
-      PlayerRig.allActions.push(action);
-    } else if (name in additiveNames) {
-      THREE.AnimationUtils.makeClipAdditive(clip);
-      let processedClip = clip;
-      if (name.endsWith('_pose')) {
-        processedClip = THREE.AnimationUtils.subclip(clip, name, 2, 3, 30);
-      }
-      const action = mixer.clipAction(processedClip);
-      setActionWeight(action, 0);
-      action.play();
-      PlayerRig.additiveActions[name] = { action, weight: 0 };
-      PlayerRig.allActions.push(action);
-    }
+  for (const [name, clip] of Object.entries(clipMap)) {
+    if (!clip) continue;
+    const action = mixer.clipAction(clip);
+    setActionWeight(action, baseWeights[name]);
+    action.play();
+    PlayerRig.baseActions[name] = action;
+    PlayerRig.allActions.push(action);
   }
 
   PlayerRig.currentBase = 'idle';
@@ -133,7 +122,6 @@ export function animatePlayer(dt) {
 
   const dtS = dt / 1000;
 
-  // Crossfade base action based on movement state
   let targetBase = 'idle';
   if (p.moving && p.sprinting) {
     targetBase = 'run';
@@ -142,7 +130,6 @@ export function animatePlayer(dt) {
   }
   crossFadeBase(targetBase, 0.35);
 
-  // Update the animation mixer
   if (PlayerRig.mixer) {
     PlayerRig.mixer.update(dtS);
   }
@@ -163,6 +150,5 @@ export function animatePlayer(dt) {
     }
   }
 
-  // Rotate body to face movement direction
   p.body.rotation.y = p.facing;
 }

@@ -1,0 +1,26 @@
+{
+  "feature": "realistic-world-overhaul",
+  "defaults": { "max_attempts": 3, "max_turns": 60, "timeout_min": 45, "idle_min": 10, "model": "sonnet" },
+  "full_gates_every": 3,
+  "gates_each": [
+    { "repo": "portfolio", "cmd": "npm run lint", "if_changed": ["portfolio/src/**", "portfolio/scripts/**", "portfolio/tests/**"] }
+  ],
+  "full_gates": [
+    { "repo": "portfolio", "cmd": "npm run gates:full", "timeout_min": 40 }
+  ],
+  "e2e_gates": [
+    { "repo": "portfolio", "cmd": "npm run gates:e2e", "timeout_min": 120 }
+  ],
+  "reset": [
+    { "repo": "portfolio", "cmd": "node -e \"const fs=require('fs');for(const d of ['dist','test-results','playwright-report'])fs.rmSync(d,{recursive:true,force:true})\"" }
+  ],
+  "deps_install": [
+    { "repo": "portfolio", "cmd": "node -e \"const fs=require('fs');if(fs.existsSync('package-lock.json'))require('child_process').execSync('npm ci',{stdio:'inherit'})\"" }
+  ],
+  "php_lint": false,
+  "permissions": { "deny": [] },
+  "final_review": true,
+  "plan_review": true,
+  "final_review_blocks": true,
+  "size": "XL"
+}

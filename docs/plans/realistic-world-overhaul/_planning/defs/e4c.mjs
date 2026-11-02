@@ -1,0 +1,202 @@
+import { has, none, exists, json, absent, vt, pw, npm, node } from '../lib.mjs';
+import { buildingPlan } from '../buildingPlan.mjs';
+
+export default [
+  // ---------------------------------------------------------------- 051
+  buildingPlan({
+    id: '051', slug: 'workshop-garage', zone: 'workshop', display: 'Startup Garage', prompt: 'tinker', title: 'Startup garage studio (zone workshop): 1CLX',
+    goal: 'Build the 1CLX startup garage: a converted garage with a half-open roller door, a dev corner, a meeting nook, a store and a tiny pantry, with startup character (whiteboards covered in sketches, a website-builder prototype on a big monitor, bean bags, cables). The big whiteboard opens the 1CLX project dialogue.',
+    footprint: 'about 16 by 12 m', floors: 'one floor (height 3.8)', style: 'plaster wall tint `#d9cdb8`, `gable` roof `metalPainted` pitch 0.25, trim `woodDark`',
+    rooms: [
+      { id: 'garage-floor', desc: 'main open studio, 9 by 8 m', floor: '`concrete`', objects: '`workbench` x2, `desk-office` x4, `chair-office` x5, `monitor-dual` x3, `laptop` x3, `keyboard-mouse` x5, `whiteboard-rolling` x3, `kanban-board`, `bean-bag` x4, `sofa-2`, `table-coffee`, `wall-tv-large` (the prototype screen), `printer-3d`, `cable-reel` x2, `shelf-industrial`, `toolbox`, `pegboard-tools`, `fan-pedestal` x2, `tube-light` x5, `plant-office` x3, `desk-lamp` x3, `rug-round`, `trash-bin-small` x2, `water-dispenser`, `notice-board`', lights: 'tube lights group `garage` with a rope-style switch at the door' },
+      { id: 'meeting-nook', desc: 'meeting nook, 4 by 4 m', floor: '`woodPlanks`', objects: '`table-round`, `chair-wooden` x4, `whiteboard` x1 (the project whiteboard with the text slot), `projector-screen`, `lamp-pendant`, `plant-potted-small` x2, `rug-round`, `cabinet-low`, `wall-clock`, `picture-frame-set`, `fan-ceiling`, `coffee-machine`, `flower-vase`', lights: 'group `nook`' },
+      { id: 'store', desc: 'parts and stock store, 4 by 4 m', floor: '`concrete`', objects: '`shelf-industrial` x3, `parts-bins` x3, `archive-box` x4, `toolbox`, `compressor`, `cable-reel`, `stool`, `filing-cabinet`, `tube-light` x2, `locker-bank`, `welding-mask`, `trash-bin-small`', lights: 'group `store`' },
+      { id: 'pantry', desc: 'pantry corner, 3 by 3 m', floor: '`floorTile`', objects: '`counter-kitchen-straight`, `sink-double`, `fridge`, `microwave`, `kettle-tray`, `rice-cooker`, `shelf-utensils`, `water-filter`, `trash-bin-small`, `stool-bar` x2, `tea-glass-set`, `plate-set`, `tube-light`, `pot-set`', lights: 'tube light group `pantry`' },
+    ],
+    doors: 'a roller door south into `garage-floor` (width 3.2, exterior, unlocked, half raised), a pedestrian door beside it (width 1.2, exterior, unlocked), `garage-floor` to `meeting-nook`, `garage-floor` to `store`, `store` to `pantry` (interior, unlocked)', windows: 'at least 6', stairs: 'none',
+    details: 'window 6, door 2, signage 2, drainpipe 3, planter 3, bin 2, lamp 4; a cable run, parked motorbikes, a wooden pallet bench outside',
+    structureTest: 'the roller door is at least 3.0 m wide',
+    exterior: 'a roller door (ribbed leaf half raised, builder `rollerDoor` added to `exterior.js` and shared with the workshop), a hand-painted signboard "1CLX / ஒன்-சி-எல்-எக்ஸ்" (key `onecl`; the Tamil is a transliteration draft), string lights, parked scooters (`scooter`) x2, a pallet bench, tubs, a bicycle against the wall, a satellite dish.',
+    signs: '`onecl`',
+    read: { id: 'project-whiteboard', room: 'meeting-nook', prompt: 'tinker', object: 'the project whiteboard' },
+    seats: 'the sofa, bean bags and the nook chairs',
+    interiorTest: 'whiteboards have text slots; the prototype screen slot exists; the roller door is walkable around',
+    readExtra: 'the dialogue is the 1CLX project as in v1',
+    e2eExtra: 'the roller door region lets the player walk in without opening anything',
+    human: 'Does it look like a real startup garage?',
+  }),
+
+  // ---------------------------------------------------------------- 052
+  buildingPlan({
+    id: '052', slug: 'freshnote-studio', zone: 'freshnote', display: 'Design Studio', prompt: 'visit studio', title: 'Design and note-taking studio (zone freshnote)',
+    goal: 'Build the Freshnote design studio: a bright two-room studio with a gallery wall of notes and sketches, a design room with drawing tables and easels, a meeting room and a pantry. The mood board in the design room opens the Freshnote project dialogue.',
+    footprint: 'about 16 by 12 m', floors: 'one floor (height 3.8)', style: 'plaster wall tint `#f4efe6`, `flat` roof with a green parapet, pastel accent trim `#9ec7b3`',
+    rooms: [
+      { id: 'gallery', desc: 'entry gallery with note walls, 8 by 6 m', floor: '`woodPlanks`', objects: '`display-stand` x4, `mood-board` x3, `picture-frame-set` x6, `sample-books` x2, `bench-wood` x2, `plant-potted-large` x3, `lamp-floor` x3, `rug-round`, `sign-board` (key `freshnote`), `wall-clock`, `notice-board`, `table-side` x2, `flower-vase` x2, `fan-ceiling` x2, `lamp-pendant` x4, `mirror-wall`, `shelf-wall` x3 with `book-row`, `doormat`', lights: 'pendants group `gallery` auto dusk' },
+      { id: 'design-room', desc: 'design room, 9 by 6 m', floor: '`woodPlanks`', objects: '`drawing-table` x4, `easel` x3, `drawing-tablet` x3, `color-swatch-wall`, `mood-board` (the project board, a large one), `paper-roll-stand`, `chair-office` x4, `stool` x4, `monitor-dual` x2, `laptop` x2, `keyboard-mouse` x3, `desk-lamp` x4, `cabinet-low` x2, `shelf-wall` x2, `plant-office` x3, `whiteboard-rolling`, `bean-bag` x2, `fan-ceiling` x2, `ac-split`, `wall-tv-large`, `trash-bin-small`, `rug-rect`', lights: 'bright panels group `design`' },
+      { id: 'meeting-room', desc: 'meeting room, 5 by 5 m', floor: '`carpet`', objects: '`table-dining-6` as the meeting table, `chair-conference` x6, `wall-tv-large`, `whiteboard`, `plant-office` x2, `cabinet-low`, `coffee-machine`, `lamp-pendant`, `curtain-pair` x2, `wall-clock`, `picture-frame-set`, `ac-split`', lights: 'group `meeting`' },
+      { id: 'pantry', desc: 'pantry, 4 by 3 m', floor: '`floorTile`', objects: '`counter-kitchen-straight`, `sink-double`, `fridge`, `microwave`, `kettle-tray`, `tea-glass-set`, `plate-set`, `stool-bar` x3, `table-bar`, `shelf-utensils`, `water-filter`, `trash-bin-small`, `plant-potted-small`, `tube-light`', lights: 'group `pantry`' },
+    ],
+    doors: 'main door south into `gallery` (width 1.8, exterior, unlocked), `gallery` to `design-room` (wide interior opening 2.2), `gallery` to `meeting-room` (interior), `design-room` to `pantry` (interior), a back door from `pantry` to outside (exterior, `locked: true`)', windows: 'at least 12 large windows', stairs: 'none',
+    details: 'window 12, door 2, signage 2, drainpipe 3, planter 8, bin 2, lamp 5; a green wall (vertical planter), a bicycle rack, a sandwich board',
+    structureTest: 'the back door is locked, the main door unlocked',
+    exterior: 'a vertical green wall made of 40 small planter boxes, a sandwich-board sign, big windows with white frames, a small sloped awning, pastel colour accent, bicycle rack with 3 cycles (`cycle-parked`), a lit signboard "FRESHNOTE / ஃபிரெஷ்நோட்" (key `freshnote`, Tamil draft).',
+    signs: '`freshnote`',
+    newProps: { cat: 'design', file: 'design', types: ['drawing-table', 'easel', 'color-swatch-wall', 'mood-board', 'drawing-tablet', 'sample-books', 'paper-roll-stand', 'display-stand'], note: 'the mood board has a pinned-notes layout with at least 12 small note quads in several pastel colours and a text slot', test: 'mood-board has 12 note parts, easel height 1.5 to 1.9 m, drawing-tablet not solid' },
+    read: { id: 'mood-board', room: 'design-room', prompt: 'visit studio', object: 'the large mood board in the design room' },
+    seats: 'the stools, office chairs and bean bags',
+    interiorTest: 'the mood board has the largest text slot in the building and is reachable',
+    readExtra: 'the dialogue is the Freshnote project as in v1',
+    e2eExtra: 'the green wall counts toward `planter` details',
+    human: 'Does the studio feel like a real design studio?',
+  }),
+
+  // ---------------------------------------------------------------- 053
+  buildingPlan({
+    id: '053', slug: 'library', zone: 'library', display: 'Public Library', prompt: 'read archives', title: 'Grand public library with archive stacks (zone library)', est: 55, model: 'opus',
+    goal: 'Build the grand public library: a two-level reading hall with a mezzanine, a reading room, children\'s section, the librarian office and the archive stacks where the experience timeline lives. The archive ledger on its lectern opens the experience dialogue (journey 3 will check that the listed roles equal the content file).',
+    footprint: 'about 24 by 18 m', floors: 'ground (height 4.8) and a mezzanine level at y 5.0 (height 3.4) over the rear third', style: 'plaster wall tint `#e8d9b9`, `hip` roof with a central `dome` accent over the hall (use `hip` roof and add a small dome through the decorate hook), stone plinth in `stoneRough`, trim `woodDark`, arched windows',
+    rooms: [
+      { id: 'main-hall', desc: 'grand reading hall, 14 by 12 m, double height at the front', floor: '`marble`', objects: '`reading-desk` x4, `chair-wooden` x16, `library-stack` x6, `ladder-library` x2, `card-catalog`, `book-cart` x2, `globe`, `map-table`, `lamp-pendant` x6, `reading-lamp-green` x6, `plant-potted-large` x4, `bench-wood` x2, `fan-ceiling` x4, `sign-board` ("LIBRARY / நூலகம்": key `library`), `wall-clock`, `picture-frame-set` x4, `rug-rect` x2, `notice-board`, `magazine-rack`, `display-case-glass` x2, `plaque-wall`, `bust-abstract`, `flower-vase` x2', lights: 'pendants and green lamps groups `hall` and `reading` auto dusk, switch at the door' },
+      { id: 'reading-room', desc: 'quiet reading room, 8 by 6 m', floor: '`woodPlanks`', objects: '`reading-desk` x3, `chair-wooden` x10, `library-stack` x3, `reading-lamp-green` x6, `bookshelf-tall` x2, `armchair` x2, `table-side`, `rug-rect`, `curtain-pair` x3, `plant-potted-small` x3, `wall-clock`, `fan-ceiling` x2, `picture-frame-set` x2, `lamp-floor`', lights: 'group `reading-room`' },
+      { id: 'archive-stacks', desc: 'archive stacks and timeline (mezzanine level 1), 12 by 6 m', floor: '`woodPlanks`', objects: '`library-stack` x8, `archive-box` x10, `scroll-case` x4, `map-table`, `ladder-library` x2, `card-catalog` x2, `reading-lamp-green` x4, `reading-desk` (the archive lectern: type `podium` for the ledger), `podium`, `timeline-wall` (6 m with the years of the experience entries as text slots), `display-case-glass` x2, `rope-barrier` x2, `lamp-wall` x4, `rug-rect`, `fan-ceiling`, `book-cart`', lights: 'warm lamps group `archive`' },
+      { id: 'childrens-section', desc: 'children\'s corner, 6 by 5 m', floor: '`carpet`', objects: '`bookshelf-low` x4, `book-row` filled, `table-round` x2, `chair-plastic` x8, `bean-bag` x4, `rug-round` x2, `plant-potted-small` x2, `picture-frame-set` x3, `lamp-pendant` x2, `wall-chart`, `cushion-set` x2, `stool` x4', lights: 'group `kids`' },
+      { id: 'librarian-office', desc: 'librarian office, 5 by 4 m', floor: '`woodPlanks`', objects: '`desk-wood`, `chair-office`, `chair-wooden` x2, `filing-cabinet` x2, `bookshelf-tall`, `book-cart`, `lamp-table`, `monitor-desktop`, `keyboard-mouse`, `phone-desk`, `stamp-desk`, `wall-clock`, `fan-ceiling`, `plant-office`, `rug-rect`, `cabinet-glass`', lights: 'group `office`' },
+    ],
+    doors: 'a double main door south into `main-hall` (width 2.2, exterior, unlocked), `main-hall` to `reading-room` (interior), `main-hall` to `childrens-section` (interior wide), `main-hall` to `librarian-office` (interior, unlocked), `archive-stacks` reached only by a staircase (width 1.6, rise 5.0) from `main-hall`', windows: 'at least 14 tall arched windows', stairs: 'main staircase from `main-hall` to `archive-stacks` (rise 5.0, width 1.8), no lift',
+    details: 'window 14, door 2, signage 2, drainpipe 4, planter 6, bin 3, lamp 8; a flight of entrance steps with a balustrade and two lamp posts',
+    structureTest: 'the archive stacks are reachable only by stairs; the main door is 2.2 m wide; there are 5 rooms',
+    exterior: 'a wide flight of entrance steps with a stone balustrade, four columns with capitals (portico), a pediment-style gable over the porch using the exterior kit, arched windows with stone surrounds, a small dome with a finial on the roof, two lamp posts, a lit sign "PUBLIC LIBRARY / பொது நூலகம்" (key `library`), planters.',
+    signs: '`library`, `archive` (ARCHIVE / காப்பகம்), `quiet` (QUIET PLEASE / அமைதி)',
+    read: { id: 'archive-ledger', room: 'archive-stacks', prompt: 'read archives', object: 'the archive ledger on its lectern (`podium`) under the timeline wall' },
+    seats: 'reading chairs (at least 8 are seat interactables), the armchairs and bean bags',
+    interiorTest: 'the timeline wall has one text slot per experience entry in `src/content/experience.js` (read the file: the number of text slots equals the number of entries) and the slot texts are the company names from that file; the stairs lead to the stacks',
+    readExtra: 'the dialogue is the experience timeline as in v1; the roles listed in the dialogue come only from `src/content/experience.js`',
+    e2eExtra: 'walk the staircase to the archive (hold `w` from the stair foot) and read the ledger there; the dialogue lists the same number of roles as `experience.js` (count the entries in the DOM against the content file imported in the test)',
+    extraShots: ',library-archive',
+    human: 'Judge the library atmosphere.',
+  }),
+
+  // ---------------------------------------------------------------- 054
+  buildingPlan({
+    id: '054', slug: 'academy', zone: 'academy', display: 'Academy', prompt: 'attend class', title: 'School and college (zone academy): classroom, labs, staff room',
+    goal: 'Build the academy: a school and college building with a classroom, a science lab, a computer lab, a staff room and an assembly corridor hall, painted in the typical white and ochre of an Indian school with a flag mast in the front yard. The blackboard in the classroom opens the education and certification dialogue.',
+    footprint: 'about 28 by 18 m', floors: 'one floor (height 3.9)', style: 'plaster wall tint `#f1eadb` with an ochre band, `flat` roof with a parapet and a small clock gable, trim `woodDark`',
+    rooms: [
+      { id: 'hall', desc: 'assembly hall and corridor, 28 by 4 m along the front', floor: '`stonePaving`', objects: '`bench-wood` x4, `notice-board` x3, `school-bell`, `wall-clock` x2, `plant-potted-large` x4, `fan-ceiling` x6, `trophy-cup` x3, `display-case-glass`, `award-wall`, `flag-stand`, `water-dispenser`, `sign-board` (key `academy`), `lamp-wall` x6, `picture-frame-set` x4, `trash-bin-small` x2, `shoe-rack`, `podium`', lights: 'group `hall` auto dusk' },
+      { id: 'classroom', desc: 'classroom, 9 by 8 m', floor: '`floorTile`', objects: '`desk-school` x12 in `grid:3x4`, `blackboard` x1 big, `teacher-desk`, `chair-wooden` x2, `wall-chart` x3, `fan-ceiling` x4, `tube-light` x6, `cabinet-low`, `bookshelf-low`, `globe`, `school-bell`, `notice-board`, `wall-clock`, `plant-potted-small` x2, `picture-frame-set`, `trash-bin-small`, `water-filter`', lights: 'tube lights group `class`' },
+      { id: 'science-lab', desc: 'science lab, 9 by 8 m', floor: '`floorTile`', objects: '`lab-bench` x4, `stool` x8, `microscope` x4, `beaker-set` x4, `wall-chart` x2, `cabinet-glass` x2, `sink-double`, `fire-extinguisher` x2, `exit-sign`, `fan-ceiling` x3, `tube-light` x6, `blackboard`, `teacher-desk`, `shelf-wall` x2, `trash-bin-small`, `locker-bank`', lights: 'group `lab`' },
+      { id: 'computer-lab', desc: 'computer lab, 9 by 6 m', floor: '`floorTileDark`', objects: '`desk-cubicle` x8, `chair-office` x10, `monitor-desktop` x10, `keyboard-mouse` x10, `server-rack`, `network-box`, `printer-copier`, `ac-split` x2, `whiteboard-rolling`, `projector-ceiling`, `projector-screen`, `ceiling-panel-light` x6, `fire-extinguisher`, `exit-sign`, `plant-office` x2, `wall-clock`', lights: 'panels group `computer`' },
+      { id: 'staff-room', desc: 'staff room, 8 by 6 m', floor: '`woodPlanks`', objects: '`desk-wood` x4, `chair-office` x4, `chair-wooden` x4, `filing-cabinet` x3, `bookshelf-tall` x2, `table-round`, `water-dispenser`, `kettle-tray`, `tea-glass-set`, `fan-ceiling` x2, `notice-board`, `wall-clock`, `plant-potted-large`, `lamp-table` x2, `picture-frame-set` x2, `rug-rect`, `cabinet-glass`', lights: 'group `staff`' },
+    ],
+    doors: 'main door south into `hall` (width 2.0, exterior, unlocked), `hall` to `classroom`, `hall` to `science-lab`, `hall` to `computer-lab`, `hall` to `staff-room` (all interior, unlocked), a side exterior door from `hall` (width 1.4, exterior, unlocked)', windows: 'at least 16', stairs: 'none',
+    details: 'window 16, door 2, signage 2, drainpipe 4, planter 8, bin 3, lamp 6; a flag mast with the flag in the front yard, a school bell on a stand, a low front wall',
+    structureTest: 'the hall touches the four other rooms (each reachable in one door), there are 5 rooms',
+    exterior: 'a long colonnaded front verandah (portico with 8 pillars), ochre band painting, a small clock gable with a working clock face on the roof (hands from real time, share the builder of plan 029), a flag mast 8 m with a flag cloth, a low front wall with a gate (decorative), a sign "ACADEMY / கல்விக்கழகம்" (key `academy`), planters along the wall, a small play yard with `bench-park` x2 outside.',
+    signs: '`academy`',
+    read: { id: 'blackboard', room: 'classroom', prompt: 'attend class', object: 'the big blackboard' },
+    seats: 'every school desk (at least 6 are seat interactables)',
+    interiorTest: 'the classroom has 12 school desks; the lab has 4 microscopes; the clock builder shares code with the square clock (import, no copy)',
+    readExtra: 'the dialogue is the education and certification content as in v1',
+    e2eExtra: 'sit at a school desk (`playerState().sitting`)',
+    human: 'Judge the school look.',
+  }),
+
+  // ---------------------------------------------------------------- 055
+  buildingPlan({
+    id: '055', slug: 'lighthouse', zone: 'lighthouse', display: 'Lighthouse', prompt: 'signal', title: 'Lighthouse and keeper cottage (zone lighthouse): climb to the top, contact board, journey 4', est: 55, model: 'opus',
+    goal: 'Build a real lighthouse with its keeper cottage on the north-east headland. The tower is climbed by stairs through three landings to the lamp room with a rotating Fresnel lens and a gallery walkway with a rail; the contact board in the lamp room opens the contact dialogue (LinkedIn, GitHub, email click-to-reveal; no phone number). The keeper cottage at the foot has a living room, bedroom and kitchen. The tower looks round from outside: a tapered cylinder skin over a square structural shell. Also prove journey 4 (walk the road from the harbour, climb, read the board).',
+    footprint: 'tower 7 by 7 m plus a cottage 10 by 7 m attached on the west side (one manifest, footprint about 18 by 8 m)', floors: 'level 0 (y 0, h 5.0), level 1 (y 5.2, h 5.0), level 2 (y 10.4, h 5.0), level 3 lamp room (y 15.6, h 4.0), level 4 `rooftop: true` gallery (y 19.8); the cottage has only level 0 (h 3.2)', style: 'plaster wall tint `#f3f1ec`, `cone` roof over the lamp room, trim `metalPainted` red; the exterior of the tower is a tapered cylinder skin with red and white bands',
+    rooms: [
+      { id: 'cottage-living', desc: 'keeper living room, 5 by 5 m', floor: '`woodPlanks`', objects: '`sofa-2`, `armchair` x2, `table-coffee`, `bookshelf-tall` x2, `lamp-table` x2, `lamp-floor`, `rug-round`, `picture-frame-set` x3, `wall-clock`, `chair-wooden` x2, `plant-potted-small` x2, `curtain-pair` x2, `telescope-brass`, `ship-wheel`, `barometer`, `fan-ceiling`, `cushion-set`, `table-side`, `brass-urn`, `lantern-storm` x2', lights: 'lamps group `cottage-living` auto dusk' },
+      { id: 'cottage-bedroom', desc: 'keeper bedroom, 5 by 4 m', floor: '`woodPlanks`', objects: '`bed-double`, `table-bedside` x2, `lamp-table` x2, `wardrobe`, `drawer-chest`, `mirror-standing`, `rug-rect`, `curtain-pair`, `pillow-stack` x1 `on:bed-double`, `blanket-roll` `on:bed-double`, `picture-frame-set`, `chair-wooden`, `luggage-suitcase`, `wall-clock`, `fan-ceiling`, `signal-flag-set`', lights: 'group `cottage-bedroom`' },
+      { id: 'cottage-kitchen', desc: 'keeper kitchen, 5 by 3 m', floor: '`floorTileDark`', objects: '`stove-clay`, `counter-kitchen-straight`, `sink-double`, `shelf-utensils`, `pot-set` x2, `table-dining-4`, `chair-wooden` x4, `fridge`, `water-filter`, `spice-rack`, `plate-set` x2 `on:table-dining-4`, `lantern-hanging`, `trash-bin-small`, `rice-cooker`, `tube-light`', lights: 'group `cottage-kitchen`' },
+      { id: 'tower-base', desc: 'tower ground room, 6 by 6 m with the first flight', floor: '`stoneRough`', objects: '`chart-table`, `chair-wooden`, `lantern-storm` x2, `rope-coil` x2, `life-ring-wall` x2, `shelf-wall`, `oil-lamp-brass`, `signal-flag-set`, `bench-stone`, `picture-frame-set`, `plaque-wall`, `locker-bank`, `notice-board`, `wall-clock`', lights: 'wall lamps group `tower-base`' },
+      { id: 'tower-landing', desc: 'mid landing room (level 1 and level 2 share the landing treatment; the room is level 1), 6 by 6 m', floor: '`stoneRough`', objects: '`bookshelf-low`, `table-side`, `chair-wooden` x2, `telescope-brass`, `lantern-storm`, `lamp-wall` x2, `rug-round`, `picture-frame-set`, `signal-flag-set`, `flower-vase`, `wall-clock`', lights: 'group `tower-mid`' },
+      { id: 'lamp-room', desc: 'lamp room at the top (level 3), 6 by 6 m, glazed on all sides, with the lens', floor: '`metalBrushed`', objects: '`lens-fresnel` (centre, rotating), `telescope-brass`, `chart-table`, `stool`, `lantern-storm`, `sign-board` (the contact board: text slot "CONTACT / தொடர்புக்கு", key `contact`), `lamp-wall` x2, `barometer`, `table-side`', lights: 'the beam lamp (emissive plus a spotlight in the pool), group `lamp-room`' },
+    ],
+    doors: 'a heavy main door at the foot of the tower facing the road (width 1.4, exterior, unlocked), a cottage front door (width 1.2, exterior, unlocked), a door between the cottage living room and the tower base (interior), `cottage-living` to `cottage-bedroom` and `cottage-kitchen` (interior), a door from `lamp-room` to the gallery (width 1.0, interior to the `rooftop` floor)', windows: 'at least 10 small round-look windows in the tower and 4 in the cottage',
+    stairs: 'four flights inside the tower: ground to level 1 (rise 5.2), level 1 to 2 (rise 5.2), level 2 to 3 (rise 5.2), level 3 to gallery by a short stair (rise 4.2); switchback layout with intermediate landings; no lift (the plan check treats the lamp-room room as reachable by stairs only)',
+    details: 'window 14, door 3, signage 2, drainpipe 2, planter 3, bin 2, lamp 6; the tower skin, gallery rail, a fog horn, a flagpole on the cottage and a low stone wall',
+    structureTest: 'the lamp room and the gallery are reachable only through three flights; the rooftop gallery is walkable and its edge blocks; the tower door faces the road side of the anchor rotation',
+    exterior: 'the tower skin: a tapered cylinder (radius 4.3 at the base to 3.1 at the top) in 6 alternating red and white bands built as `CylinderGeometry` pieces with an arc gap at the door, small porthole windows, a gallery ring with a handrail and balusters, a lamp-room glass lantern with a cone cap and a weather vane, the cottage with a hip tile roof and a stone chimney, a flagpole, a stone wall, a lit sign "LIGHTHOUSE / கலங்கரை விளக்கம்" (key `lighthouse`).',
+    signs: '`lighthouse`, `contact` (CONTACT / தொடர்புக்கு)',
+    newProps: { cat: 'nautical', file: 'nautical', types: ['lens-fresnel', 'telescope-brass', 'chart-table', 'ship-wheel', 'lantern-storm', 'barometer', 'signal-flag-set', 'life-ring-wall'], note: '`lens-fresnel` is a tall glass lens built from stacked prism rings with a bright emissive core and `animated: { kind: "spin", speed: 0.6 }`, 1.8 to 2.4 m high', test: 'lens height 1.8 to 2.4 m with the spin metadata, telescope length 0.6 to 1.2 m' },
+    read: { id: 'contact-board', room: 'lamp-room', prompt: 'signal', object: 'the contact board in the lamp room' },
+    seats: 'the cottage sofa, armchairs and kitchen chairs',
+    interiorTest: 'the contact board is within 4 m of the stair top and clear; the contact dialogue content (read `src/content/dialogues.js` and `contact.js`) has LinkedIn, GitHub, an email reveal button and no phone (the unit test renders the builder with a minimal fake DOM or inspects the content structure)',
+    interiorExtra: 'The lens beam: add a hook field `listObjects()` entry `lighthouse-beam` with its current angle so epic 5 can test it.',
+    readExtra: 'the dialogue is the contact content as in v1 minus the phone (plan 004) with the email click-to-reveal',
+    e2eExtra: 'journey 4 of the spec: from the harbour quay `walkTo` the lighthouse door along the road (timeout 90 s), `e` opens the door, climb the three flights with `walkTo` the stair foot targets (the stairs are climbed by holding `w` along each flight; use `teleport` with yaw to line up at each flight start if needed), reach the lamp room (`playerState().y` within 0.2 of 15.6), `e` on the contact board: `#dialogue` shows the LinkedIn and GitHub links and a `button.email-reveal`, and the page text contains no phone number (the regex of `check:phone`); walk out to the gallery and the rail blocks the edge',
+    extraShots: ',lighthouse-top,lighthouse-cottage',
+    human: 'Judge the lighthouse silhouette and the view from the top.',
+    freezeExtra: [],
+  }),
+
+  // ---------------------------------------------------------------- 056
+  buildingPlan({
+    id: '056', slug: 'milestones-hall', zone: 'milestones', display: 'Town Hall', prompt: 'see numbers', title: 'Town hall and hall of achievements (zone milestones)',
+    goal: 'Build the Town Hall, the last landmark: a civic building with a clock gable, an entrance hall, the achievement hall with display cases, trophies and a timeline wall, a council chamber and an office. The central podium with its plaque opens the milestones dialogue (300K users, team lead and the other facts, exactly as v1).',
+    footprint: 'about 22 by 16 m', floors: 'one floor (height 5.0 for the achievement hall)', style: 'plaster wall tint `#efe6d2`, `hip` roof with `roofTile` and a central clock gable, stone plinth, trim `woodDark`, columns on the front',
+    rooms: [
+      { id: 'entrance-hall', desc: 'entrance hall, 8 by 6 m', floor: '`marble`', objects: '`bench-wood` x2, `plant-potted-large` x4, `flag-stand` x2, `plaque-wall` x2, `sign-board` ("TOWN HALL / நகர மன்றம்": key `town-hall`), `lamp-pendant` x3, `wall-clock`, `picture-frame-set` x4, `rug-rect`, `fan-ceiling` x3, `notice-board`, `doormat`, `brass-urn` x2, `oil-lamp-brass` x2, `table-side`, `flower-vase`, `rope-barrier` x2', lights: 'group `entrance` auto dusk' },
+      { id: 'achievement-hall', desc: 'hall of achievements, 14 by 10 m', floor: '`marble`', objects: '`display-case-glass` x6, `trophy-cup` x8, `podium` x1 (the plaque podium) plus `plaque-wall`, `award-wall` x2, `timeline-wall` x1 (6 m), `bust-abstract` x2, `banner-hanging` x4, `flag-stand` x3, `rope-barrier` x4, `bench-stone` x2, `lamp-pendant` x6, `fan-ceiling` x4, `plant-potted-large` x4, `picture-frame-set` x6, `rug-rect` x2, `wall-clock`, `flower-vase` x3, `vase-floor` x2', lights: 'spot-style group `exhibit` and pendants group `hall`' },
+      { id: 'council-chamber', desc: 'council chamber, 8 by 6 m', floor: '`woodPlanks`', objects: '`conference-table`, `chair-conference` x12, `podium`, `flag-stand`, `wall-tv-large`, `bookshelf-tall` x2, `plant-potted-large` x2, `curtain-pair` x3, `picture-frame-set` x3, `fan-ceiling` x3, `lamp-wall` x4, `rug-rect`, `wall-clock`, `water-dispenser`, `mic-desk` x3', lights: 'group `chamber`' },
+      { id: 'town-office', desc: 'town clerk office, 5 by 4 m', floor: '`woodPlanks`', objects: '`desk-wood`, `chair-office`, `chair-wooden` x2, `filing-cabinet` x2, `cabinet-glass`, `bookshelf-low`, `monitor-desktop`, `keyboard-mouse`, `phone-desk`, `printer-copier`, `lamp-table`, `fan-ceiling`, `wall-clock`, `stamp-desk`, `plant-office`, `rug-rect`', lights: 'group `office`' },
+    ],
+    doors: 'a double main door south into `entrance-hall` (width 2.4, exterior, unlocked), `entrance-hall` to `achievement-hall` (wide interior opening 3.0), `achievement-hall` to `council-chamber` (interior, unlocked), `achievement-hall` to `town-office` (interior, unlocked), a side exterior door into `town-office` (exterior, `locked: true`)', windows: 'at least 12',
+    stairs: 'none',
+    details: 'window 12, door 2, signage 2, drainpipe 4, planter 6, bin 3, lamp 8; front columns and a flight of steps, flagpole',
+    structureTest: 'there are 4 rooms; the main door is 2.4 m wide; the side door is locked',
+    exterior: 'a pillared front portico (6 columns) with a wide flight of steps, a central clock gable with a working clock (share the builder of plan 029), a flagpole with a flag, lamp posts, planters, a plaque by the door, a lit sign "TOWN HALL / நகர மன்றம்" (key `town-hall`).',
+    signs: '`town-hall`',
+    read: { id: 'milestone-podium', room: 'achievement-hall', prompt: 'see numbers', object: 'the central podium with the milestones plaque' },
+    seats: 'the hall benches and the chamber chairs',
+    interiorTest: 'the timeline wall has at least 5 text slots filled from the milestones facts in `src/content/dialogues.js` (use only text that exists there, never invent)',
+    readExtra: 'the dialogue is the milestones content as in v1',
+    e2eExtra: 'the clock hands exist and rotate from the real time',
+    human: 'Judge the hall of achievements.',
+  }),
+
+  // ---------------------------------------------------------------- 057
+  {
+    id: '057', name: 'all-landmarks-close', title: 'All 14 landmarks: v1 code removed, consistency checks, dialogues and journeys 2 to 4', epic: 'E4', est: 50,
+    arch: 'sections 10.7 and requirement R6, R8, assumption A30',
+    goal: [
+      'Close epic 4. Every landmark is now a walk-in building. Remove the v1 building code, make the final consistency checks (`check:buildings --all`, names, modes, dialogues), run all 14 dialogues in the browser, and prove journeys 2, 3 and 4 with the auto-walk helper. After this plan the runner pauses for your review.',
+    ],
+    read: ['src/world/zones.js', 'src/world/buildings.js', 'src/world/buildingAnims.js', 'src/world/areas/index.js', 'src/content/dialogues.js', 'tests/fixtures/zoneExpect.json', 'scripts/check-buildings.mjs', 'README.md', 'src/ui/minimap.js'],
+    steps: [
+      {
+        title: 'Remove v1 building code and finish the zone table',
+        items: [
+          '`tests/unit/world/zones.test.js` first (new file): `ZONE_LAYOUT` has exactly the 14 ids; every zone has `mode: "object"`; every zone `name` equals `displayName` of its `src/world/buildings/<id>/manifest.json`; every `prompt` equals the manifest `prompt`; positions equal the `town.json` anchors; no zone name still contains old v1 names (`Plaza of Kaviyarasu`, `Notice Board`, `Skill Forge`, `Citadel`, `Broadcast`... the old strings: check against a list), the minimap legend labels come from the same names.',
+          'Delete `src/world/buildings.js`, `src/world/buildingAnims.js` and every import of them; remove the `v1-world` area from `src/world/areas/index.js`; remove the radius-mode branch of `src/systems/interaction.js` (`tryAction` special cases) now that every zone is `object`; remove `updateBuildings` from the game loop; remove v1 per-building colliders. Keep `openDialogue` and the dialogue builders. Delete unused v1 helpers that are now dead (`src/util/three.js` functions that nothing imports; check with a search before deleting).',
+          'README: replace the controls table with the real one (WASD, Shift, mouse, E, V first person, T time, O settings; touch controls arrive in plan 071 and the map in plan 068, mention them as "coming" only if not yet implemented) and the zone table with the 14 display names and what each shows (the section from the content files, no new facts).',
+        ],
+        verify: [vt('tests/unit/world/zones.test.js'), absent('src/world/buildings.js', 'src/world/buildingAnims.js'), npm('lint')],
+      },
+      {
+        title: 'Whole-set checks and all 14 dialogues',
+        items: [
+          '`npm run check:buildings -- --all` must pass: all 14 manifests, every rule, the stage `full`. Fix every finding in the building it concerns (do not weaken the checker).',
+          '`tests/e2e/dialogues-all.spec.js`: for each of the 14 zones: `teleport` to the building door, enter by `walkTo` the interactable position, press `e` at the read object (`listInteractables()` gives its position by id from each manifest), assert `#dialogue` has class `visible`, contains the display name and every `mustInclude` string of `zoneExpect.json`, close with Escape. The `notice` zone triggers a download as well (listen for the event). The `plaza` desk is the reception.',
+        ],
+        verify: [node('scripts/check-buildings.mjs --all'), pw('tests/e2e/dialogues-all.spec.js', 40)],
+      },
+      {
+        title: 'Journeys 2, 3 and 4 and the review pack',
+        items: [
+          '`tests/e2e/journey-2-door.spec.js` (journey 2): start at the spawn, `walkTo` the post office door, `e` opens it, walk in with the loader staying hidden, `walkTo` the counter, `e`: a download named `Kaviyarasu_Fullstack_Engineer_Resume.pdf` starts. `tests/e2e/journey-3-library.spec.js` (journey 3; the fast-travel map arrives in plan 068, so use `teleport(\'library\')` now; plan 077 switches this step to the map): enter the library, climb to the archive, `e` on the ledger: the dialogue roles equal the entries of `src/content/experience.js` (count and company names). The journey 4 test is `tests/e2e/lighthouse.spec.js` from plan 055; run it here too.',
+          '`npm run check:budget` with spots for every landmark (`<id>-outside` and `<id>-inside` were added by each plan) passes both profiles; if a landmark is over, fix it in that building. `npm run shots -- --plan 057` for the 14 exteriors and 14 main rooms (add spots where missing); view and fix visible defects (best effort).',
+          'Write `docs/review/landmarks-review.md` for the person: the 28 screenshot paths, a table of the 14 buildings (display name, rooms, distinct object types from `check:buildings`, which dialogue it opens), the controls, what is still missing (NPCs, weather, new audio, map, text mode, tour, touch).',
+        ],
+        verify: [pw('tests/e2e/journey-2-door.spec.js', 30), pw('tests/e2e/journey-3-library.spec.js', 30), { cmd: 'npm run check:budget', timeout_min: 20 }, exists('docs/review/landmarks-review.md')],
+      },
+    ],
+    accept: [npm('lint'), vt('tests/unit/world/zones.test.js'), node('scripts/check-buildings.mjs --all'), pw('tests/e2e/dialogues-all.spec.js', 40), pw('tests/e2e/journey-2-door.spec.js', 30), pw('tests/e2e/journey-3-library.spec.js', 30), pw('tests/e2e/lighthouse.spec.js', 30), { cmd: 'npm run check:budget', timeout_min: 20 }, npm('check:ledger'), npm('check:size')],
+    allowed: ['portfolio/src/**', 'portfolio/tests/**', 'portfolio/README.md', 'portfolio/docs/review/**'],
+    freeze: ['portfolio/tests/unit/world/zones.test.js', 'portfolio/tests/e2e/dialogues-all.spec.js', 'portfolio/tests/e2e/journey-2-door.spec.js', 'portfolio/tests/e2e/journey-3-library.spec.js'],
+    human: 'Milestone of epic 4: walk every landmark and approve before life, audio and extras are added.',
+  },
+];

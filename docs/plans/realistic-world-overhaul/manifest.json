@@ -1019,16 +1019,21 @@
       "depends_on": [
         "012"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 80,
       "allowed_paths": [
         "portfolio/scripts/**",
         "portfolio/assets/**",
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**",
+        "portfolio/credits.html",
+        "portfolio/CREDITS.md"
       ],
       "allow_extra": [],
       "freeze": [
+        "portfolio/tests/unit/scripts/packMaterialList.test.js",
         "portfolio/tests/unit/materials/sets.test.js",
         "portfolio/tests/unit/materials/uv.test.js",
         "portfolio/tests/unit/materials/registry.test.js",
@@ -1036,45 +1041,77 @@
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/materials/sets.test.js tests/unit/materials/uv.test.js tests/unit/materials/registry.test.js",
+        "npx vitest run tests/unit/scripts/packMaterialList.test.js tests/unit/materials/sets.test.js tests/unit/materials/uv.test.js tests/unit/materials/registry.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/materials.spec.js",
-          "timeout_min": 10
+          "timeout_min": 15
         },
-        "npm run check:size"
+        "npm run check:ledger",
+        "node scripts/generate-credits.mjs --check",
+        "npm run check:size",
+        {
+          "repo": "portfolio",
+          "cmd": "npm run build",
+          "timeout_min": 15
+        },
+        "node scripts/check-prod-hook.mjs"
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Batch tool and the texture sets",
+          "title": "Material list and the batch packing tool (unit tested, no network)",
           "verify": [
-            "npx vitest run tests/unit/materials/sets.test.js",
-            "node \"{{runner}}/assert.mjs\" exists assets/textures/INDEX.json scripts/assets/packMaterialList.mjs"
+            "npx vitest run tests/unit/scripts/packMaterialList.test.js",
+            "node \"{{runner}}/assert.mjs\" exists scripts/assets/packMaterialList.mjs scripts/assets/materials.list.json"
           ]
         },
         {
           "n": 2,
-          "title": "Metric UVs and the material registry",
+          "title": "Run the batch in chunks (network) and check the sets",
           "verify": [
-            "npx vitest run tests/unit/materials/uv.test.js tests/unit/materials/registry.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/engine/materials.js src/util/uv.js"
+            "npx vitest run tests/unit/materials/sets.test.js",
+            "node \"{{runner}}/assert.mjs\" exists assets/textures/INDEX.json",
+            "npm run check:ledger",
+            "node scripts/generate-credits.mjs --check",
+            "npm run check:size"
           ]
         },
         {
           "n": 3,
-          "title": "Materials fixture and Playwright check",
+          "title": "Metric UVs",
+          "verify": [
+            "npx vitest run tests/unit/materials/uv.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/util/uv.js"
+          ]
+        },
+        {
+          "n": 4,
+          "title": "The material registry",
+          "verify": [
+            "npx vitest run tests/unit/materials/registry.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/engine/materials.js",
+            "node \"{{runner}}/assert.mjs\" has src/engine/materials.js \"export function getMaterialStats\"",
+            "node \"{{runner}}/assert.mjs\" has src/engine/materials.js \"export function releaseMaterial\""
+          ]
+        },
+        {
+          "n": 5,
+          "title": "Materials fixture, hook extras and the Playwright check",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/materials.spec.js",
-              "timeout_min": 10
+              "timeout_min": 15
             },
-            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/materials.js"
+            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/materials.js docs/shots/013/materials-medium.png",
+            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/index.js \"materials\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"materialStats\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"Materials\""
           ]
         }
       ],
-      "human_check": "Look at the materials fixture (`npm run dev`, open `?fixture=materials`): do the surfaces look like believable plaster, tile, wood, stone?"
+      "human_check": "Look at the materials fixture (`npm run dev`, open `?fixture=materials`) or `docs/shots/013/materials-medium.png`: do the surfaces look like believable plaster, tile, wood, stone?"
     },
     {
       "id": "014",
@@ -1086,15 +1123,18 @@
       "depends_on": [
         "013"
       ],
-      "est_turns": 45,
+      "est_turns": 55,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/perf/**",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
+        "portfolio/tests/unit/engine/cameraOverride.test.js",
         "portfolio/tests/unit/budgets/budgets.test.js",
         "portfolio/tests/unit/budgets/evaluate.test.js",
         "portfolio/tests/unit/scripts/shots.test.js",
@@ -1102,43 +1142,62 @@
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/budgets/budgets.test.js tests/unit/budgets/evaluate.test.js tests/unit/scripts/shots.test.js",
+        "npx vitest run tests/unit/engine/cameraOverride.test.js tests/unit/budgets/budgets.test.js tests/unit/budgets/evaluate.test.js tests/unit/scripts/shots.test.js",
         {
           "repo": "portfolio",
           "cmd": "npm run check:budget",
-          "timeout_min": 10
+          "timeout_min": 15
         },
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/camera-override.spec.js",
           "timeout_min": 10
-        }
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/smoke.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/v1-behaviour.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run build",
+          "timeout_min": 15
+        },
+        "node scripts/check-prod-hook.mjs"
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Camera override in the hook and the budgets file",
+          "title": "Camera override, the hook and the budgets file",
           "verify": [
-            "npx vitest run tests/unit/budgets/budgets.test.js",
+            "npx vitest run tests/unit/engine/cameraOverride.test.js tests/unit/budgets/budgets.test.js",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/camera-override.spec.js",
               "timeout_min": 10
             },
-            "node \"{{runner}}/assert.mjs\" exists src/budgets.json"
+            "node \"{{runner}}/assert.mjs\" exists src/budgets.json src/shots.json src/engine/cameraOverride.js"
           ]
         },
         {
           "n": 2,
-          "title": "check-budget",
+          "title": "The shared browser helper and check-budget",
           "verify": [
             "npx vitest run tests/unit/budgets/evaluate.test.js",
             {
               "repo": "portfolio",
-              "cmd": "npm run check:budget",
-              "timeout_min": 10
+              "cmd": "npm run check:budget -- --json docs/perf/last-run.json",
+              "timeout_min": 15
             },
-            "node \"{{runner}}/assert.mjs\" exists docs/perf/baseline-v1.json"
+            "node -e \"const j=JSON.parse(require('fs').readFileSync('docs/perf/last-run.json','utf8'));const m=j.measurements;process.exit(j.version===1&&m.length===8&&m.every(r=>Number.isFinite(r.calls)&&r.calls>0&&Number.isFinite(r.triangles)&&r.triangles>0&&['desktop','phone'].includes(r.profile))?0:1)\"",
+            "node -e \"const j=JSON.parse(require('fs').readFileSync('docs/perf/baseline-v1.json','utf8'));const m=j.measurements;process.exit(j.version===1&&m.length===8&&m.every(r=>Number.isFinite(r.calls)&&Number.isFinite(r.triangles))&&j.max.desktop.calls>0&&j.max.phone.triangles>0?0:1)\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"baselineAllowance\"",
+            "node \"{{runner}}/assert.mjs\" exists docs/perf/baseline-v1.json scripts/lib/browser.mjs scripts/check-budget.mjs"
           ]
         },
         {
@@ -1151,12 +1210,19 @@
               "cmd": "npm run shots -- --spots spawn --plan 014",
               "timeout_min": 10
             },
-            "node \"{{runner}}/assert.mjs\" exists docs/shots/014/spawn-high.png",
-            "node \"{{runner}}/assert.mjs\" exists scripts/lib/browser.mjs"
+            {
+              "repo": "portfolio",
+              "cmd": "npm run shots -- --spots library --quality low --plan 014",
+              "timeout_min": 10
+            },
+            "node \"{{runner}}/assert.mjs\" exists docs/shots/014/spawn-high.png docs/shots/014/library-low.png scripts/shots.mjs",
+            "node -e \"process.exit(require('fs').statSync('docs/shots/014/spawn-high.png').size>20000?0:1)\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"npm run shots\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"x,y,z,yaw,pitch\""
           ]
         }
       ],
-      "human_check": "Open `docs/shots/014/spawn-high.png` once to see what the tool produces."
+      "human_check": "Open `docs/shots/014/spawn-high.png` once to see what the tool produces: the plaza should be ahead of the camera, the avatar must not be in the frame."
     },
     {
       "id": "015",
@@ -1168,7 +1234,7 @@
       "depends_on": [
         "014"
       ],
-      "est_turns": 45,
+      "est_turns": 55,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -1178,11 +1244,12 @@
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/engine/streaming.test.js",
+        "portfolio/tests/unit/util/urlParamsFail.test.js",
         "portfolio/tests/e2e/streaming.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/engine/streaming.test.js",
+        "npx vitest run tests/unit/engine/streaming.test.js tests/unit/util/urlParamsFail.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/streaming.spec.js",
@@ -1210,29 +1277,52 @@
           "n": 1,
           "title": "Streamer (pure logic, unit tested)",
           "verify": [
-            "npx vitest run tests/unit/engine/streaming.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/engine/streaming.js"
+            "npx vitest run tests/unit/engine/streaming.test.js tests/unit/util/urlParamsFail.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/engine/streaming.js",
+            "node \"{{runner}}/assert.mjs\" has src/util/urlParams.js \"fail\""
           ]
         },
         {
           "n": 2,
           "title": "Integration: v1 world as an area, retry banner, ?only= and the hook",
           "verify": [
-            "node \"{{runner}}/assert.mjs\" has src/main.js \"Streamer\"",
-            "node \"{{runner}}/assert.mjs\" exists src/ui/retryBanner.js",
-            "npm run lint"
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"new Streamer\\(\"",
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"forceLoad\"",
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"registerArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/v1World.js \"buildTerrain\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/gameloop.js \"streamer.update\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"streamState\"",
+            "node \"{{runner}}/assert.mjs\" exists src/ui/retryBanner.js src/world/v1World.js",
+            "npm run lint",
+            {
+              "repo": "portfolio",
+              "cmd": "npm run build",
+              "timeout_min": 15
+            },
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/smoke.spec.js",
+              "timeout_min": 15
+            },
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/v1-behaviour.spec.js",
+              "timeout_min": 15
+            }
           ]
         },
         {
           "n": 3,
-          "title": "Streaming fixture and Playwright order and failure tests",
+          "title": "Streaming fixture and Playwright order, unload and failure tests",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/streaming.spec.js",
               "timeout_min": 10
             },
-            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/streaming.js"
+            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/streaming.js",
+            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/index.js \"streaming\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"Streamer\""
           ]
         }
       ]
@@ -1247,7 +1337,8 @@
       "depends_on": [
         "015"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 80,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -1255,15 +1346,25 @@
       ],
       "allow_extra": [],
       "freeze": [
-        "portfolio/tests/unit/collision/*.test.js",
-        "portfolio/tests/e2e/camera-mode.spec.js"
+        "portfolio/tests/unit/collision/geometry.test.js",
+        "portfolio/tests/unit/collision/world.test.js",
+        "portfolio/tests/unit/collision/floors.test.js",
+        "portfolio/tests/unit/collision/cameraSolver.test.js",
+        "portfolio/tests/unit/collision/legacy.test.js",
+        "portfolio/tests/e2e/camera-mode.spec.js",
+        "portfolio/tests/e2e/collision.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/collision/geometry.test.js tests/unit/collision/world.test.js tests/unit/collision/floors.test.js tests/unit/collision/cameraSolver.test.js",
+        "npx vitest run tests/unit/collision/geometry.test.js tests/unit/collision/world.test.js tests/unit/collision/floors.test.js tests/unit/collision/cameraSolver.test.js tests/unit/collision/legacy.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/camera-mode.spec.js",
+          "timeout_min": 10
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/collision.spec.js",
           "timeout_min": 10
         },
         {
@@ -1283,14 +1384,16 @@
           "title": "Geometry helpers and the walls part of CollisionWorld",
           "verify": [
             "npx vitest run tests/unit/collision/geometry.test.js tests/unit/collision/world.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/systems/collision/geometry.js src/systems/collision/world.js"
+            "node \"{{runner}}/assert.mjs\" exists src/systems/collision/geometry.js src/systems/collision/world.js",
+            "node \"{{runner}}/assert.mjs\" has src/systems/collision/world.js \"list[(]prefix\""
           ]
         },
         {
           "n": 2,
           "title": "Floors, stairs, ground height and ray queries",
           "verify": [
-            "npx vitest run tests/unit/collision/floors.test.js tests/unit/collision/world.test.js"
+            "npx vitest run tests/unit/collision/floors.test.js tests/unit/collision/world.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/systems/collision/world.js \"groundHeight[(]\""
           ]
         },
         {
@@ -1303,15 +1406,39 @@
         },
         {
           "n": 4,
-          "title": "Integration: controller, legacy adapter, camera modes, hook",
+          "title": "Wiring: the world object, the legacy adapter, the controller and spawn safety",
+          "verify": [
+            "npx vitest run tests/unit/collision/legacy.test.js tests/unit/collision/world.test.js tests/unit/collision/floors.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/systems/controller.js \"moveCircle[(]\"",
+            "node \"{{runner}}/assert.mjs\" none src/state.js \"colliders\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/collision.js \"game[.]colliders\"",
+            "node \"{{runner}}/assert.mjs\" has src/engine/scene.js \"new CollisionWorld[(]\"",
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/v1-behaviour.spec.js",
+              "timeout_min": 15
+            }
+          ]
+        },
+        {
+          "n": 5,
+          "title": "Camera modes, the collision fixture, the hook and Playwright",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/camera-mode.spec.js",
               "timeout_min": 10
             },
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/collision.spec.js",
+              "timeout_min": 10
+            },
             "npm run lint",
-            "node \"{{runner}}/assert.mjs\" has src/systems/controller.js \"moveCircle\""
+            "node \"{{runner}}/assert.mjs\" has src/engine/camera.js \"solveCamera[(]\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/input.js \"viewCallback\"",
+            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/collision.js",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"CollisionWorld\""
           ]
         }
       ]
@@ -1326,20 +1453,23 @@
       "depends_on": [
         "016"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 75,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/interaction/registry.test.js",
         "portfolio/tests/unit/interaction/doors.test.js",
+        "portfolio/tests/unit/content/resolveDialogue.test.js",
         "portfolio/tests/e2e/doors.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/interaction/registry.test.js tests/unit/interaction/doors.test.js",
+        "npx vitest run tests/unit/interaction/registry.test.js tests/unit/interaction/doors.test.js tests/unit/content/resolveDialogue.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/doors.spec.js",
@@ -1375,10 +1505,20 @@
         },
         {
           "n": 3,
-          "title": "Read objects and wiring into the game loop and the old interaction code",
+          "title": "Read objects and wiring into the game loop, the HUD and the old interaction code",
           "verify": [
-            "node \"{{runner}}/assert.mjs\" has src/systems/interaction/read.js \"openDialogue\"",
-            "node \"{{runner}}/assert.mjs\" has src/world/zones.js \"mode: 'radius'\"",
+            "npx vitest run tests/unit/content/resolveDialogue.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/systems/interaction/read.js \"setReadHandlers\"",
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"setReadHandlers[(]\"",
+            "node \"{{runner}}/assert.mjs\" count src/world/zones.js \"mode: 'radius'\" 14",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings.js \"mode: zone[.]mode\"",
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"new InteractionRegistry[(]\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/interaction.js \"interaction[.]use[(]\"",
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/v1-behaviour.spec.js",
+              "timeout_min": 15
+            },
             "npm run lint"
           ]
         },
@@ -1391,7 +1531,9 @@
               "cmd": "npx playwright test tests/e2e/doors.spec.js",
               "timeout_min": 10
             },
-            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/interactions.js"
+            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/interactions.js",
+            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/index.js \"interactions\"",
+            "npm run lint"
           ]
         }
       ]
@@ -1406,21 +1548,24 @@
       "depends_on": [
         "017"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/interaction/switch.test.js",
         "portfolio/tests/unit/interaction/sit.test.js",
         "portfolio/tests/unit/interaction/elevator.test.js",
+        "portfolio/tests/unit/dev/interactionsFixture.test.js",
         "portfolio/tests/e2e/interactions-extras.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/interaction/switch.test.js tests/unit/interaction/sit.test.js tests/unit/interaction/elevator.test.js",
+        "npx vitest run tests/unit/interaction/switch.test.js tests/unit/interaction/sit.test.js tests/unit/interaction/elevator.test.js tests/unit/dev/interactionsFixture.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/interactions-extras.spec.js",
@@ -1430,6 +1575,21 @@
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/doors.spec.js",
           "timeout_min": 10
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/camera-mode.spec.js",
+          "timeout_min": 10
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/v1-behaviour.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/smoke.spec.js",
+          "timeout_min": 15
         }
       ],
       "steps": [
@@ -1438,7 +1598,8 @@
           "title": "Light switch and the sit system",
           "verify": [
             "npx vitest run tests/unit/interaction/switch.test.js tests/unit/interaction/sit.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/systems/interaction/lightSwitch.js src/systems/interaction/sit.js"
+            "node \"{{runner}}/assert.mjs\" exists src/systems/interaction/lightSwitch.js src/systems/interaction/sit.js",
+            "node \"{{runner}}/assert.mjs\" has src/systems/interaction/sit.js \"class SitController\""
           ]
         },
         {
@@ -1446,20 +1607,45 @@
           "title": "Elevator",
           "verify": [
             "npx vitest run tests/unit/interaction/elevator.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/systems/interaction/elevator.js"
+            "node \"{{runner}}/assert.mjs\" exists src/systems/interaction/elevator.js",
+            "node \"{{runner}}/assert.mjs\" has src/systems/interaction/elevator.js \"registry[.]move[(]\""
           ]
         },
         {
           "n": 3,
-          "title": "Extend the interactions fixture: lamp, seats, bed, stairs and a three-level lift",
+          "title": "Wiring: game.sit, game.lifts, controller, camera, E precedence, hook",
           "verify": [
-            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/interactions.js \"createLift\"",
-            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/interactions.js \"createSeat\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/gameloop.js \"game[.]sit[.]update\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/gameloop.js \"fixtureUpdate\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/interaction.js \"handleAction[(]\"",
+            "node \"{{runner}}/assert.mjs\" has src/engine/camera.js \"distanceOverride\"",
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"new SitController[(]\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/controller.js \"sitting\"",
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/v1-behaviour.spec.js",
+              "timeout_min": 15
+            },
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/camera-mode.spec.js",
+              "timeout_min": 10
+            },
             "npm run lint"
           ]
         },
         {
           "n": 4,
+          "title": "Extend the interactions fixture: lamp, seats, bed, stairs and a three-level lift",
+          "verify": [
+            "npx vitest run tests/unit/dev/interactionsFixture.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/interactions.js \"createLift[(]\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/interactions.js \"createSeat[(]\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/interactions.js \"createLightSwitch[(]\""
+          ]
+        },
+        {
+          "n": 5,
           "title": "Playwright: switch, sit, stairs and the lift",
           "verify": [
             {
@@ -1481,11 +1667,13 @@
       "depends_on": [
         "018"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 80,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
@@ -1497,15 +1685,22 @@
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/props/catalog.test.js tests/unit/props/allProps.test.js tests/unit/props/seating.test.js tests/unit/props/tables.test.js tests/unit/props/beds.test.js"
+        {
+          "repo": "portfolio",
+          "cmd": "npx vitest run tests/unit/props",
+          "timeout_min": 10
+        },
+        "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"finishProp\""
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Catalog core, builder helpers and the props fixture",
+          "title": "Catalog core, builder helpers, finishProp and the props fixture",
           "verify": [
             "npx vitest run tests/unit/props/catalog.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/catalog.js src/world/props/index.js src/dev/fixtures/props.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/catalog.js src/world/props/index.js src/dev/fixtures/props.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/catalog.js \"export function finishProp\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/index.js \"props\""
           ]
         },
         {
@@ -1513,7 +1708,8 @@
           "title": "Seating (14 types)",
           "verify": [
             "npx vitest run tests/unit/props/seating.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/seating.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/seating.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"seating\""
           ]
         },
         {
@@ -1521,7 +1717,8 @@
           "title": "Tables and desks (14 types)",
           "verify": [
             "npx vitest run tests/unit/props/tables.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/tables.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/tables.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"tables\""
           ]
         },
         {
@@ -1530,6 +1727,7 @@
           "verify": [
             "npx vitest run tests/unit/props/beds.test.js tests/unit/props/allProps.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/beds.js src/world/props/sets/outdoorSeating.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"outdoorSeating\"",
             {
               "repo": "portfolio",
               "cmd": "npx vitest run tests/unit/props",
@@ -1612,9 +1810,15 @@
         "portfolio"
       ],
       "depends_on": [
+        "012",
+        "016",
+        "017",
+        "018",
+        "019",
         "020"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 100,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
@@ -1625,16 +1829,30 @@
       "freeze": [
         "portfolio/tests/unit/nav/walkGraph.test.js",
         "portfolio/tests/unit/kit/place.test.js",
+        "portfolio/tests/unit/kit/parts.test.js",
+        "portfolio/tests/unit/kit/fixtures.test.js",
         "portfolio/tests/unit/kit/building.test.js",
+        "portfolio/tests/unit/kit/schemaExtras.test.js",
         "portfolio/tests/e2e/cottage.spec.js",
-        "portfolio/tests/fixtures/manifests/cottageFull.json"
+        "portfolio/tests/fixtures/manifests/cottageFull.json",
+        "portfolio/tests/fixtures/manifests/twoStoreyLift.json"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/nav/walkGraph.test.js tests/unit/kit/place.test.js tests/unit/kit/building.test.js tests/unit/kit/collide.test.js",
+        "npx vitest run tests/unit/nav/walkGraph.test.js tests/unit/kit/place.test.js tests/unit/kit/parts.test.js tests/unit/kit/fixtures.test.js tests/unit/kit/building.test.js tests/unit/kit/collide.test.js tests/unit/kit/schema.test.js tests/unit/kit/schemaExtras.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/cottage.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/doors.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/interactions-extras.spec.js",
           "timeout_min": 15
         }
       ],
@@ -1644,7 +1862,8 @@
           "title": "Walk graph (reachability with the real movement rules)",
           "verify": [
             "npx vitest run tests/unit/nav/walkGraph.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/systems/nav/walkGraph.js"
+            "node \"{{runner}}/assert.mjs\" exists src/systems/nav/walkGraph.js",
+            "node \"{{runner}}/assert.mjs\" has src/systems/nav/walkGraph.js \"walk graph exceeded maxStates\""
           ]
         },
         {
@@ -1652,27 +1871,40 @@
           "title": "Object placement",
           "verify": [
             "npx vitest run tests/unit/kit/place.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/kit/place.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/place.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/place.js \"door-clearance\""
           ]
         },
         {
           "n": 3,
-          "title": "Doors, lights, lifts, interactables and the BuildingInstance",
+          "title": "Headless context, doors, lights and lifts (+ test fixtures)",
           "verify": [
-            "npx vitest run tests/unit/kit/building.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/kit/building.js src/world/kit/doors.js src/world/kit/lights.js src/world/kit/lifts.js tests/fixtures/manifests/cottageFull.json"
+            "npx vitest run tests/unit/kit/parts.test.js tests/unit/kit/fixtures.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/headlessContext.js src/world/kit/doors.js src/world/kit/lights.js src/world/kit/lifts.js tests/fixtures/manifests/cottageFull.json tests/fixtures/manifests/twoStoreyLift.json"
           ]
         },
         {
           "n": 4,
-          "title": "Cottage fixture and Playwright",
+          "title": "BuildingInstance, interactables and visibility",
+          "verify": [
+            "npx vitest run tests/unit/kit/building.test.js tests/unit/kit/schemaExtras.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/building.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/building.js \"interactable-ignored\""
+          ]
+        },
+        {
+          "n": 5,
+          "title": "Fixtures, hook, docs and Playwright",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/cottage.spec.js",
               "timeout_min": 15
             },
-            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/cottage.js"
+            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/cottage.js src/dev/fixtures/twoStoreyLift.js",
+            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"readZone\"",
+            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"relative to the room floor\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"listBuildings\""
           ]
         }
       ]
@@ -1688,46 +1920,69 @@
         "021"
       ],
       "est_turns": 55,
+      "max_turns": 70,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md"
       ],
       "allow_extra": [],
       "freeze": [
+        "portfolio/tests/unit/props/catalogMeta.test.js",
         "portfolio/tests/unit/props/storage.test.js",
         "portfolio/tests/unit/props/lamps.test.js",
-        "portfolio/tests/unit/props/decor.test.js"
+        "portfolio/tests/unit/props/decor.test.js",
+        "portfolio/tests/unit/props/setsB.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/props/storage.test.js tests/unit/props/lamps.test.js tests/unit/props/decor.test.js tests/unit/props/allProps.test.js"
+        "npx vitest run tests/unit/props",
+        "npx vitest run tests/unit/props/catalogMeta.test.js tests/unit/props/storage.test.js tests/unit/props/lamps.test.js tests/unit/props/decor.test.js tests/unit/props/setsB.test.js tests/unit/props/allProps.test.js"
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Storage and books (16 types)",
+          "title": "Metadata mechanism and the extra materials",
           "verify": [
-            "npx vitest run tests/unit/props/storage.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/storage.js src/world/props/sets/books.js"
+            "npx vitest run tests/unit/props/catalogMeta.test.js tests/unit/props/catalog.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/extraMaterials.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/catalog.js \"lightSockets\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"lightSockets\""
           ]
         },
         {
           "n": 2,
-          "title": "Lighting fixtures and textiles (14 types)",
+          "title": "Storage and books (16 types)",
           "verify": [
-            "npx vitest run tests/unit/props/lamps.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/lamps.js src/world/props/sets/textiles.js"
+            "npx vitest run tests/unit/props/storage.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/storage.js src/world/props/sets/books.js src/world/props/spines.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/storage\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/books\""
           ]
         },
         {
           "n": 3,
-          "title": "Plants, decor, fans, AC and signs (16 types)",
+          "title": "Lighting fixtures and textiles (14 types)",
           "verify": [
-            "npx vitest run tests/unit/props/decor.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/plants.js src/world/props/sets/decor.js src/world/props/sets/air.js src/world/props/sets/signs.js"
+            "npx vitest run tests/unit/props/lamps.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/lamps.js src/world/props/sets/textiles.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/lamps\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/textiles\""
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Plants, decor, fans, AC and signs (21 types) and the registration test",
+          "verify": [
+            "npx vitest run tests/unit/props/decor.test.js tests/unit/props/setsB.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/plants.js src/world/props/sets/decor.js src/world/props/sets/air.js src/world/props/sets/signs.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/signs\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/air\"",
+            "npx vitest run tests/unit/props"
           ]
         }
-      ]
+      ],
+      "human_check": "Open the shots of this set: judge that wardrobes, shelves, lamps, plants and fans look like real objects (not boxes), that the oil lamp and urn carry no religious imagery, and that the wall clock, fan and signs sit at believable heights. Visual realism cannot be machine-checked."
     },
     {
       "id": "023",
@@ -1739,7 +1994,8 @@
       "depends_on": [
         "022"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 75,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**"
@@ -1748,11 +2004,13 @@
       "freeze": [
         "portfolio/tests/unit/props/kitchen.test.js",
         "portfolio/tests/unit/props/dining.test.js",
-        "portfolio/tests/unit/props/bath.test.js"
+        "portfolio/tests/unit/props/bath.test.js",
+        "portfolio/tests/unit/props/setsC.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/props/kitchen.test.js tests/unit/props/dining.test.js tests/unit/props/bath.test.js tests/unit/props/allProps.test.js"
+        "npx vitest run tests/unit/props",
+        "npx vitest run tests/unit/props/kitchen.test.js tests/unit/props/dining.test.js tests/unit/props/bath.test.js tests/unit/props/setsC.test.js tests/unit/props/allProps.test.js"
       ],
       "steps": [
         {
@@ -1760,7 +2018,8 @@
           "title": "Kitchen (16 types)",
           "verify": [
             "npx vitest run tests/unit/props/kitchen.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/kitchen.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/kitchen.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/kitchen\""
           ]
         },
         {
@@ -1768,18 +2027,23 @@
           "title": "Dining and restaurant (12 types)",
           "verify": [
             "npx vitest run tests/unit/props/dining.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/dining.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/dining.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/dining\""
           ]
         },
         {
           "n": 3,
-          "title": "Bathroom and hotel room (18 types)",
+          "title": "Bathroom and hotel room (20 types) and registration",
           "verify": [
-            "npx vitest run tests/unit/props/bath.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/bath.js src/world/props/sets/hotelRoom.js"
+            "npx vitest run tests/unit/props/bath.test.js tests/unit/props/setsC.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/bath.js src/world/props/sets/hotelRoom.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/bath\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/hotelRoom\"",
+            "npx vitest run tests/unit/props"
           ]
         }
-      ]
+      ],
+      "human_check": "Open the shots of this set: judge that the stoves, wet grinder, clay chulha, thali and banana-leaf setting look recognisably South Indian and that bathroom and hotel items have believable proportions. Visual realism and cultural accuracy cannot be machine-checked."
     },
     {
       "id": "024",
@@ -1791,23 +2055,34 @@
       "depends_on": [
         "023"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/check-buildings.mjs",
+        "portfolio/package.json",
         "portfolio/tests/**",
         "portfolio/docs/world-conventions.md"
       ],
       "allow_extra": [],
       "freeze": [
+        "portfolio/tests/unit/kit/schemaStage.test.js",
         "portfolio/tests/unit/scripts/checkBuildings.test.js",
         "portfolio/tests/unit/buildings/plaza.test.js",
+        "portfolio/tests/unit/world/zonesDisplayName.test.js",
+        "portfolio/tests/helpers/richManifest.js",
         "portfolio/tests/e2e/plaza-shell.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/scripts/checkBuildings.test.js tests/unit/buildings/plaza.test.js",
+        "npx vitest run tests/unit/kit/schemaStage.test.js tests/unit/scripts/checkBuildings.test.js tests/unit/buildings/plaza.test.js tests/unit/world/zonesDisplayName.test.js",
         "node scripts/check-buildings.mjs --only plaza --stage structure",
+        "node scripts/check-buildings.mjs",
+        {
+          "repo": "portfolio",
+          "cmd": "npm run test",
+          "timeout_min": 20
+        },
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/plaza-shell.spec.js",
@@ -1817,19 +2092,30 @@
       "steps": [
         {
           "n": 1,
-          "title": "check-buildings with stages",
+          "title": "Manifest `stage` field and check-buildings with stages",
           "verify": [
-            "npx vitest run tests/unit/scripts/checkBuildings.test.js",
-            "node \"{{runner}}/assert.mjs\" exists scripts/check-buildings.mjs"
+            "npx vitest run tests/unit/kit/schemaStage.test.js tests/unit/scripts/checkBuildings.test.js",
+            "node \"{{runner}}/assert.mjs\" exists scripts/check-buildings.mjs tests/helpers/richManifest.js",
+            "node \"{{runner}}/assert.mjs\" has scripts/check-buildings.mjs \"STAGE_RULES\"",
+            "node \"{{runner}}/assert.mjs\" has scripts/check-buildings.mjs \"locked-only\"",
+            "node \"{{runner}}/assert.mjs\" has package.json \"check:buildings\""
           ]
         },
         {
           "n": 2,
           "title": "Grand Hotel structure manifest",
           "verify": [
-            "npx vitest run tests/unit/buildings/plaza.test.js",
+            "npx vitest run tests/unit/buildings/plaza.test.js tests/unit/world/zonesDisplayName.test.js",
             "node scripts/check-buildings.mjs --only plaza --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/plaza/manifest.json"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/plaza/manifest.json",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json footprint.w 28",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json footprint.d 20",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json stage structure",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json displayName Grand Hotel",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json style.roof.type flat",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json exteriorDetails",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json stairs",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json lifts"
           ]
         },
         {
@@ -1841,11 +2127,15 @@
               "cmd": "npx playwright test tests/e2e/plaza-shell.spec.js",
               "timeout_min": 15
             },
-            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/building-plaza.js"
+            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/building-plaza.js",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"hotel-front\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"hotel-lobby\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"How to add a building\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"room-min\""
           ]
         }
       ],
-      "human_check": "Walk the empty hotel shell once in `?fixture=building-plaza` to judge the proportions and room layout before furniture goes in."
+      "human_check": "Walk the empty hotel shell once in `?fixture=building-plaza` to judge the proportions and room layout before furniture goes in (the guest rooms are large suites, the corridor is a 28 x 4 m hall, the lift cabin passes visually through the slabs: decide whether that is acceptable)."
     },
     {
       "id": "025",
@@ -1857,7 +2147,8 @@
       "depends_on": [
         "024"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 80,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
@@ -1867,6 +2158,8 @@
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/kit/exterior.test.js",
+        "portfolio/tests/unit/kit/signTexture.test.js",
+        "portfolio/tests/unit/kit/exteriorPlace.test.js",
         "portfolio/tests/unit/content/signage.test.js",
         "portfolio/tests/unit/buildings/plazaExterior.test.js",
         "portfolio/tests/unit/scripts/checkBuildingsDetails.test.js",
@@ -1874,45 +2167,76 @@
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/kit/exterior.test.js tests/unit/content/signage.test.js tests/unit/buildings/plazaExterior.test.js tests/unit/scripts/checkBuildingsDetails.test.js tests/unit/scripts/checkBuildings.test.js",
+        "npx vitest run tests/unit/kit/exterior.test.js tests/unit/kit/signTexture.test.js tests/unit/content/signage.test.js tests/unit/kit/exteriorPlace.test.js tests/unit/buildings/plazaExterior.test.js tests/unit/scripts/checkBuildingsDetails.test.js tests/unit/scripts/checkBuildings.test.js tests/unit/buildings/plaza.test.js tests/unit/kit/building.test.js",
+        "node scripts/check-buildings.mjs --only plaza --stage details",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/plaza-exterior.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/plaza-shell.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/cottage.spec.js",
           "timeout_min": 15
         }
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Exterior detail kit (headless)",
+          "title": "Exterior detail builders (headless)",
           "verify": [
             "npx vitest run tests/unit/kit/exterior.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/kit/exterior.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/exterior.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/exterior.js \"detailKind\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/exterior.js \"hipRoof\""
           ]
         },
         {
           "n": 2,
           "title": "Signage text and sign textures",
           "verify": [
-            "npx vitest run tests/unit/content/signage.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/content/signage.js src/world/kit/signTexture.js"
+            "npx vitest run tests/unit/content/signage.test.js tests/unit/kit/signTexture.test.js tests/unit/kit/exterior.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/content/signage.js src/world/kit/signTexture.js",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"DRAFT\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/signTexture.js \"document.fonts.load\""
           ]
         },
         {
           "n": 3,
+          "title": "Generic placement, the decorate registry and the details check",
+          "verify": [
+            "npx vitest run tests/unit/kit/exteriorPlace.test.js tests/unit/scripts/checkBuildingsDetails.test.js tests/unit/scripts/checkBuildings.test.js tests/unit/kit/building.test.js",
+            "node \"{{runner}}/assert.mjs\" exists scripts/check-buildings.mjs src/world/buildings/registry.js",
+            "node \"{{runner}}/assert.mjs\" has scripts/check-buildings.mjs \"exterior-built\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/exterior.js \"placeExteriorDetails\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/exterior.js \"countDetails\""
+          ]
+        },
+        {
+          "n": 4,
           "title": "Apply to the Grand Hotel and check the details exist",
           "verify": [
-            "npx vitest run tests/unit/buildings/plazaExterior.test.js tests/unit/scripts/checkBuildingsDetails.test.js",
+            "npx vitest run tests/unit/buildings/plazaExterior.test.js",
             "node scripts/check-buildings.mjs --only plaza --stage structure",
+            "node scripts/check-buildings.mjs --only plaza --stage details",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/plaza-exterior.spec.js",
               "timeout_min": 15
-            }
+            },
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/plaza/build.js src/world/buildings/registry.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"decoratePlaza\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"hotel-corner\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"listExteriorDetails\""
           ]
         }
       ],
-      "human_check": "Have a Tamil reader check every string in `src/content/signage.js` and the hotel and shop names (A2, A15)."
+      "human_check": "Have a Tamil reader check every string in `src/content/signage.js` (starter vocabulary, zone names and room plates) and the hotel and shop names (A2, A15). Then look at the facade shots: portico, balconies, shutters and the lit signboard at dusk."
     },
     {
       "id": "026",

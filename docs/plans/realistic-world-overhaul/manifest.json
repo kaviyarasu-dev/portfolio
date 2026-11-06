@@ -2762,22 +2762,26 @@
       "depends_on": [
         "030"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
         "portfolio/docs/review/**",
+        "portfolio/docs/shots/**",
         "portfolio/docs/world-conventions.md"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/world/sliceAreas.test.js",
+        "portfolio/tests/unit/budgets/sliceSpots.test.js",
+        "portfolio/tests/unit/docs/sliceReview.test.js",
         "portfolio/tests/e2e/journey-1-arrive.spec.js",
         "portfolio/tests/e2e/slice-regression.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/world/sliceAreas.test.js",
+        "npx vitest run tests/unit/world/sliceAreas.test.js tests/unit/budgets/sliceSpots.test.js tests/unit/docs/sliceReview.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/journey-1-arrive.spec.js",
@@ -2800,16 +2804,18 @@
       "steps": [
         {
           "n": 1,
-          "title": "Streamed areas, spawn and zone changes",
+          "title": "Streamed areas, boot order, spawn and zone relocation",
           "verify": [
             "npx vitest run tests/unit/world/sliceAreas.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/areas/plazaArea.js",
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"createPlazaAreas\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/zones.js \"Grand Hotel\"",
             "npm run lint"
           ]
         },
         {
           "n": 2,
-          "title": "Journey 1 and the streaming order",
+          "title": "Journey 1, regression and the streaming order",
           "verify": [
             {
               "repo": "portfolio",
@@ -2827,12 +2833,17 @@
           "n": 3,
           "title": "Budgets, shots and the review pack",
           "verify": [
+            "npx vitest run tests/unit/budgets/sliceSpots.test.js tests/unit/docs/sliceReview.test.js",
             {
               "repo": "portfolio",
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node \"{{runner}}/assert.mjs\" exists docs/review/slice-review.md docs/shots/031/hotel-front-high.png"
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"slice-lobby\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"slice-rooftop\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"slice-hotel-front\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"slice-bath-1\"",
+            "node \"{{runner}}/assert.mjs\" exists docs/review/slice-review.md docs/shots/031/slice-hotel-front-high.png docs/shots/031/slice-hotel-corner-high.png docs/shots/031/square-day-high.png docs/shots/031/square-night-high.png docs/shots/031/slice-lobby-high.png docs/shots/031/slice-restaurant-high.png docs/shots/031/slice-kitchen-high.png docs/shots/031/slice-corridor-high.png docs/shots/031/slice-guest-1-high.png docs/shots/031/slice-bath-1-high.png docs/shots/031/slice-rooftop-high.png"
           ]
         }
       ],
@@ -3240,16 +3251,19 @@
       "depends_on": [
         "037"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/props/harbour.test.js",
         "portfolio/tests/unit/town/harbourLayout.test.js",
+        "portfolio/tests/unit/town/harbourAreas.test.js",
         "portfolio/tests/e2e/harbour.spec.js"
       ],
       "unfreeze": [
@@ -3257,11 +3271,16 @@
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/props/harbour.test.js tests/unit/town/harbourLayout.test.js tests/unit/layout/plots.test.js",
+        "npx vitest run tests/unit/props/harbour.test.js tests/unit/props/allProps.test.js tests/unit/town/harbourLayout.test.js tests/unit/town/harbourAreas.test.js tests/unit/layout/plots.test.js tests/unit/budgets/budgets.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/harbour.spec.js",
           "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 15
         }
       ],
       "steps": [
@@ -3270,21 +3289,38 @@
           "title": "Harbour props (headless)",
           "verify": [
             "npx vitest run tests/unit/props/harbour.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/harbour.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/harbour.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"harbour\""
           ]
         },
         {
           "n": 2,
-          "title": "Jetty, quay, fish market and placement from the plan",
+          "title": "Jetty and quay (walkable deck, rails, piles, lamps)",
           "verify": [
             "npx vitest run tests/unit/town/harbourLayout.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/town/harbour.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/town/harbour.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/town/harbour.js \"JETTY_DECK_Y\""
           ]
         },
         {
           "n": 3,
-          "title": "Integrate, Playwright and shots",
+          "title": "Fish market, boats and beach details from the plan data",
           "verify": [
+            "npx vitest run tests/unit/town/harbourLayout.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/town/harbourProps.js"
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Areas, spots, Playwright and shots",
+          "verify": [
+            "npx vitest run tests/unit/town/harbourAreas.test.js tests/unit/budgets/budgets.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"harbour-quay\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"harbour-jetty\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"beach-boats\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"harbour-quay\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"harbour-jetty\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"beach-boats\"",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/harbour.spec.js",
@@ -3310,28 +3346,37 @@
       "depends_on": [
         "038"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
         "portfolio/tests/**",
-        "portfolio/package.json"
+        "portfolio/package.json",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/local/gopuram.test.js",
         "portfolio/tests/unit/local/streetLife.test.js",
         "portfolio/tests/unit/local/localDetail.test.js",
+        "portfolio/tests/unit/local/localAreas.test.js",
+        "portfolio/tests/unit/content/signageLocal.test.js",
         "portfolio/tests/e2e/local-detail.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/local/gopuram.test.js tests/unit/local/streetLife.test.js tests/unit/local/localDetail.test.js tests/unit/content/signage.test.js",
+        "npx vitest run tests/unit/local/gopuram.test.js tests/unit/local/streetLife.test.js tests/unit/local/localDetail.test.js tests/unit/local/localAreas.test.js tests/unit/content/signage.test.js tests/unit/content/signageLocal.test.js tests/unit/props/allProps.test.js tests/unit/props/street.test.js tests/unit/layout/townSchema.test.js tests/unit/budgets/budgets.test.js",
         "node scripts/check-local-detail.mjs",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/local-detail.spec.js",
           "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 15
         }
       ],
       "steps": [
@@ -3340,7 +3385,8 @@
           "title": "Gopuram gate and temple builders",
           "verify": [
             "npx vitest run tests/unit/local/gopuram.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/local/gopuram.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/local/gopuram.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/town.json \"gate\""
           ]
         },
         {
@@ -3348,22 +3394,31 @@
           "title": "Street life props and placement",
           "verify": [
             "npx vitest run tests/unit/local/streetLife.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/street.js src/world/local/placeLocal.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/streetLife.js src/world/local/placeLocal.js src/world/local/kolam.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"streetLife\""
           ]
         },
         {
           "n": 3,
-          "title": "Signage placement and the local-detail manifest check",
+          "title": "Signage, tagging, the local-detail manifest check and areas",
           "verify": [
-            "npx vitest run tests/unit/local/localDetail.test.js",
+            "npx vitest run tests/unit/content/signageLocal.test.js tests/unit/content/signage.test.js tests/unit/local/localDetail.test.js tests/unit/local/localAreas.test.js",
             "node scripts/check-local-detail.mjs",
-            "node \"{{runner}}/assert.mjs\" exists src/world/layout/localDetail.json scripts/check-local-detail.mjs"
+            "node \"{{runner}}/assert.mjs\" exists src/world/layout/localDetail.json scripts/check-local-detail.mjs src/world/local/tagLocal.js src/world/local/placeSigns.js src/world/areas/localAreas.js",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"listSigns\""
           ]
         },
         {
           "n": 4,
-          "title": "Playwright and shots",
+          "title": "Spots, Playwright and shots",
           "verify": [
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"gopuram\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"street-life\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"shop-signs\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"gopuram\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"temple\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"tea-stall\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"shop-signs\"",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/local-detail.spec.js",
@@ -3389,27 +3444,37 @@
       "depends_on": [
         "039"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/review/**"
+        "portfolio/docs/review/**",
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/world/areas.test.js",
         "portfolio/tests/unit/ui/minimapData.test.js",
+        "portfolio/tests/unit/world/atmosphere.test.js",
+        "portfolio/tests/unit/dev/tourSpots.test.js",
         "portfolio/tests/e2e/world-tour.spec.js",
         "portfolio/tests/e2e/auto-walk.spec.js",
         "portfolio/tests/unit/dev/autoWalk.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/world/areas.test.js tests/unit/ui/minimapData.test.js",
+        "npx vitest run tests/unit/world/areas.test.js tests/unit/ui/minimapData.test.js tests/unit/world/atmosphere.test.js tests/unit/dev/autoWalk.test.js tests/unit/dev/tourSpots.test.js tests/unit/budgets/budgets.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/world-tour.spec.js",
           "timeout_min": 30
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/auto-walk.spec.js",
+          "timeout_min": 25
         },
         {
           "repo": "portfolio",
@@ -3427,24 +3492,42 @@
       "steps": [
         {
           "n": 1,
-          "title": "Area table, priorities and tier rules",
+          "title": "One area table, radii and the main.js wiring",
           "verify": [
             "npx vitest run tests/unit/world/areas.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/areas/index.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/areas/index.js",
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"createAllAreas\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"registerLandmarkArea\""
           ]
         },
         {
           "n": 2,
           "title": "Minimap, fog and view distance",
           "verify": [
-            "npx vitest run tests/unit/ui/minimapData.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/ui/minimap.js"
+            "npx vitest run tests/unit/ui/minimapData.test.js tests/unit/world/atmosphere.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/ui/minimapData.js src/world/atmosphere.js"
           ]
         },
         {
           "n": 3,
-          "title": "World tour test, budgets and the review pack",
+          "title": "Auto-walk helper (dev only)",
           "verify": [
+            "npx vitest run tests/unit/dev/autoWalk.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/dev/autoWalk.js",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"walkTo\""
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Tour spots, world tour test, budgets and the review pack",
+          "verify": [
+            "npx vitest run tests/unit/dev/tourSpots.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"harbour-wide\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"west-gate-road\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"lighthouse-road\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"harbour-wide\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"west-gate-road\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"lighthouse-road\"",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/world-tour.spec.js",
@@ -3453,19 +3536,19 @@
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/auto-walk.spec.js",
-              "timeout_min": 15
+              "timeout_min": 25
             },
-            "npx vitest run tests/unit/dev/autoWalk.test.js",
             {
               "repo": "portfolio",
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node \"{{runner}}/assert.mjs\" exists docs/review/town-review.md"
+            "node \"{{runner}}/assert.mjs\" exists docs/review/town-review.md docs/shots/040/harbour-quay-high.png docs/shots/040/night/harbour-quay-high.png",
+            "node \"{{runner}}/assert.mjs\" has docs/review/town-review.md \"Known gaps\""
           ]
         }
       ],
-      "human_check": "Milestone of epic 3: walk the town, harbour, beach and forest and tell the planner what to change before epic 4."
+      "human_check": "Milestone of epic 3: walk the town, harbour, beach and forest and tell the planner what to change before epic 4. Check by eye that nothing pops in closer than about 150 m and that fog looks right at dusk."
     },
     {
       "id": "041",
@@ -3477,47 +3560,68 @@
       "depends_on": [
         "040"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
+        "portfolio/tests/unit/props/setsDShared.test.js",
         "portfolio/tests/unit/props/office.test.js",
         "portfolio/tests/unit/props/tech.test.js",
         "portfolio/tests/unit/props/media.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/props/office.test.js tests/unit/props/tech.test.js tests/unit/props/media.test.js tests/unit/props/allProps.test.js"
+        "npx vitest run tests/unit/props",
+        "npx vitest run tests/unit/props/setsDShared.test.js tests/unit/props/office.test.js tests/unit/props/tech.test.js tests/unit/props/media.test.js tests/unit/props/allProps.test.js"
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Office furniture and equipment (16 types)",
+          "title": "Shared pieces: emissive colours, extra materials, screen slots, blink convention",
           "verify": [
-            "npx vitest run tests/unit/props/office.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/office.js"
+            "npx vitest run tests/unit/props/setsDShared.test.js tests/unit/props/catalogMeta.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/extraMaterials.js \"getEmissive\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/extraMaterials.js \"greenScreen\"",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"keep-blink\""
           ]
         },
         {
           "n": 2,
-          "title": "Server, building services and office extras (12 types)",
+          "title": "Office furniture and equipment (16 types)",
           "verify": [
-            "npx vitest run tests/unit/props/tech.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/tech.js"
+            "npx vitest run tests/unit/props/office.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/office.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/office\""
           ]
         },
         {
           "n": 3,
-          "title": "Broadcast studio (16 types)",
+          "title": "Server, building services and office extras (12 types)",
+          "verify": [
+            "npx vitest run tests/unit/props/tech.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/tech.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/tech\""
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Broadcast studio (16 types), ON AIR and the registration test",
           "verify": [
             "npx vitest run tests/unit/props/media.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/media.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/media.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/sets/media.js \"setOnAir\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/media\"",
+            "npx vitest run tests/unit/props"
           ]
         }
-      ]
+      ],
+      "human_check": "Open the shots of this set: judge that the monitors, desks, server racks, vending machine, mixing console, studio camera and ON AIR sign look like real objects (not boxes), that the L-shaped desk and the boat-shaped conference table read correctly, and that wall and ceiling items (TV, panels, par rig, exit sign) sit at believable heights. Visual realism cannot be machine-checked."
     },
     {
       "id": "042",

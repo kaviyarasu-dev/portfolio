@@ -491,6 +491,8 @@
           "verify": [
             "npx vitest run tests/unit/scripts/assets-ledger.test.js",
             "node \"{{runner}}/assert.mjs\" exists scripts/lib/ledger.mjs scripts/lib/ledgerRules.mjs scripts/ledger-add.mjs",
+            "node \"{{runner}}/assert.mjs\" has scripts/lib/ledger.mjs \"removeEntry\"",
+            "node \"{{runner}}/assert.mjs\" has scripts/ledger-add.mjs \"remove\"",
             "node scripts/search-assets.mjs polyhaven models --category furniture --limit 3"
           ]
         }
@@ -1747,7 +1749,8 @@
       "depends_on": [
         "019"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 80,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
@@ -1758,6 +1761,7 @@
       "freeze": [
         "portfolio/tests/unit/kit/schema.test.js",
         "portfolio/tests/unit/kit/walls.test.js",
+        "portfolio/tests/unit/kit/floors.test.js",
         "portfolio/tests/unit/kit/shell.test.js",
         "portfolio/tests/unit/kit/collide.test.js",
         "portfolio/tests/fixtures/manifests/cottage.json",
@@ -1765,7 +1769,14 @@
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/kit/schema.test.js tests/unit/kit/walls.test.js tests/unit/kit/shell.test.js tests/unit/kit/collide.test.js"
+        "npx vitest run tests/unit/kit/schema.test.js tests/unit/kit/walls.test.js tests/unit/kit/floors.test.js tests/unit/kit/shell.test.js tests/unit/kit/collide.test.js",
+        {
+          "repo": "portfolio",
+          "cmd": "npm run test",
+          "timeout_min": 20
+        },
+        "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"## Full example\"",
+        "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"wallMaterial\""
       ],
       "steps": [
         {
@@ -1773,31 +1784,51 @@
           "title": "Manifest schema, the manifest doc and fixtures",
           "verify": [
             "npx vitest run tests/unit/kit/schema.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/kit/schema.js docs/building-manifest.md tests/fixtures/manifests/cottage.json tests/fixtures/manifests/twoStorey.json"
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/schema.js docs/building-manifest.md tests/fixtures/manifests/cottage.json tests/fixtures/manifests/twoStorey.json",
+            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"## Full example\"",
+            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"wallMaterial\"",
+            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"rooftop\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/schema.js \"export function withDefaults\""
           ]
         },
         {
           "n": 2,
-          "title": "Wall segments with openings",
+          "title": "Wall plan: segments, openings and the opening record",
           "verify": [
             "npx vitest run tests/unit/kit/walls.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/kit/walls.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/walls.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/walls.js \"export function buildWallPlan\""
           ]
         },
         {
           "n": 3,
-          "title": "Shell meshes: walls, floors, ceilings, roofs, merged by material",
+          "title": "Floor plan: slabs with stairwell holes, ceilings and stairs",
           "verify": [
-            "npx vitest run tests/unit/kit/shell.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/kit/shell.js"
+            "npx vitest run tests/unit/kit/floors.test.js tests/unit/kit/walls.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/floors.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/floors.js \"export function subtractRects\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/floors.js \"export function buildFloorPlan\""
           ]
         },
         {
           "n": 4,
-          "title": "Collision wiring and the walk-through test",
+          "title": "Shell meshes: walls, floors, ceilings, stairs and roofs, merged by material",
           "verify": [
-            "npx vitest run tests/unit/kit/collide.test.js tests/unit/kit/shell.test.js tests/unit/kit/walls.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/kit/collide.js"
+            "npx vitest run tests/unit/kit/shell.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/shell.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/shell.js \"export function buildShell\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/kit/shell.js \"document[.]\""
+          ]
+        },
+        {
+          "n": 5,
+          "title": "Collision wiring and the walk-through tests",
+          "verify": [
+            "npx vitest run tests/unit/kit/collide.test.js tests/unit/kit/shell.test.js tests/unit/kit/walls.test.js tests/unit/kit/floors.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/kit/collide.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/collide.js \"export function addShellColliders\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/collide.js \"addStair\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/collide.js \"addFloor\""
           ]
         }
       ]
@@ -1879,7 +1910,7 @@
           "n": 3,
           "title": "Headless context, doors, lights and lifts (+ test fixtures)",
           "verify": [
-            "npx vitest run tests/unit/kit/parts.test.js tests/unit/kit/fixtures.test.js",
+            "npx vitest run tests/unit/kit/parts.test.js tests/unit/kit/fixtures.test.js tests/unit/kit/schemaExtras.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/kit/headlessContext.js src/world/kit/doors.js src/world/kit/lights.js src/world/kit/lifts.js tests/fixtures/manifests/cottageFull.json tests/fixtures/manifests/twoStoreyLift.json"
           ]
         },
@@ -2135,7 +2166,7 @@
           ]
         }
       ],
-      "human_check": "Walk the empty hotel shell once in `?fixture=building-plaza` to judge the proportions and room layout before furniture goes in (the guest rooms are large suites, the corridor is a 28 x 4 m hall, the lift cabin passes visually through the slabs: decide whether that is acceptable)."
+      "human_check": "Walk the empty hotel shell once in `?fixture=building-plaza` to judge the proportions and room layout before furniture goes in (the guest rooms are large suites, the corridor is a 28 x 6 m hall, the lift cabin passes visually through the slabs: decide whether that is acceptable)."
     },
     {
       "id": "025",
@@ -2159,6 +2190,8 @@
       "freeze": [
         "portfolio/tests/unit/kit/exterior.test.js",
         "portfolio/tests/unit/kit/signTexture.test.js",
+        "portfolio/tests/unit/kit/slotText.test.js",
+        "portfolio/tests/unit/kit/itemText.test.js",
         "portfolio/tests/unit/kit/exteriorPlace.test.js",
         "portfolio/tests/unit/content/signage.test.js",
         "portfolio/tests/unit/buildings/plazaExterior.test.js",
@@ -2167,7 +2200,7 @@
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/kit/exterior.test.js tests/unit/kit/signTexture.test.js tests/unit/content/signage.test.js tests/unit/kit/exteriorPlace.test.js tests/unit/buildings/plazaExterior.test.js tests/unit/scripts/checkBuildingsDetails.test.js tests/unit/scripts/checkBuildings.test.js tests/unit/buildings/plaza.test.js tests/unit/kit/building.test.js",
+        "npx vitest run tests/unit/kit/exterior.test.js tests/unit/kit/signTexture.test.js tests/unit/kit/slotText.test.js tests/unit/kit/itemText.test.js tests/unit/content/signage.test.js tests/unit/kit/exteriorPlace.test.js tests/unit/buildings/plazaExterior.test.js tests/unit/scripts/checkBuildingsDetails.test.js tests/unit/scripts/checkBuildings.test.js tests/unit/buildings/plaza.test.js tests/unit/kit/building.test.js",
         "node scripts/check-buildings.mjs --only plaza --stage details",
         {
           "repo": "portfolio",
@@ -2200,8 +2233,8 @@
           "n": 2,
           "title": "Signage text and sign textures",
           "verify": [
-            "npx vitest run tests/unit/content/signage.test.js tests/unit/kit/signTexture.test.js tests/unit/kit/exterior.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/content/signage.js src/world/kit/signTexture.js",
+            "npx vitest run tests/unit/content/signage.test.js tests/unit/kit/signTexture.test.js tests/unit/kit/exterior.test.js tests/unit/kit/slotText.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/content/signage.js src/world/kit/signTexture.js src/world/kit/slotText.js",
             "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"DRAFT\"",
             "node \"{{runner}}/assert.mjs\" has src/world/kit/signTexture.js \"document.fonts.load\""
           ]
@@ -2210,7 +2243,7 @@
           "n": 3,
           "title": "Generic placement, the decorate registry and the details check",
           "verify": [
-            "npx vitest run tests/unit/kit/exteriorPlace.test.js tests/unit/scripts/checkBuildingsDetails.test.js tests/unit/scripts/checkBuildings.test.js tests/unit/kit/building.test.js",
+            "npx vitest run tests/unit/kit/exteriorPlace.test.js tests/unit/kit/itemText.test.js tests/unit/scripts/checkBuildingsDetails.test.js tests/unit/scripts/checkBuildings.test.js tests/unit/kit/building.test.js",
             "node \"{{runner}}/assert.mjs\" exists scripts/check-buildings.mjs src/world/buildings/registry.js",
             "node \"{{runner}}/assert.mjs\" has scripts/check-buildings.mjs \"exterior-built\"",
             "node \"{{runner}}/assert.mjs\" has src/world/kit/exterior.js \"placeExteriorDetails\"",
@@ -2248,56 +2281,97 @@
       "depends_on": [
         "025"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**"
       ],
       "allow_extra": [],
       "freeze": [
+        "portfolio/tests/unit/props/hotelLobby.test.js",
+        "portfolio/tests/unit/content/signageHotel.test.js",
         "portfolio/tests/unit/buildings/plazaLobby.test.js",
         "portfolio/tests/unit/buildings/plazaRestaurant.test.js",
+        "portfolio/tests/unit/buildings/plazaStairhall.test.js",
         "portfolio/tests/e2e/hotel-public.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/buildings/plazaLobby.test.js tests/unit/buildings/plazaRestaurant.test.js tests/unit/buildings/plaza.test.js",
-        "node scripts/check-buildings.mjs --only plaza --stage rooms --rooms lobby,restaurant,kitchen,stairhall --min-types-per-room 12",
+        "npx vitest run tests/unit/props/hotelLobby.test.js tests/unit/props/allProps.test.js tests/unit/content/signageHotel.test.js tests/unit/buildings/plazaLobby.test.js tests/unit/buildings/plazaRestaurant.test.js tests/unit/buildings/plazaStairhall.test.js tests/unit/buildings/plaza.test.js tests/unit/buildings/plazaExterior.test.js",
+        "node scripts/check-buildings.mjs",
+        "node scripts/check-buildings.mjs --only plaza --stage details",
+        "npm run check:ledger",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/hotel-public.spec.js",
+          "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/plaza-shell.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/plaza-exterior.spec.js",
           "timeout_min": 15
         }
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Lobby and reception",
+          "title": "Reception desk prop, sign keys and manifest scaffolding",
           "verify": [
-            "npx vitest run tests/unit/buildings/plazaLobby.test.js"
+            "npx vitest run tests/unit/props/hotelLobby.test.js tests/unit/content/signageHotel.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/hotelLobby.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/hotelLobby\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"stairs-lift\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/plaza/manifest.json \"roomMin\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/plaza/manifest.json \"floorTile\""
           ]
         },
         {
           "n": 2,
-          "title": "Restaurant and kitchen",
+          "title": "Lobby and reception",
           "verify": [
-            "npx vitest run tests/unit/buildings/plazaRestaurant.test.js"
+            "npx vitest run tests/unit/buildings/plazaLobby.test.js tests/unit/buildings/plaza.test.js",
+            "node scripts/check-buildings.mjs --only plaza --stage rooms --rooms lobby --room-min lobby=18"
           ]
         },
         {
           "n": 3,
-          "title": "Stair hall, lift, public-room Playwright test and shots",
+          "title": "Restaurant and kitchen",
+          "verify": [
+            "npx vitest run tests/unit/buildings/plazaRestaurant.test.js tests/unit/buildings/plazaLobby.test.js",
+            "node scripts/check-buildings.mjs --only plaza --stage rooms --rooms lobby,restaurant,kitchen --room-min lobby=18,restaurant=18,kitchen=16"
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Stair hall and lift",
+          "verify": [
+            "npx vitest run tests/unit/buildings/plazaStairhall.test.js tests/unit/buildings/plazaRestaurant.test.js tests/unit/buildings/plazaLobby.test.js",
+            "node scripts/check-buildings.mjs --only plaza --stage rooms --rooms lobby,restaurant,kitchen,stairhall --room-min lobby=18,restaurant=18,kitchen=16,stairhall=12"
+          ]
+        },
+        {
+          "n": 5,
+          "title": "Declare the stage, Playwright test, shots",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/hotel-public.spec.js",
-              "timeout_min": 15
+              "timeout_min": 20
             },
-            "node scripts/check-buildings.mjs --only plaza --stage rooms --rooms lobby,restaurant,kitchen,stairhall --min-types-per-room 12"
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json stage rooms",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"hotel-reception\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"hotel-stairhall\"",
+            "node scripts/check-buildings.mjs --only plaza"
           ]
         }
       ],
-      "human_check": "Walk the lobby, restaurant and kitchen and judge whether they feel like a real hotel."
+      "human_check": "Walk the lobby, restaurant, kitchen and stair hall and judge whether they feel like a real South Indian hotel (proportions, clutter, lighting at dusk). Have a Tamil reader check the three new sign strings (reception, menu, stairs and lift). Check the lift ride and the seats by hand once."
     },
     {
       "id": "027",
@@ -2309,7 +2383,8 @@
       "depends_on": [
         "026"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -2318,60 +2393,93 @@
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/buildings/plazaUpper.test.js",
+        "portfolio/tests/unit/buildings/plazaRoof.test.js",
         "portfolio/tests/unit/props/rooftop.test.js",
-        "portfolio/tests/unit/kit/wallMaterial.test.js",
+        "portfolio/tests/unit/content/signageUpper.test.js",
         "portfolio/tests/e2e/journey-5-sit.spec.js",
         "portfolio/tests/e2e/hotel-upper.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/buildings/plazaUpper.test.js tests/unit/props/rooftop.test.js tests/unit/buildings/plaza.test.js",
+        "npx vitest run tests/unit/props/rooftop.test.js tests/unit/props/allProps.test.js tests/unit/content/signageUpper.test.js tests/unit/buildings/plazaUpper.test.js tests/unit/buildings/plazaRoof.test.js tests/unit/buildings/plaza.test.js tests/unit/buildings/plazaLobby.test.js tests/unit/buildings/plazaRestaurant.test.js tests/unit/buildings/plazaStairhall.test.js tests/unit/buildings/plazaExterior.test.js",
         "node scripts/check-buildings.mjs --only plaza",
+        "node scripts/check-buildings.mjs",
+        "npm run check:ledger",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/journey-5-sit.spec.js",
-          "timeout_min": 15
+          "timeout_min": 20
         },
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/hotel-upper.spec.js",
-          "timeout_min": 15
+          "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/hotel-public.spec.js",
+          "timeout_min": 20
         }
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Corridor and the four guest rooms",
+          "title": "Rooftop prop set, sign key, docs and manifest scaffolding",
           "verify": [
-            "npx vitest run tests/unit/buildings/plazaUpper.test.js tests/unit/kit/wallMaterial.test.js"
+            "npx vitest run tests/unit/props/rooftop.test.js tests/unit/content/signageUpper.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/rooftop.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/rooftop\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"first-floor\"",
+            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"wallMaterial\"",
+            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"roomMin\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/plaza/manifest.json \"rooftop\""
           ]
         },
         {
           "n": 2,
-          "title": "Rooftop, rooftop props and the whole-building check",
+          "title": "Corridor on the first floor",
           "verify": [
-            "npx vitest run tests/unit/props/rooftop.test.js",
-            "node scripts/check-buildings.mjs --only plaza"
+            "node scripts/check-buildings.mjs --only plaza --stage rooms --rooms corridor-1 --room-min corridor-1=14"
           ]
         },
         {
           "n": 3,
-          "title": "Journey 5 and shots",
+          "title": "Guest rooms and bathrooms",
+          "verify": [
+            "npx vitest run tests/unit/buildings/plazaUpper.test.js tests/unit/buildings/plaza.test.js",
+            "node scripts/check-buildings.mjs --only plaza --stage rooms --rooms corridor-1,guest-1,guest-2,guest-3,guest-4,bath-1,bath-2,bath-3,bath-4 --room-min corridor-1=14,guest-1=18,guest-2=18,guest-3=18,guest-4=18,bath-1=10,bath-2=10,bath-3=10,bath-4=10"
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Rooftop and the whole-building check",
+          "verify": [
+            "npx vitest run tests/unit/buildings/plazaRoof.test.js tests/unit/buildings/plazaUpper.test.js tests/unit/buildings/plaza.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/plaza/manifest.json stage full",
+            "node scripts/check-buildings.mjs --only plaza",
+            "node scripts/check-buildings.mjs"
+          ]
+        },
+        {
+          "n": 5,
+          "title": "Journey 5, roof test and shots",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/journey-5-sit.spec.js",
-              "timeout_min": 15
+              "timeout_min": 20
             },
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/hotel-upper.spec.js",
-              "timeout_min": 15
-            }
+              "timeout_min": 20
+            },
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"hotel-corridor\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"hotel-rooftop\""
           ]
         }
       ],
-      "human_check": "Walk the guest rooms and the rooftop; judge realism and the layout."
+      "human_check": "Walk the corridor, the four guest rooms, a bathroom and the rooftop in `?fixture=building-plaza` and judge realism and layout (the guest rooms are large suites; pillows sit centred on the mattress; the lift cabin passes visually through the slabs, accepted in plan 024). Have a Tamil reader check the `first-floor` sign."
     },
     {
       "id": "028",
@@ -2383,67 +2491,84 @@
       "depends_on": [
         "027"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 75,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/scripts/dev/**",
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/terrain/height.test.js",
         "portfolio/tests/unit/terrain/splat.test.js",
         "portfolio/tests/unit/terrain/terrainMesh.test.js",
+        "portfolio/tests/unit/terrain/terrainBuild.test.js",
+        "portfolio/tests/unit/terrain/v1Heights.json",
         "portfolio/tests/e2e/terrain.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/terrain/height.test.js tests/unit/terrain/splat.test.js tests/unit/terrain/terrainMesh.test.js",
+        "npx vitest run tests/unit/terrain/height.test.js tests/unit/terrain/splat.test.js tests/unit/terrain/terrainMesh.test.js tests/unit/terrain/terrainBuild.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/terrain.spec.js",
-          "timeout_min": 15
+          "timeout_min": 20
         },
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/smoke.spec.js",
           "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 10
         }
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Heightfield and splat weights (pure)",
+          "title": "Capture the v1 heights, then the pure heightfield and splat modules",
           "verify": [
             "npx vitest run tests/unit/terrain/height.test.js tests/unit/terrain/splat.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/terrain/height.js src/world/terrain/splat.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/terrain/height.js src/world/terrain/splat.js tests/unit/terrain/v1Heights.json",
+            "node -e \"const fs=require('fs');process.exit(['scripts/dev/captureV1Heights.mjs'].some(p=>fs.existsSync(p))?1:0)\""
           ]
         },
         {
           "n": 2,
-          "title": "Splat material and terrain mesh",
+          "title": "Splat material, terrain mesh and the new buildTerrain",
           "verify": [
-            "npx vitest run tests/unit/terrain/terrainMesh.test.js",
+            "npx vitest run tests/unit/terrain/terrainMesh.test.js tests/unit/terrain/terrainBuild.test.js tests/unit/terrain/height.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/terrain.js \"buildTerrainMesh\"",
             "node \"{{runner}}/assert.mjs\" has src/world/terrain.js \"createHeightField\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/terrain.js \"setExtraFlatAreas\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"terrainStats\"",
             "npm run lint"
           ]
         },
         {
           "n": 3,
-          "title": "Playwright, budget and a look",
+          "title": "Playwright on all three tiers, budget and a look",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/terrain.spec.js",
-              "timeout_min": 15
+              "timeout_min": 20
             },
             {
               "repo": "portfolio",
               "cmd": "npm run check:budget",
               "timeout_min": 10
-            }
+            },
+            "node \"{{runner}}/assert.mjs\" exists docs/shots/028/spawn-high.png"
           ]
         }
-      ]
+      ],
+      "human_check": "Look at docs/shots/028/spawn-high.png: grass, sand and dirt must be visible and not stretched."
     },
     {
       "id": "029",
@@ -2455,66 +2580,90 @@
       "depends_on": [
         "028"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/layout/square.test.js",
         "portfolio/tests/unit/world/squareLandmarks.test.js",
+        "portfolio/tests/unit/props/street.test.js",
+        "portfolio/tests/unit/content/signpostKeys.test.js",
+        "portfolio/tests/unit/world/propsExclusion.test.js",
         "portfolio/tests/e2e/square.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/layout/square.test.js tests/unit/world/squareLandmarks.test.js",
+        "npx vitest run tests/unit/layout/square.test.js tests/unit/world/squareLandmarks.test.js tests/unit/props/street.test.js tests/unit/world/propsExclusion.test.js tests/unit/props/allProps.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/square.spec.js",
-          "timeout_min": 15
+          "timeout_min": 20
         },
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/smoke.spec.js",
           "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 10
         }
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Slice layout data and the square plan",
+          "title": "Slice layout data and the pure square checker",
           "verify": [
             "npx vitest run tests/unit/layout/square.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/layout/slice.json src/world/layout/square.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/layout/slice.json src/world/layout/square.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/slice.json \"flatAreas\""
           ]
         },
         {
           "n": 2,
-          "title": "Landmark builders: paving, banyan platform, clock tower",
+          "title": "Street prop set and sign keys",
           "verify": [
-            "npx vitest run tests/unit/world/squareLandmarks.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/town/square.js"
+            "npx vitest run tests/unit/props/street.test.js tests/unit/content/signpostKeys.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/street.js"
           ]
         },
         {
           "n": 3,
-          "title": "Integrate into the world, Playwright and shots",
+          "title": "Landmark builders: paving, banyan platform, clock tower, buildSquare",
           "verify": [
+            "npx vitest run tests/unit/world/squareLandmarks.test.js tests/unit/layout/square.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/town/square.js src/world/town/bakeStatic.js"
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Integrate into the world, Playwright, budget and shots",
+          "verify": [
+            "npx vitest run tests/unit/world/propsExclusion.test.js",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/square.spec.js",
-              "timeout_min": 15
+              "timeout_min": 20
             },
             {
               "repo": "portfolio",
               "cmd": "npm run check:budget",
               "timeout_min": 10
-            }
+            },
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"square\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"square-night\"",
+            "node \"{{runner}}/assert.mjs\" exists docs/shots/029/square-day-high.png"
           ]
         }
       ],
-      "human_check": "Judge the square: does it feel like a real town centre? Tamil signposts need a reader."
+      "human_check": "Judge the square: does it feel like a real town centre? Tamil signposts (draft text in signage.js) need a reader."
     },
     {
       "id": "030",
@@ -2526,29 +2675,38 @@
       "depends_on": [
         "029"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 80,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
         "portfolio/assets/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/props/glbProps.test.js",
         "portfolio/tests/unit/props/glbProps.assets.test.js",
+        "portfolio/tests/unit/scripts/packModelList.test.js",
         "portfolio/tests/e2e/glb-props.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/props/glbProps.test.js tests/unit/props/glbProps.assets.test.js tests/unit/props/allProps.test.js",
+        "npx vitest run tests/unit/props/glbProps.test.js tests/unit/props/glbProps.assets.test.js tests/unit/scripts/packModelList.test.js tests/unit/props/allProps.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/glb-props.spec.js",
-          "timeout_min": 15
+          "timeout_min": 20
         },
         "npm run check:ledger",
-        "npm run check:size"
+        "npm run check:size",
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 10
+        }
       ],
       "steps": [
         {
@@ -2556,15 +2714,20 @@
           "title": "Catalog support for GLB-backed props",
           "verify": [
             "npx vitest run tests/unit/props/glbProps.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/glbProps.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/glbProps.js src/world/props/glbProps.json",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/glbProps.js \"MeshoptDecoder\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/glbProps.js \"GLTFLoader\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/building.js \"preloadBuildingProps\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"propsStats\"",
+            "npm run lint"
           ]
         },
         {
           "n": 2,
           "title": "Acquire hero models from Poly Haven",
           "verify": [
-            "npx vitest run tests/unit/props/glbProps.assets.test.js",
-            "node \"{{runner}}/assert.mjs\" exists scripts/assets/packModelList.mjs scripts/assets/heroProps.list.json src/world/props/glbProps.json",
+            "npx vitest run tests/unit/scripts/packModelList.test.js tests/unit/props/glbProps.assets.test.js",
+            "node \"{{runner}}/assert.mjs\" exists scripts/assets/packModelList.mjs scripts/assets/heroProps.list.json scripts/assets/heroProps.rejected.json src/world/props/glbProps.json",
             "npm run check:ledger"
           ]
         },
@@ -2575,10 +2738,15 @@
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/glb-props.spec.js",
-              "timeout_min": 15
+              "timeout_min": 20
             },
             "npm run check:size",
-            "npm run check:ledger"
+            "npm run check:ledger",
+            {
+              "repo": "portfolio",
+              "cmd": "npm run check:budget",
+              "timeout_min": 10
+            }
           ]
         }
       ],

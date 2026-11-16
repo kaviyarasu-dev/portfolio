@@ -39,14 +39,14 @@ Check for this step (the runner runs it too; it fails before the work and passes
 
 Deliver:
 - Remove `game.perfMode`, `setPerfMode` and the `perfWatch` branches that use it (search `src/` for every `perfMode` and `ultralow` use; none may remain). `src/engine/renderer.js` gets `applyTier(tier)`: pixel ratio `min(devicePixelRatio, pixelRatioCap)` (also `composer.setPixelRatio` and the FXAA `resolution` uniform), `renderer.shadowMap.enabled`, `game.sun.shadow.mapSize` and disposal of `game.sun.shadow.map` when the size changes, bloom pass `enabled`, FXAA pass `enabled` (the OutputPass of plan 002 stays on). It runs at boot and on every tier change. `tests/unit/engine/applyTier.test.js` drives it with plain fake objects (renderer, composer, passes, sun) and asserts each setting for the three tiers.
-- The frame-time watcher in `src/systems/gameloop.js` now lowers the tier one step (high to medium to low) through `setTier(t, { persist: false, auto: true })` (the tier stays auto) when the average frame time over 180 frames exceeds 33 ms, at most once every 8 seconds, and only when the tier is auto (`isAuto()`), the URL has no `quality` param and `navigator.webdriver` is not true (so tests are never changed under them). Extract the rule as the pure `nextAutoTier({ tier, avgMs, sinceLastMs, auto })` with unit tests for the 33 ms and 8 s thresholds and the one-step rule. Replace the other v1 `perfMode` readers: `src/entity/player.js` head look-at runs unless the tier is `low`, and `src/world/buildings.js` smoke effects use `TIER_SETTINGS[getTier()].particleScale` (skip when it is under 0.5).
+- The frame-time watcher in `src/systems/gameloop.js` now lowers the tier one step (high to medium to low) through `setTier(t, { persist: false, auto: true })` (the tier stays auto) when the average frame time over 180 frames exceeds 33 ms, at most once every 8 seconds, and only when the tier is auto (`isAuto()`), the URL has no `quality` param and `navigator.webdriver` is not true (so tests are never changed under them). Extract the rule as the pure `nextAutoTier({ tier, avgMs, sinceLastMs, auto })`, exported from `src/engine/quality.js`, and write `tests/unit/engine/nextAutoTier.test.js` first (it is frozen): it covers the 33 ms and 8 s thresholds and the one-step rule. Replace the other v1 `perfMode` readers: `src/entity/player.js` head look-at runs unless the tier is `low`, and `src/world/buildings.js` smoke effects use `TIER_SETTINGS[getTier()].particleScale` (skip when it is under 0.5).
 - Extend `src/dev/worldHook.js`: `quality()` returns the real tier, `setQuality(t)`, `pixelRatio()`, `reducedMotion()`.
 
 Check for this step (the runner runs it too; it fails before the work and passes after):
 - `node "{{runner}}/assert.mjs" none src/state.js "perfMode"`
 - `node "{{runner}}/assert.mjs" none src/entity/player.js "perfMode"`
 - `node "{{runner}}/assert.mjs" none src/world/buildings.js "perfMode"`
-- `npx vitest run tests/unit/engine/applyTier.test.js`
+- `npx vitest run tests/unit/engine/applyTier.test.js tests/unit/engine/nextAutoTier.test.js`
 - `node "{{runner}}/assert.mjs" has src/engine/renderer.js "applyTier"`
 
 ### Step 3: Settings panel
@@ -69,7 +69,7 @@ Check for this step (the runner runs it too; it fails before the work and passes
 Run every command below before the final report. All must exit 0.
 
 - `npm run lint`
-- `npx vitest run tests/unit/engine/quality.test.js`
+- `npx vitest run tests/unit/engine/quality.test.js tests/unit/engine/applyTier.test.js tests/unit/engine/nextAutoTier.test.js`
 - `npx playwright test tests/e2e/settings.spec.js`
 - `npx playwright test tests/e2e/smoke.spec.js`
 - `npx playwright test tests/e2e/v1-behaviour.spec.js`

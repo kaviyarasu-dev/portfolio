@@ -4,7 +4,7 @@ Epic E1. Estimated turns: 55. Model: opus.
 
 ## Goal
 
-Move every v1 source file from `js/` to `src/` as normal ES modules, load Three.js, Howler and the post-processing passes from npm instead of CDN globals, remove `build.mjs`, `dist/`, `Xbot.js` and the 14-byte `Ybot.glb`, and prove the game still boots with zero console errors. The game must look and behave like v1 (boot, WASD and mouse, day/night clock, `?time=`, `T`, `E` near a landmark opens its dialogue, minimap).
+Move every v1 source file from `js/` to `src/` as normal ES modules, load Three.js, Howler and the post-processing passes from npm instead of CDN globals, remove `build.mjs`, `dist/`, `Xbot.js` and the 14-byte `Ybot.glb`, and prove the game still boots with zero console errors. The game must look and behave like v1 (boot, WASD and mouse, day/night clock, `?time=`, `T` (time advance), `N` (mute), `E` near a landmark opens its dialogue, minimap).
 
 The resume PDF moves into `assets/` under the no-space name; the download file name stays `Kaviyarasu_Fullstack_Engineer_Resume.pdf`.
 

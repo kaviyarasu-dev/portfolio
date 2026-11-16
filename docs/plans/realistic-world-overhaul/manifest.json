@@ -726,7 +726,10 @@
         "portfolio/assets/**",
         "portfolio/src/**",
         "portfolio/index.html",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/package.json",
+        "portfolio/package-lock.json",
+        "portfolio/node_modules/**"
       ],
       "allow_extra": [],
       "freeze": [
@@ -883,11 +886,13 @@
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/engine/quality.test.js",
+        "portfolio/tests/unit/engine/applyTier.test.js",
+        "portfolio/tests/unit/engine/nextAutoTier.test.js",
         "portfolio/tests/e2e/settings.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/engine/quality.test.js",
+        "npx vitest run tests/unit/engine/quality.test.js tests/unit/engine/applyTier.test.js tests/unit/engine/nextAutoTier.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/settings.spec.js",
@@ -920,7 +925,7 @@
             "node \"{{runner}}/assert.mjs\" none src/state.js \"perfMode\"",
             "node \"{{runner}}/assert.mjs\" none src/entity/player.js \"perfMode\"",
             "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"perfMode\"",
-            "npx vitest run tests/unit/engine/applyTier.test.js",
+            "npx vitest run tests/unit/engine/applyTier.test.js tests/unit/engine/nextAutoTier.test.js",
             "node \"{{runner}}/assert.mjs\" has src/engine/renderer.js \"applyTier\""
           ]
         },
@@ -1039,11 +1044,12 @@
         "portfolio/tests/unit/materials/sets.test.js",
         "portfolio/tests/unit/materials/uv.test.js",
         "portfolio/tests/unit/materials/registry.test.js",
+        "portfolio/tests/unit/engine/cameraOverride.test.js",
         "portfolio/tests/e2e/materials.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/scripts/packMaterialList.test.js tests/unit/materials/sets.test.js tests/unit/materials/uv.test.js tests/unit/materials/registry.test.js",
+        "npx vitest run tests/unit/scripts/packMaterialList.test.js tests/unit/materials/sets.test.js tests/unit/materials/uv.test.js tests/unit/materials/registry.test.js tests/unit/engine/cameraOverride.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/materials.spec.js",
@@ -1101,6 +1107,8 @@
           "n": 5,
           "title": "Materials fixture, hook extras and the Playwright check",
           "verify": [
+            "npx vitest run tests/unit/engine/cameraOverride.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/engine/cameraOverride.js",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/materials.spec.js",
@@ -1136,7 +1144,6 @@
       ],
       "allow_extra": [],
       "freeze": [
-        "portfolio/tests/unit/engine/cameraOverride.test.js",
         "portfolio/tests/unit/budgets/budgets.test.js",
         "portfolio/tests/unit/budgets/evaluate.test.js",
         "portfolio/tests/unit/scripts/shots.test.js",
@@ -1175,7 +1182,7 @@
       "steps": [
         {
           "n": 1,
-          "title": "Camera override, the hook and the budgets file",
+          "title": "The budgets file and the spot files (the camera override belongs to plan 013; this plan only adds its e2e spec)",
           "verify": [
             "npx vitest run tests/unit/engine/cameraOverride.test.js tests/unit/budgets/budgets.test.js",
             {
@@ -1340,7 +1347,7 @@
         "015"
       ],
       "est_turns": 60,
-      "max_turns": 80,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -1456,7 +1463,7 @@
         "016"
       ],
       "est_turns": 60,
-      "max_turns": 75,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -1670,7 +1677,7 @@
         "018"
       ],
       "est_turns": 60,
-      "max_turns": 80,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -1750,7 +1757,7 @@
         "019"
       ],
       "est_turns": 60,
-      "max_turns": 80,
+      "max_turns": 85,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
@@ -2430,9 +2437,9 @@
             "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/rooftop.js",
             "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/rooftop\"",
             "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"first-floor\"",
-            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"wallMaterial\"",
-            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"roomMin\"",
-            "node \"{{runner}}/assert.mjs\" has src/world/buildings/plaza/manifest.json \"rooftop\""
+            "node \"{{runner}}/assert.mjs\" has docs/building-manifest.md \"Stage, roomMin and wallMaterial (plans 020 to 027)\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/plaza/manifest.json \"\"rooftop\": 14\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/plaza/manifest.json \"\"bath-4\": 10\""
           ]
         },
         {
@@ -2607,6 +2614,16 @@
         },
         {
           "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/v1-behaviour.spec.js",
+          "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/avatar.spec.js",
+          "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/smoke.spec.js",
           "timeout_min": 15
         },
@@ -2650,6 +2667,16 @@
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/square.spec.js",
+              "timeout_min": 20
+            },
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/v1-behaviour.spec.js",
+              "timeout_min": 20
+            },
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/avatar.spec.js",
               "timeout_min": 20
             },
             {
@@ -2809,7 +2836,8 @@
             "npx vitest run tests/unit/world/sliceAreas.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/areas/plazaArea.js",
             "node \"{{runner}}/assert.mjs\" has src/main.js \"createPlazaAreas\"",
-            "node \"{{runner}}/assert.mjs\" has src/world/zones.js \"Grand Hotel\"",
+            "node \"{{runner}}/assert.mjs\" has src/main.js \"forceLoad('hotel')\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/zones.js \"check in\"",
             "npm run lint"
           ]
         },
@@ -2859,7 +2887,8 @@
       "depends_on": [
         "031"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
@@ -2874,7 +2903,8 @@
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/layout/geometry.test.js tests/unit/layout/townSchema.test.js tests/unit/layout/townPlan.test.js tests/unit/layout/plots.test.js"
+        "npx vitest run tests/unit/layout/geometry.test.js tests/unit/layout/townSchema.test.js tests/unit/layout/townPlan.test.js tests/unit/layout/plots.test.js",
+        "node scripts/gen-town.mjs --check"
       ],
       "steps": [
         {
@@ -2882,24 +2912,31 @@
           "title": "Geometry helpers and the town.json schema",
           "verify": [
             "npx vitest run tests/unit/layout/geometry.test.js tests/unit/layout/townSchema.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/layout/geometry.js src/world/layout/town.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/layout/geometry.js src/world/layout/town.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/geometry.js \"rectDistanceToPolyline\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/town.js \"validateTown\""
           ]
         },
         {
           "n": 2,
-          "title": "Author roads, areas and anchors; reachability and walk-time tests",
+          "title": "Author roads, areas, harbour and anchors; reachability and walk-time tests",
           "verify": [
             "npx vitest run tests/unit/layout/townPlan.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/layout/town.json src/world/layout/walk.js",
-            "node \"{{runner}}/assert.mjs\" has src/config.js \"MAX_PATH_METRES\""
+            "node \"{{runner}}/assert.mjs\" has src/config.js \"MAX_PATH_METRES\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/walk.js \"shortestWalk\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/walk.js \"farthestLandmark\""
           ]
         },
         {
           "n": 3,
-          "title": "Plot generator and counts",
+          "title": "Plot and boat generator, gen-town script and counts",
           "verify": [
-            "npx vitest run tests/unit/layout/plots.test.js tests/unit/layout/townPlan.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/layout/plots.js scripts/gen-town.mjs"
+            "npx vitest run tests/unit/layout/plots.test.js tests/unit/layout/townPlan.test.js tests/unit/layout/townSchema.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/layout/plots.js scripts/gen-town.mjs",
+            "node scripts/gen-town.mjs --check",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/plots.js \"generateBoats\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/plots.js \"DEFAULT_SEED\""
           ]
         }
       ],
@@ -2915,20 +2952,29 @@
       "depends_on": [
         "032"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/terrain/townHeight.test.js",
         "portfolio/tests/unit/collision/wading.test.js",
+        "portfolio/tests/unit/layout/squareFromTown.test.js",
         "portfolio/tests/e2e/world-scale.spec.js"
+      ],
+      "unfreeze": [
+        "portfolio/tests/unit/terrain/terrainBuild.test.js",
+        "portfolio/tests/unit/world/sliceAreas.test.js",
+        "portfolio/tests/e2e/slice-regression.spec.js",
+        "portfolio/tests/e2e/terrain.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/terrain/townHeight.test.js tests/unit/collision/wading.test.js tests/unit/layout/townPlan.test.js",
+        "npx vitest run tests/unit/terrain/townHeight.test.js tests/unit/collision/wading.test.js tests/unit/layout/townPlan.test.js tests/unit/layout/squareFromTown.test.js tests/unit/world/zonesFromTown.test.js tests/unit/terrain/terrainBuild.test.js tests/unit/world/sliceAreas.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/world-scale.spec.js",
@@ -2943,22 +2989,44 @@
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/journey-1-arrive.spec.js",
           "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 15
         }
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Heightfield from the town plan",
+          "title": "Town heightfield (pure, tested)",
           "verify": [
             "npx vitest run tests/unit/terrain/townHeight.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/terrain/townHeight.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/terrain/townHeight.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/terrain/townHeight.js \"shoreDistance\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/terrain/townHeight.js \"createTownHeightField\""
           ]
         },
         {
           "n": 2,
-          "title": "Wading limit, enlarged world constants and the v1 landmarks at their anchors",
+          "title": "Wire the town terrain into the game: constants, square.json, zones, exclusions",
           "verify": [
-            "npx vitest run tests/unit/collision/wading.test.js",
+            "npx vitest run tests/unit/layout/squareFromTown.test.js tests/unit/world/zonesFromTown.test.js tests/unit/world/townExclusions.test.js tests/unit/terrain/terrainBuild.test.js tests/unit/terrain/terrainMesh.test.js tests/unit/world/sliceAreas.test.js tests/unit/world/propsExclusion.test.js tests/unit/layout/square.test.js tests/unit/layout/townPlan.test.js",
+            "node -e \"const fs=require('fs');process.exit(['src/world/layout/slice.json'].some(p=>fs.existsSync(p))?1:0)\"",
+            "node \"{{runner}}/assert.mjs\" exists src/world/layout/square.json src/world/layout/exclusions.js tests/unit/layout/fixtures/square-v1.json",
+            "node \"{{runner}}/assert.mjs\" has src/config.js \"WORLD_RADIUS = 300\"",
+            "node \"{{runner}}/assert.mjs\" has src/config.js \"CAMERA_FAR = 900\"",
+            "node \"{{runner}}/assert.mjs\" none src/config.js \"terrainSegments\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props.js \"addExclusionPolyline\"",
+            "npm run lint"
+          ]
+        },
+        {
+          "n": 3,
+          "title": "Wading limit, minimap, sky and the world-scale checks",
+          "verify": [
+            "npx vitest run tests/unit/collision/wading.test.js tests/unit/ui/minimapScale.test.js tests/unit/world/worldScaleConfig.test.js tests/unit/terrain/townHeight.test.js",
+            "node \"{{runner}}/assert.mjs\" none src/systems/controller.js \"-0\\.5\"",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/world-scale.spec.js",
@@ -2983,24 +3051,33 @@
       "depends_on": [
         "033"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/scripts/**",
+        "portfolio/tests/**",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/roads/ribbon.test.js",
         "portfolio/tests/unit/roads/surface.test.js",
         "portfolio/tests/unit/roads/clear.test.js",
+        "portfolio/tests/unit/roads/roads.test.js",
         "portfolio/tests/e2e/roads.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/roads/ribbon.test.js tests/unit/roads/surface.test.js tests/unit/roads/clear.test.js",
+        "npx vitest run tests/unit/roads/ribbon.test.js tests/unit/roads/surface.test.js tests/unit/roads/clear.test.js tests/unit/roads/roads.test.js tests/unit/roads/spots.test.js tests/unit/layout/plots.test.js tests/unit/layout/townPlan.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/roads.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
           "timeout_min": 15
         }
       ],
@@ -3010,21 +3087,43 @@
           "title": "Ribbon geometry and kerbs (pure, unit tested)",
           "verify": [
             "npx vitest run tests/unit/roads/ribbon.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/roads/ribbon.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/roads/ribbon.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/roads/ribbon.js \"buildKerbGeometry\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/roads/ribbon.js \"splitRunsOutsideRect\""
           ]
         },
         {
           "n": 2,
-          "title": "Materials, junctions, scene integration and surface lookup",
+          "title": "Surface lookup and the clear-road test",
           "verify": [
-            "npx vitest run tests/unit/roads/surface.test.js tests/unit/roads/clear.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/roads/roads.js src/world/roads/surface.js"
+            "npx vitest run tests/unit/roads/surface.test.js tests/unit/roads/clear.test.js tests/unit/layout/plots.test.js tests/unit/layout/townPlan.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/roads/surface.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/roads/surface.js \"createSurfaceLookup\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/roads/surface.js \"setSurfaceLookup\""
           ]
         },
         {
           "n": 3,
-          "title": "Playwright and a look",
+          "title": "Materials, junctions, merged meshes, wiring and the hook",
           "verify": [
+            "npx vitest run tests/unit/roads/roads.test.js tests/unit/roads/ribbon.test.js tests/unit/roads/surface.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/roads/roads.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/roads/roads.js \"polygonOffset\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/terrain.js \"pathInfluence|colPath\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"surfaceAt\""
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Playwright, spots and a look",
+          "verify": [
+            "npx vitest run tests/unit/roads/spots.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"main-street\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"junction\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"lane\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"main-street\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"junction\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"lane\"",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/roads.spec.js",
@@ -3037,7 +3136,8 @@
             }
           ]
         }
-      ]
+      ],
+      "human_check": "Judge whether the main street, junctions and lanes look like a real South Indian coastal town road network (kerbs, gutters, materials), not flat ribbons."
     },
     {
       "id": "035",
@@ -3049,47 +3149,67 @@
       "depends_on": [
         "034"
       ],
-      "est_turns": 45,
+      "est_turns": 60,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/water/waves.test.js",
         "portfolio/tests/unit/water/waterMesh.test.js",
+        "portfolio/tests/unit/water/spots.test.js",
         "portfolio/tests/e2e/water.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/water/waves.test.js tests/unit/water/waterMesh.test.js",
+        "npx vitest run tests/unit/water/waves.test.js tests/unit/water/waterMesh.test.js tests/unit/water/spots.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/water.spec.js",
+          "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
           "timeout_min": 15
         }
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Pure water functions",
+          "title": "Pure water functions and the depth data",
           "verify": [
             "npx vitest run tests/unit/water/waves.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/water/waves.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/water/waves.js src/world/water/depthData.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/water/waves.js \"waveHeightAt\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/water/waves.js \"harbourCalm\""
           ]
         },
         {
           "n": 2,
-          "title": "Water mesh and shader",
+          "title": "Water mesh, shader and boot wiring",
           "verify": [
-            "npx vitest run tests/unit/water/waterMesh.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/water/waterMesh.js"
+            "npx vitest run tests/unit/water/waterMesh.test.js tests/unit/water/waves.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/water/waterMesh.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/water/waterMesh.js \"onBeforeCompile\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/water.js \"waterNormalTex\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/water.js \"PlaneGeometry\"",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"waveHeight\"",
+            "npm run lint"
           ]
         },
         {
           "n": 3,
-          "title": "Playwright and a look",
+          "title": "Playwright, spots and a look",
           "verify": [
+            "npx vitest run tests/unit/water/spots.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"harbour-water\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"shore\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"harbour-water\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"shore\"",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/water.spec.js",
@@ -3102,7 +3222,8 @@
             }
           ]
         }
-      ]
+      ],
+      "human_check": "Look at docs/shots/035: judge the depth gradient, foam line, calm harbour and the horizon blend with the sky."
     },
     {
       "id": "036",
@@ -3114,20 +3235,27 @@
       "depends_on": [
         "035"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/shots/**",
+        "portfolio/assets/vegetation/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/vegetation/species.test.js",
         "portfolio/tests/unit/vegetation/scatter.test.js",
+        "portfolio/tests/unit/vegetation/render.test.js",
         "portfolio/tests/e2e/vegetation.spec.js"
+      ],
+      "unfreeze": [
+        "portfolio/tests/unit/world/propsExclusion.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/vegetation/species.test.js tests/unit/vegetation/scatter.test.js",
+        "npx vitest run tests/unit/vegetation/species.test.js tests/unit/vegetation/scatter.test.js tests/unit/vegetation/render.test.js tests/unit/vegetation/integration.test.js tests/unit/vegetation/spots.test.js tests/unit/world/propsExclusion.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/vegetation.spec.js",
@@ -3137,6 +3265,11 @@
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/smoke.spec.js",
           "timeout_min": 15
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 15
         }
       ],
       "steps": [
@@ -3145,21 +3278,42 @@
           "title": "Species builders (headless)",
           "verify": [
             "npx vitest run tests/unit/vegetation/species.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/vegetation/species.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/vegetation/species.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/vegetation/species.js \"coconut-palm\""
           ]
         },
         {
           "n": 2,
-          "title": "Placement rules (pure)",
+          "title": "Placement rules (pure) and the wind function",
           "verify": [
-            "npx vitest run tests/unit/vegetation/scatter.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/vegetation/scatter.js"
+            "npx vitest run tests/unit/vegetation/scatter.test.js tests/unit/vegetation/species.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/vegetation/scatter.js src/world/vegetation/wind.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/vegetation/scatter.js \"scatterVegetation\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/vegetation/wind.js \"windAmplitude\""
           ]
         },
         {
           "n": 3,
-          "title": "Instanced rendering, wind, grass chunks, colliders and integration",
+          "title": "Instanced rendering, wind shader, pooled grass",
           "verify": [
+            "npx vitest run tests/unit/vegetation/render.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/vegetation/render.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/vegetation/render.js \"GrassField\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/vegetation/render.js \"onBeforeCompile\""
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Integration, colliders, hook, Playwright, spots and a look",
+          "verify": [
+            "npx vitest run tests/unit/vegetation/integration.test.js tests/unit/vegetation/spots.test.js tests/unit/world/propsExclusion.test.js",
+            "node \"{{runner}}/assert.mjs\" none src/world/props.js \"scatterProps\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"beach\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"forest\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"avenue\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"beach\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"forest\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"avenue\"",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/vegetation.spec.js",
@@ -3185,47 +3339,82 @@
       "depends_on": [
         "036"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/town/archetypes.test.js",
-        "portfolio/tests/unit/kit/bake.test.js",
+        "portfolio/tests/unit/town/decorate.test.js",
+        "portfolio/tests/unit/town/townBuilder.test.js",
+        "portfolio/tests/unit/town/townAreas.test.js",
+        "portfolio/tests/unit/content/signageShops.test.js",
         "portfolio/tests/e2e/town-buildings.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/town/archetypes.test.js tests/unit/kit/bake.test.js",
+        "npx vitest run tests/unit/town/archetypes.test.js tests/unit/town/decorate.test.js tests/unit/town/townBuilder.test.js tests/unit/town/townAreas.test.js tests/unit/content/signageShops.test.js tests/unit/content/signage.test.js tests/unit/budgets/budgets.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/town-buildings.spec.js",
           "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 15
         }
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Archetype manifests and the parameterized instance",
+          "title": "Shop sign keys, archetype files and the parameterised instance",
           "verify": [
-            "npx vitest run tests/unit/town/archetypes.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/town/archetype.js src/world/buildings/_archetypes/house-a.json src/world/buildings/_archetypes/cafe.json"
+            "npx vitest run tests/unit/town/archetypes.test.js tests/unit/content/signageShops.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/town/archetype.js src/world/buildings/_archetypes/house-a.json src/world/buildings/_archetypes/house-b.json src/world/buildings/_archetypes/shop-row.json src/world/buildings/_archetypes/cafe.json src/world/buildings/_archetypes/market.json src/world/buildings/_archetypes/hut.json",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"shop-sweets\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/town/archetype.js \"instantiate\""
           ]
         },
         {
           "n": 2,
-          "title": "Baking static geometry per block",
+          "title": "Archetype decorators, curtains and the market hall",
           "verify": [
-            "npx vitest run tests/unit/kit/bake.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/kit/bake.js src/world/town/townBuilder.js"
+            "npx vitest run tests/unit/town/decorate.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/town/decorate.js src/world/town/curtains.js src/world/town/marketHall.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/town/decorate.js \"rolling-shutter\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/town/curtains.js \"town-windows\""
           ]
         },
         {
           "n": 3,
-          "title": "Integrate and verify in the browser",
+          "title": "Town builder: blocks, plinths, baking",
           "verify": [
+            "npx vitest run tests/unit/town/townBuilder.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/town/townBuilder.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/town/townBuilder.js \"bakeStatic\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/town/townBuilder.js \"listBlocks\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/town/townBuilder.js \"kit/bake\"",
+            "node -e \"const fs=require('fs');process.exit(['src/world/kit/bake.js'].some(p=>fs.existsSync(p))?1:0)\""
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Streamed areas, spot, browser test and shots",
+          "verify": [
+            "npx vitest run tests/unit/town/townAreas.test.js tests/unit/budgets/budgets.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/areas/townAreas.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/townAreas.js \"createTownAreas\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"house-row\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"house-row\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"main-street\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"main-street\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildHouse|buildCottage\"",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/town-buildings.spec.js",
@@ -3386,7 +3575,8 @@
           "verify": [
             "npx vitest run tests/unit/local/gopuram.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/local/gopuram.js",
-            "node \"{{runner}}/assert.mjs\" has src/world/layout/town.json \"gate\""
+            "node \"{{runner}}/assert.mjs\" has src/world/local/gopuram.js \"buildGopuram\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/layout/town.json \"\"gate\"\""
           ]
         },
         {
@@ -3633,47 +3823,68 @@
       "depends_on": [
         "041"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/world-conventions.md",
+        "portfolio/docs/shots/**"
       ],
       "allow_extra": [],
       "freeze": [
+        "portfolio/tests/unit/props/setsEShared.test.js",
         "portfolio/tests/unit/props/libraryMuseum.test.js",
         "portfolio/tests/unit/props/schoolPost.test.js",
         "portfolio/tests/unit/props/securityTransport.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/props/libraryMuseum.test.js tests/unit/props/schoolPost.test.js tests/unit/props/securityTransport.test.js tests/unit/props/allProps.test.js"
+        "npx vitest run tests/unit/props",
+        "npx vitest run tests/unit/props/setsEShared.test.js tests/unit/props/libraryMuseum.test.js tests/unit/props/schoolPost.test.js tests/unit/props/securityTransport.test.js tests/unit/props/allProps.test.js"
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Library and museum (20 types)",
+          "title": "Shared pieces: swing and spin metadata, conventions",
           "verify": [
-            "npx vitest run tests/unit/props/libraryMuseum.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/library.js src/world/props/sets/museum.js"
+            "npx vitest run tests/unit/props/setsEShared.test.js tests/unit/props/catalogMeta.test.js",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"swingTarget\""
           ]
         },
         {
           "n": 2,
-          "title": "School and post office (17 types)",
+          "title": "Library and museum (20 types)",
           "verify": [
-            "npx vitest run tests/unit/props/schoolPost.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/school.js src/world/props/sets/post.js"
+            "npx vitest run tests/unit/props/libraryMuseum.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/library.js src/world/props/sets/museum.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/library\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/museum\""
           ]
         },
         {
           "n": 3,
-          "title": "Security and transport (12 types)",
+          "title": "School and post office (17 types)",
+          "verify": [
+            "npx vitest run tests/unit/props/schoolPost.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/school.js src/world/props/sets/post.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/school\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/post\""
+          ]
+        },
+        {
+          "n": 4,
+          "title": "Security and transport (12 types), screens and registration",
           "verify": [
             "npx vitest run tests/unit/props/securityTransport.test.js tests/unit/props/allProps.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/security.js src/world/props/sets/transport.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/props/sets/security.js src/world/props/sets/transport.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/security\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"sets/transport\"",
+            "npx vitest run tests/unit/props"
           ]
         }
-      ]
+      ],
+      "human_check": "Open the shots of this set: judge that the library stack, card catalog, globe, display case, school desk, blackboard, post box, counter grille, sorting rack, boom barrier, cctv bank and departure board look like real objects (not boxes), that wall items (plaques, charts, boards, banner) sit at believable heights, and that the boom barrier rests horizontal with its hinge at the housing. Visual realism cannot be machine-checked."
     },
     {
       "id": "043",
@@ -3685,11 +3896,13 @@
       "depends_on": [
         "042"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md"
       ],
       "allow_extra": [],
       "freeze": [
@@ -3698,7 +3911,9 @@
         "portfolio/tests/unit/buildings/noticeInterior.test.js",
         "portfolio/tests/e2e/notice.spec.js",
         "portfolio/tests/unit/content/zoneExpect.test.js",
-        "portfolio/tests/fixtures/zoneExpect.json"
+        "portfolio/tests/fixtures/zoneExpect.json",
+        "portfolio/tests/unit/buildings/noticeResume.test.js",
+        "portfolio/tests/unit/buildings/noticeArea.test.js"
       ],
       "verify": [
         "npm run lint",
@@ -3714,7 +3929,9 @@
           "cmd": "npm run check:budget",
           "timeout_min": 15
         },
-        "npm run check:ledger"
+        "npm run check:ledger",
+        "npx vitest run tests/unit/content/zoneExpect.test.js tests/unit/buildings/noticeResume.test.js tests/unit/buildings/noticeArea.test.js",
+        "npm run check:size"
       ],
       "steps": [
         {
@@ -3732,7 +3949,13 @@
           "verify": [
             "npx vitest run tests/unit/buildings/noticeExterior.test.js",
             "node scripts/check-buildings.mjs --only notice --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/notice/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/notice/build.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"notice\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/notice/build.js \"flagpole\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/notice/build.js \"bike-stand\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/notice/build.js \"portico\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/notice/build.js \"post-box\"",
+            "node \"{{runner}}/assert.mjs\" none src/content/signage.js \"post-hours\""
           ]
         },
         {
@@ -3740,7 +3963,9 @@
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
             "npx vitest run tests/unit/buildings/noticeInterior.test.js",
-            "node scripts/check-buildings.mjs --only notice"
+            "node scripts/check-buildings.mjs --only notice",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/notice/manifest.json \"sw-office\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/notice/manifest.json \"sit-bench\""
           ]
         },
         {
@@ -3758,11 +3983,22 @@
               "timeout_min": 15
             },
             "node scripts/check-buildings.mjs --only notice",
-            "npx vitest run tests/unit/content/zoneExpect.test.js"
+            "npx vitest run tests/unit/content/zoneExpect.test.js tests/unit/buildings/noticeResume.test.js tests/unit/buildings/noticeArea.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/notice/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createNoticeArea\"",
+            "node \"{{runner}}/assert.mjs\" none src/systems/interaction.js \"RESUME DOWNLOADED\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"notice-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"notice-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"notice-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"notice-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"post-veranda\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildNotice\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Post Office\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Post Office\""
           ]
         }
       ],
-      "human_check": "Walk the Post Office and compare with a real Indian post office; check the Tamil sign."
+      "human_check": "Walk the Post Office and compare with a real Indian post office; check the Tamil sign (the Tamil of every sign is a draft); check that the README zone table and the minimap label now say Post Office (the README is edited by this plan)."
     },
     {
       "id": "044",
@@ -3774,11 +4010,13 @@
       "depends_on": [
         "043"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md"
       ],
       "allow_extra": [],
       "freeze": [
@@ -3786,7 +4024,8 @@
         "portfolio/tests/unit/buildings/forgeExterior.test.js",
         "portfolio/tests/unit/buildings/forgeInterior.test.js",
         "portfolio/tests/e2e/forge.spec.js",
-        "portfolio/tests/unit/props/tools.test.js"
+        "portfolio/tests/unit/props/tools.test.js",
+        "portfolio/tests/unit/buildings/forgeArea.test.js"
       ],
       "verify": [
         "npm run lint",
@@ -3802,7 +4041,9 @@
           "cmd": "npm run check:budget",
           "timeout_min": 15
         },
-        "npm run check:ledger"
+        "npm run check:ledger",
+        "npx vitest run tests/unit/content/zoneExpect.test.js tests/unit/buildings/forgeArea.test.js tests/unit/props/tools.test.js",
+        "npm run check:size"
       ],
       "steps": [
         {
@@ -3820,19 +4061,44 @@
           "verify": [
             "npx vitest run tests/unit/buildings/forgeExterior.test.js",
             "node scripts/check-buildings.mjs --only forge --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/forge/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/forge/build.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"forge\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/build.js \"chimney\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/build.js \"roller-shutter\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/build.js \"pallet-stack\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/build.js \"oil-drum\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/build.js \"lean-to\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/build.js \"window-grille\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/build.js \"roof-ribs\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"workshop-sign\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"skills-board\""
           ]
         },
         {
           "n": 3,
-          "title": "Interior: rooms, objects, lights, interactables",
+          "title": "Tool props: 14 new prop types (tools set)",
           "verify": [
-            "npx vitest run tests/unit/buildings/forgeInterior.test.js tests/unit/props/tools.test.js tests/unit/props/allProps.test.js",
-            "node scripts/check-buildings.mjs --only forge"
+            "npx vitest run tests/unit/props/tools.test.js tests/unit/props/allProps.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/sets/tools.js \"cable-reel\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/sets/tools.js \"compressor\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/props/index.js \"tools\""
           ]
         },
         {
           "n": 4,
+          "title": "Interior: rooms, objects, lights, interactables",
+          "verify": [
+            "npx vitest run tests/unit/buildings/forgeInterior.test.js",
+            "node scripts/check-buildings.mjs --only forge",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/manifest.json \"sw-weld\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/manifest.json \"sw-store\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/manifest.json \"sit-stool\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/forge/manifest.json \"sit-visitor\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/forge/manifest.json stage full"
+          ]
+        },
+        {
+          "n": 5,
           "title": "Convert the zone, stream it, Playwright and shots",
           "verify": [
             {
@@ -3845,11 +4111,25 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only forge"
+            "node scripts/check-buildings.mjs --only forge",
+            "npx vitest run tests/unit/content/zoneExpect.test.js tests/unit/buildings/forgeArea.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/forge/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createForgeArea\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildForge\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"forgeSmoke\"",
+            "node \"{{runner}}/assert.mjs\" none src/content/dialogues.js \"The Skill Forge\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Engineering Workshop\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Engineering Workshop\"",
+            "node \"{{runner}}/assert.mjs\" none README.md \"Skill Forge\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"forge-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"forge-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"forge-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"forge-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"forge-yard\""
           ]
         }
       ],
-      "human_check": "Judge whether the workshop reads as a real engineering works."
+      "human_check": "Walk the Engineering Workshop inside and out and judge whether it reads as a real small engineering works (lathes, drill presses, welding bay, lab, roller shutter, chimney, tin roof). Check the Tamil of the two signs (the Tamil of every sign is a draft: பொறியியல் பணிமனை, திறன்கள்). Check that the README zone table and the minimap label now say Engineering Workshop (the README is edited by this plan)."
     },
     {
       "id": "045",
@@ -3861,7 +4141,8 @@
       "depends_on": [
         "044"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
@@ -3874,16 +4155,32 @@
         "portfolio/tests/unit/kit/curtainWall.test.js",
         "portfolio/tests/unit/buildings/citadelExterior.test.js",
         "portfolio/tests/unit/buildings/citadelLobby.test.js",
+        "portfolio/tests/unit/dev/buildingFixture.test.js",
         "portfolio/tests/e2e/citadel-lift.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/buildings/citadel.test.js tests/unit/kit/curtainWall.test.js tests/unit/buildings/citadelExterior.test.js tests/unit/buildings/citadelLobby.test.js",
+        {
+          "repo": "portfolio",
+          "cmd": "npm run test",
+          "timeout_min": 25
+        },
+        "npx vitest run tests/unit/buildings/citadel.test.js tests/unit/kit/curtainWall.test.js tests/unit/buildings/citadelExterior.test.js tests/unit/buildings/citadelLobby.test.js tests/unit/dev/buildingFixture.test.js",
         "node scripts/check-buildings.mjs --only citadel --stage structure",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/citadel-lift.spec.js",
           "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/plaza-shell.spec.js",
+          "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 15
         }
       ],
       "steps": [
@@ -3893,7 +4190,11 @@
           "verify": [
             "npx vitest run tests/unit/buildings/citadel.test.js",
             "node scripts/check-buildings.mjs --only citadel --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/citadel/manifest.json"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/citadel/manifest.json",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/citadel/manifest.json stage structure",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/manifest.json \"l2-link\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/manifest.json \"w-30\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/manifest.json \"meeting-screen\""
           ]
         },
         {
@@ -3902,24 +4203,35 @@
           "verify": [
             "npx vitest run tests/unit/kit/curtainWall.test.js tests/unit/buildings/citadelExterior.test.js",
             "node scripts/check-buildings.mjs --only citadel --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/citadel/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/citadel/build.js src/world/buildings/citadel/extras.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/exterior.js \"curtainWall\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"citadel\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"gravitywrite\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"citadel-welcome\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/build.js \"citadel-bands\""
           ]
         },
         {
           "n": 3,
-          "title": "Lobby interior, lift check and shots",
+          "title": "Lobby interior, lift check, fixture and shots",
           "verify": [
-            "npx vitest run tests/unit/buildings/citadelLobby.test.js",
+            "npx vitest run tests/unit/buildings/citadelLobby.test.js tests/unit/dev/buildingFixture.test.js",
+            "node scripts/check-buildings.mjs --only citadel --stage rooms --rooms lobby --room-min lobby=14",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/citadel-lift.spec.js",
               "timeout_min": 20
             },
-            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/building.js"
+            "node \"{{runner}}/assert.mjs\" exists src/dev/fixtures/buildingById.js",
+            "node \"{{runner}}/assert.mjs\" has src/dev/fixtures/index.js \"building-\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/manifest.json \"sw-lobby\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"citadel-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"citadel-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"citadel-lobby\""
           ]
         }
       ],
-      "human_check": "Judge the tower facade at dusk and from the street."
+      "human_check": "Judge the tower facade at dusk and from the street. The Tamil of the two new signs (`கிராவிட்டிரைட்`, `நல்வரவு`) is a draft: review it. Note for plan 046: the executive office is 10 by 18 m and the meeting room 12 by 18 m because every level must tile the footprint with at most six rooms."
     },
     {
       "id": "046",
@@ -3931,23 +4243,25 @@
       "depends_on": [
         "045"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md"
       ],
       "allow_extra": [],
       "freeze": [
-        "portfolio/tests/unit/buildings/citadel.test.js",
-        "portfolio/tests/unit/buildings/citadelExterior.test.js",
-        "portfolio/tests/unit/buildings/citadelInterior.test.js",
+        "portfolio/tests/unit/buildings/citadelFloors.test.js",
+        "portfolio/tests/unit/buildings/citadelFloorsExterior.test.js",
+        "portfolio/tests/unit/buildings/citadelFloorsInterior.test.js",
         "portfolio/tests/e2e/citadel.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/buildings/citadel.test.js tests/unit/buildings/citadelExterior.test.js tests/unit/buildings/citadelInterior.test.js",
+        "npx vitest run tests/unit/buildings/citadelFloors.test.js tests/unit/buildings/citadelFloorsExterior.test.js tests/unit/buildings/citadelFloorsInterior.test.js",
         "node scripts/check-buildings.mjs --only citadel",
         {
           "repo": "portfolio",
@@ -3964,33 +4278,38 @@
       "steps": [
         {
           "n": 1,
-          "title": "Structure manifest for the GravityWrite HQ",
+          "title": "Manifest: edit the plan 045 structure to stage full (objects, lights, switches, seats, floor plates)",
           "verify": [
-            "npx vitest run tests/unit/buildings/citadel.test.js",
-            "node scripts/check-buildings.mjs --only citadel --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/citadel/manifest.json"
+            "npx vitest run tests/unit/buildings/citadelFloors.test.js",
+            "node scripts/check-buildings.mjs --only citadel --stage full",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/citadel/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/manifest.json \"sit-meet-1\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/manifest.json \"sw-meet-back\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/manifest.json \"citadel-floor-fourth\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/citadel/manifest.json \"meeting-screen\""
           ]
         },
         {
           "n": 2,
-          "title": "Exterior: shell look, details, signage",
+          "title": "Signage: four floor-plate keys (words, no digits) and their test",
           "verify": [
-            "npx vitest run tests/unit/buildings/citadelExterior.test.js",
-            "node scripts/check-buildings.mjs --only citadel --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/citadel/build.js"
+            "npx vitest run tests/unit/buildings/citadelFloorsExterior.test.js",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"citadel-floor-first\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"citadel-floor-fourth\"",
+            "node scripts/check-buildings.mjs --only citadel --stage full"
           ]
         },
         {
           "n": 3,
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
-            "npx vitest run tests/unit/buildings/citadelInterior.test.js",
+            "npx vitest run tests/unit/buildings/citadelFloorsInterior.test.js",
             "node scripts/check-buildings.mjs --only citadel"
           ]
         },
         {
           "n": 4,
-          "title": "Convert the zone, stream it, Playwright and shots",
+          "title": "Convert the zone, stream it, Playwright, budgets and shots",
           "verify": [
             {
               "repo": "portfolio",
@@ -4002,11 +4321,24 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only citadel"
+            "node scripts/check-buildings.mjs --only citadel --stage full",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"citadel\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createCitadelArea\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/citadel/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"GravityWrite HQ\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"GravityWrite HQ\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"citadel-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"citadel-newsroom\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"citadel-meeting\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"citadel-roof\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"citadel-roof\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"citadel-meeting\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"citadel-newsroom\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"citadel-inside\""
           ]
         }
       ],
-      "human_check": "Judge the newsroom and meeting room look."
+      "human_check": "Judge the newsroom, the meeting room and the rooftop. The Tamil of the four floor words is a draft: review it. The tower facade is judged in plan 045."
     },
     {
       "id": "047",
@@ -4018,11 +4350,14 @@
       "depends_on": [
         "046"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
+      "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md"
       ],
       "allow_extra": [],
       "freeze": [
@@ -4076,7 +4411,7 @@
         },
         {
           "n": 4,
-          "title": "Convert the zone, stream it, Playwright and shots",
+          "title": "Convert the zone, stream it, Playwright, budgets and shots",
           "verify": [
             {
               "repo": "portfolio",
@@ -4088,11 +4423,21 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only broadcast"
+            "node scripts/check-buildings.mjs --only broadcast --stage full",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"broadcast\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createBroadcastArea\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/broadcast/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Broadcast Station\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Broadcast Station\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"broadcast-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"broadcast-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"broadcast-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"broadcast-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"broadcast-mast\""
           ]
         }
       ],
-      "human_check": "Judge the mast and studio."
+      "human_check": "Judge the mast and the studio from the street and inside. The Tamil of the three keys (ஒளிபரப்பு நிலையம், ஒளிபரப்பு, ஒளிபரப்பில்) is a draft: review it."
     },
     {
       "id": "048",
@@ -4104,11 +4449,13 @@
       "depends_on": [
         "047"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md"
       ],
       "allow_extra": [],
       "freeze": [
@@ -4162,7 +4509,7 @@
         },
         {
           "n": 4,
-          "title": "Convert the zone, stream it, Playwright and shots",
+          "title": "Convert the zone, stream it, Playwright, budgets and shots",
           "verify": [
             {
               "repo": "portfolio",
@@ -4174,11 +4521,21 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only gateway"
+            "node scripts/check-buildings.mjs --only gateway",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"gateway\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createGatewayArea\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/gateway/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Security Gatehouse\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Security Gatehouse\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"gateway-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"gateway-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"gateway-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"gateway-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"gateway-barrier\""
           ]
         }
       ],
-      "human_check": "Judge the gatehouse and barrier."
+      "human_check": "Judge the gatehouse and the barrier. The Tamil of the two keys (பாதுகாப்பு, பார்வையாளர்கள்) is a draft: review it."
     },
     {
       "id": "049",
@@ -4190,18 +4547,22 @@
       "depends_on": [
         "048"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
+      "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/buildings/transport.test.js",
         "portfolio/tests/unit/buildings/transportExterior.test.js",
         "portfolio/tests/unit/buildings/transportInterior.test.js",
-        "portfolio/tests/e2e/transport.spec.js"
+        "portfolio/tests/e2e/transport.spec.js",
+        "portfolio/tests/unit/props/ferry.test.js"
       ],
       "verify": [
         "npm run lint",
@@ -4242,13 +4603,13 @@
           "n": 3,
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
-            "npx vitest run tests/unit/buildings/transportInterior.test.js",
+            "npx vitest run tests/unit/buildings/transportInterior.test.js tests/unit/props/ferry.test.js tests/unit/props/allProps.test.js",
             "node scripts/check-buildings.mjs --only transport"
           ]
         },
         {
           "n": 4,
-          "title": "Convert the zone, stream it, Playwright and shots",
+          "title": "Convert the zone, stream it, Playwright, budgets and shots",
           "verify": [
             {
               "repo": "portfolio",
@@ -4260,11 +4621,22 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only transport"
+            "node scripts/check-buildings.mjs --only transport",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/transport/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"transport\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createTransportArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"DECORATORS.transport\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"timetable\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"ferry\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"transport-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"transport-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"transport-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"transport-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"ferry-terminal-quay\""
           ]
         }
       ],
-      "human_check": "Judge the terminal against a real ferry jetty."
+      "human_check": "Judge the terminal against a real ferry jetty and the gangway slope. The Tamil of the two keys (படகுத்துறை, கால அட்டவணை) is a draft: review it."
     },
     {
       "id": "050",
@@ -4276,11 +4648,14 @@
       "depends_on": [
         "049"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
+      "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md"
       ],
       "allow_extra": [],
       "freeze": [
@@ -4334,7 +4709,7 @@
         },
         {
           "n": 4,
-          "title": "Convert the zone, stream it, Playwright and shots",
+          "title": "Convert the zone, stream it, Playwright, budgets and shots",
           "verify": [
             {
               "repo": "portfolio",
@@ -4346,11 +4721,22 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only temple"
+            "node scripts/check-buildings.mjs --only temple",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/temple/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"temple\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createTempleArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"DECORATORS.temple\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"oss-cafe\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"community-hall\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"temple-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"temple-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"temple-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"temple-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"temple-stair\""
           ]
         }
       ],
-      "human_check": "The building must read as a community cafe, not a temple."
+      "human_check": "The building must read as a community cafe and civic hall, not a temple. The Tamil of the two signs is a draft: review it."
     },
     {
       "id": "051",
@@ -4360,20 +4746,28 @@
         "portfolio"
       ],
       "depends_on": [
-        "050"
+        "050",
+        "044"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md",
+        "portfolio/src/world/buildings.js",
+        "portfolio/src/world/buildingAnims.js",
+        "portfolio/src/world/collision.js",
+        "portfolio/src/ui/minimap.js"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/buildings/workshop.test.js",
         "portfolio/tests/unit/buildings/workshopExterior.test.js",
         "portfolio/tests/unit/buildings/workshopInterior.test.js",
-        "portfolio/tests/e2e/workshop.spec.js"
+        "portfolio/tests/e2e/workshop.spec.js",
+        "portfolio/tests/unit/buildings/workshopArea.test.js"
       ],
       "verify": [
         "npm run lint",
@@ -4389,7 +4783,10 @@
           "cmd": "npm run check:budget",
           "timeout_min": 15
         },
-        "npm run check:ledger"
+        "npm run check:ledger",
+        "npm run test",
+        "npm run check:content",
+        "npx vitest run tests/unit/buildings/workshopExterior.test.js tests/unit/buildings/workshopArea.test.js tests/unit/props/tools.test.js"
       ],
       "steps": [
         {
@@ -4407,7 +4804,14 @@
           "verify": [
             "npx vitest run tests/unit/buildings/workshopExterior.test.js",
             "node scripts/check-buildings.mjs --only workshop --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/workshop/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/workshop/build.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"workshop\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/workshop/build.js \"decorateWorkshop\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/workshop/build.js \"string-lights\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/workshop/build.js \"cable-run\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/kit/exterior.js \"rollerDoor\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"onecl\"",
+            "node \"{{runner}}/assert.mjs\" has tests/unit/buildings/workshopExterior.test.js \"getDecorator\""
           ]
         },
         {
@@ -4415,7 +4819,11 @@
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
             "npx vitest run tests/unit/buildings/workshopInterior.test.js",
-            "node scripts/check-buildings.mjs --only workshop"
+            "node scripts/check-buildings.mjs --only workshop",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/workshop/manifest.json \"project-whiteboard\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/workshop/manifest.json \"sw-garage\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/workshop/manifest.json \"sit-bean\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/workshop/manifest.json stage full"
           ]
         },
         {
@@ -4432,7 +4840,18 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only workshop"
+            "node scripts/check-buildings.mjs --only workshop",
+            "npx vitest run tests/unit/world/zones.test.js tests/unit/buildings/workshopArea.test.js tests/unit/content/zoneExpect.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/workshop/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createWorkshopArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"decorateWorkshop\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildWorkshop\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Startup Garage\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Startup Garage\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"workshop-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"workshop-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"workshop-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"workshop-inside\""
           ]
         }
       ],
@@ -4448,11 +4867,17 @@
       "depends_on": [
         "051"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md",
+        "portfolio/src/world/buildings.js",
+        "portfolio/src/world/buildingAnims.js",
+        "portfolio/src/world/collision.js",
+        "portfolio/src/ui/minimap.js"
       ],
       "allow_extra": [],
       "freeze": [
@@ -4460,7 +4885,8 @@
         "portfolio/tests/unit/buildings/freshnoteExterior.test.js",
         "portfolio/tests/unit/buildings/freshnoteInterior.test.js",
         "portfolio/tests/e2e/freshnote.spec.js",
-        "portfolio/tests/unit/props/design.test.js"
+        "portfolio/tests/unit/props/design.test.js",
+        "portfolio/tests/unit/buildings/freshnoteArea.test.js"
       ],
       "verify": [
         "npm run lint",
@@ -4476,7 +4902,10 @@
           "cmd": "npm run check:budget",
           "timeout_min": 15
         },
-        "npm run check:ledger"
+        "npm run check:ledger",
+        "npm run test",
+        "npm run check:content",
+        "npx vitest run tests/unit/buildings/freshnoteExterior.test.js tests/unit/buildings/freshnoteArea.test.js tests/unit/props/design.test.js"
       ],
       "steps": [
         {
@@ -4494,7 +4923,13 @@
           "verify": [
             "npx vitest run tests/unit/buildings/freshnoteExterior.test.js",
             "node scripts/check-buildings.mjs --only freshnote --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/freshnote/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/freshnote/build.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"freshnote\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/freshnote/build.js \"decorateFreshnote\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/freshnote/build.js \"green-wall\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/freshnote/build.js \"awning\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"zone-freshnote\"",
+            "node \"{{runner}}/assert.mjs\" has tests/unit/buildings/freshnoteExterior.test.js \"getDecorator\""
           ]
         },
         {
@@ -4502,7 +4937,11 @@
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
             "npx vitest run tests/unit/buildings/freshnoteInterior.test.js tests/unit/props/design.test.js tests/unit/props/allProps.test.js",
-            "node scripts/check-buildings.mjs --only freshnote"
+            "node scripts/check-buildings.mjs --only freshnote",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/freshnote/manifest.json \"sw-gallery\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/freshnote/manifest.json \"mood-board\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/freshnote/manifest.json \"sit-stool\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/freshnote/manifest.json stage full"
           ]
         },
         {
@@ -4519,11 +4958,22 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only freshnote"
+            "node scripts/check-buildings.mjs --only freshnote",
+            "npx vitest run tests/unit/world/zones.test.js tests/unit/buildings/freshnoteArea.test.js tests/unit/content/zoneExpect.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/freshnote/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createFreshnoteArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"decorateFreshnote\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildFreshnoteStudio\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Design Studio\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Design Studio\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"freshnote-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"freshnote-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"freshnote-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"freshnote-inside\""
           ]
         }
       ],
-      "human_check": "Does the studio feel like a real design studio?"
+      "human_check": "Does the studio feel like a real design studio? Also check the Tamil of the signs (ஃபிரெஷ்நோட் and திறந்திருக்கிறது are drafts)."
     },
     {
       "id": "053",
@@ -4535,19 +4985,26 @@
       "depends_on": [
         "052"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 100,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md",
+        "portfolio/src/world/buildings.js",
+        "portfolio/src/world/buildingAnims.js",
+        "portfolio/src/world/collision.js",
+        "portfolio/src/ui/minimap.js"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/buildings/library.test.js",
         "portfolio/tests/unit/buildings/libraryExterior.test.js",
         "portfolio/tests/unit/buildings/libraryInterior.test.js",
-        "portfolio/tests/e2e/library.spec.js"
+        "portfolio/tests/e2e/library.spec.js",
+        "portfolio/tests/unit/buildings/libraryArea.test.js"
       ],
       "verify": [
         "npm run lint",
@@ -4563,7 +5020,11 @@
           "cmd": "npm run check:budget",
           "timeout_min": 15
         },
-        "npm run check:ledger"
+        "npm run check:ledger",
+        "npm run test",
+        "npm run check:content",
+        "npm run check:local",
+        "npx vitest run tests/unit/buildings/libraryExterior.test.js tests/unit/buildings/libraryArea.test.js tests/unit/props/seating.test.js"
       ],
       "steps": [
         {
@@ -4581,7 +5042,13 @@
           "verify": [
             "npx vitest run tests/unit/buildings/libraryExterior.test.js",
             "node scripts/check-buildings.mjs --only library --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/library/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/library/build.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"library\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/library/build.js \"decorateLibrary\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/library/build.js \"pediment\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/library/build.js \"lamp-post\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"zone-library\"",
+            "node \"{{runner}}/assert.mjs\" has tests/unit/buildings/libraryExterior.test.js \"getDecorator\""
           ]
         },
         {
@@ -4589,7 +5056,11 @@
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
             "npx vitest run tests/unit/buildings/libraryInterior.test.js",
-            "node scripts/check-buildings.mjs --only library"
+            "node scripts/check-buildings.mjs --only library",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/library/manifest.json \"archive-ledger\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/library/manifest.json \"main-staircase\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/library/manifest.json \"sit-hall\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/library/manifest.json stage full"
           ]
         },
         {
@@ -4606,11 +5077,23 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only library"
+            "node scripts/check-buildings.mjs --only library",
+            "npx vitest run tests/unit/world/zones.test.js tests/unit/buildings/libraryArea.test.js tests/unit/content/zoneExpect.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/library/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createLibraryArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"decorateLibrary\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildLibrary\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Public Library\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Public Library\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"library-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"library-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"library-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"library-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"library-archive\""
           ]
         }
       ],
-      "human_check": "Judge the library atmosphere."
+      "human_check": "Judge the library atmosphere. Also check the Tamil of the signs (பொது நூலகம், நூலகம், காப்பகம், அமைதி) which are drafts for the person."
     },
     {
       "id": "054",
@@ -4622,18 +5105,25 @@
       "depends_on": [
         "053"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md",
+        "portfolio/src/world/buildings.js",
+        "portfolio/src/world/buildingAnims.js",
+        "portfolio/src/world/collision.js",
+        "portfolio/src/ui/minimap.js"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/buildings/academy.test.js",
         "portfolio/tests/unit/buildings/academyExterior.test.js",
         "portfolio/tests/unit/buildings/academyInterior.test.js",
-        "portfolio/tests/e2e/academy.spec.js"
+        "portfolio/tests/e2e/academy.spec.js",
+        "portfolio/tests/unit/buildings/academyArea.test.js"
       ],
       "verify": [
         "npm run lint",
@@ -4649,7 +5139,11 @@
           "cmd": "npm run check:budget",
           "timeout_min": 15
         },
-        "npm run check:ledger"
+        "npm run check:ledger",
+        "npm run test",
+        "npm run check:content",
+        "npm run check:phone",
+        "npx vitest run tests/unit/buildings/academyExterior.test.js tests/unit/buildings/academyArea.test.js tests/unit/props/schoolPost.test.js"
       ],
       "steps": [
         {
@@ -4667,7 +5161,13 @@
           "verify": [
             "npx vitest run tests/unit/buildings/academyExterior.test.js",
             "node scripts/check-buildings.mjs --only academy --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/academy/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/academy/build.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"academy\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/academy/build.js \"decorateAcademy\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/academy/build.js \"portico\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/academy/build.js \"clock-gable\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"zone-academy\"",
+            "node \"{{runner}}/assert.mjs\" has tests/unit/buildings/academyExterior.test.js \"getDecorator\""
           ]
         },
         {
@@ -4675,7 +5175,11 @@
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
             "npx vitest run tests/unit/buildings/academyInterior.test.js",
-            "node scripts/check-buildings.mjs --only academy"
+            "node scripts/check-buildings.mjs --only academy",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/academy/manifest.json \"blackboard\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/academy/manifest.json \"sit-desk\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/academy/manifest.json \"sw-hall\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/academy/manifest.json stage full"
           ]
         },
         {
@@ -4692,11 +5196,22 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only academy"
+            "node scripts/check-buildings.mjs --only academy",
+            "npx vitest run tests/unit/world/zones.test.js tests/unit/buildings/academyArea.test.js tests/unit/content/zoneExpect.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/academy/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createAcademyArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"decorateAcademy\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildAcademy\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Academy\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Academy\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"academy-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"academy-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"academy-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"academy-inside\""
           ]
         }
       ],
-      "human_check": "Judge the school look."
+      "human_check": "Judge the school look. Also check the Tamil of the sign (கல்விக்கழகம் is a draft) for the person; the Tamil review is a human check, not a test."
     },
     {
       "id": "055",
@@ -4708,12 +5223,18 @@
       "depends_on": [
         "054"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 100,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md",
+        "portfolio/src/world/buildings.js",
+        "portfolio/src/world/buildingAnims.js",
+        "portfolio/src/world/collision.js",
+        "portfolio/src/ui/minimap.js"
       ],
       "allow_extra": [],
       "freeze": [
@@ -4721,7 +5242,9 @@
         "portfolio/tests/unit/buildings/lighthouseExterior.test.js",
         "portfolio/tests/unit/buildings/lighthouseInterior.test.js",
         "portfolio/tests/e2e/lighthouse.spec.js",
-        "portfolio/tests/unit/props/nautical.test.js"
+        "portfolio/tests/unit/props/nautical.test.js",
+        "portfolio/tests/unit/buildings/lighthouseArea.test.js",
+        "portfolio/tests/e2e/lighthouse.spec.js"
       ],
       "verify": [
         "npm run lint",
@@ -4737,7 +5260,11 @@
           "cmd": "npm run check:budget",
           "timeout_min": 15
         },
-        "npm run check:ledger"
+        "npm run check:ledger",
+        "npm run test",
+        "npm run check:content",
+        "npm run check:phone",
+        "npx vitest run tests/unit/buildings/lighthouseExterior.test.js tests/unit/buildings/lighthouseArea.test.js tests/unit/props/nautical.test.js"
       ],
       "steps": [
         {
@@ -4755,7 +5282,13 @@
           "verify": [
             "npx vitest run tests/unit/buildings/lighthouseExterior.test.js",
             "node scripts/check-buildings.mjs --only lighthouse --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/lighthouse/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/lighthouse/build.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"lighthouse\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/lighthouse/build.js \"decorateLighthouse\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/lighthouse/build.js \"towerSkin\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/lighthouse/build.js \"coneCap\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"zone-lighthouse\"",
+            "node \"{{runner}}/assert.mjs\" has tests/unit/buildings/lighthouseExterior.test.js \"getDecorator\""
           ]
         },
         {
@@ -4763,7 +5296,11 @@
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
             "npx vitest run tests/unit/buildings/lighthouseInterior.test.js tests/unit/props/nautical.test.js tests/unit/props/allProps.test.js",
-            "node scripts/check-buildings.mjs --only lighthouse"
+            "node scripts/check-buildings.mjs --only lighthouse",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/lighthouse/manifest.json \"contact-board\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/lighthouse/manifest.json \"flight-3\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/lighthouse/manifest.json \"sit-sofa\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/lighthouse/manifest.json stage full"
           ]
         },
         {
@@ -4780,11 +5317,24 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only lighthouse"
+            "node scripts/check-buildings.mjs --only lighthouse",
+            "npx vitest run tests/unit/world/zones.test.js tests/unit/buildings/lighthouseArea.test.js tests/unit/content/zoneExpect.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/lighthouse/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createLighthouseArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"decorateLighthouse\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildLighthouse\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Lighthouse\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Lighthouse\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"lighthouse-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"lighthouse-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"lighthouse-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"lighthouse-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"lighthouse-top\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"lighthouse-cottage\""
           ]
         }
       ],
-      "human_check": "Judge the lighthouse silhouette and the view from the top."
+      "human_check": "Judge the lighthouse silhouette and the view from the top. Also check the Tamil of the signs (கலங்கரை விளக்கம் and தொடர்புக்கு are drafts) for the person; the Tamil review is a human check, not a test."
     },
     {
       "id": "056",
@@ -4796,18 +5346,25 @@
       "depends_on": [
         "055"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/**"
+        "portfolio/docs/**",
+        "portfolio/README.md",
+        "portfolio/src/world/buildings.js",
+        "portfolio/src/world/buildingAnims.js",
+        "portfolio/src/world/collision.js",
+        "portfolio/src/ui/minimap.js"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/buildings/milestones.test.js",
         "portfolio/tests/unit/buildings/milestonesExterior.test.js",
         "portfolio/tests/unit/buildings/milestonesInterior.test.js",
-        "portfolio/tests/e2e/milestones.spec.js"
+        "portfolio/tests/e2e/milestones.spec.js",
+        "portfolio/tests/unit/buildings/milestonesArea.test.js"
       ],
       "verify": [
         "npm run lint",
@@ -4823,7 +5380,11 @@
           "cmd": "npm run check:budget",
           "timeout_min": 15
         },
-        "npm run check:ledger"
+        "npm run check:ledger",
+        "npm run test",
+        "npm run check:content",
+        "npm run check:phone",
+        "npx vitest run tests/unit/buildings/milestonesExterior.test.js tests/unit/buildings/milestonesArea.test.js"
       ],
       "steps": [
         {
@@ -4841,7 +5402,13 @@
           "verify": [
             "npx vitest run tests/unit/buildings/milestonesExterior.test.js",
             "node scripts/check-buildings.mjs --only milestones --stage structure",
-            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/milestones/build.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/buildings/milestones/build.js",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"milestones\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/milestones/build.js \"decorateMilestones\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/milestones/build.js \"clockGable\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/milestones/clock.js \"handAngles\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/signage.js \"zone-milestones\"",
+            "node \"{{runner}}/assert.mjs\" has tests/unit/buildings/milestonesExterior.test.js \"getDecorator\""
           ]
         },
         {
@@ -4849,7 +5416,11 @@
           "title": "Interior: rooms, objects, lights, interactables",
           "verify": [
             "npx vitest run tests/unit/buildings/milestonesInterior.test.js",
-            "node scripts/check-buildings.mjs --only milestones"
+            "node scripts/check-buildings.mjs --only milestones",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/milestones/manifest.json \"milestone-podium\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/milestones/manifest.json \"timeline-wall\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/milestones/manifest.json \"sit-bench\"",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/milestones/manifest.json stage full"
           ]
         },
         {
@@ -4866,11 +5437,22 @@
               "cmd": "npm run check:budget",
               "timeout_min": 15
             },
-            "node scripts/check-buildings.mjs --only milestones"
+            "node scripts/check-buildings.mjs --only milestones",
+            "npx vitest run tests/unit/world/zones.test.js tests/unit/buildings/milestonesArea.test.js tests/unit/content/zoneExpect.test.js",
+            "node \"{{runner}}/assert.mjs\" json src/world/buildings/milestones/manifest.json stage full",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"createMilestonesArea\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/buildings/registry.js \"decorateMilestones\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"buildMilestones\"",
+            "node \"{{runner}}/assert.mjs\" has src/content/dialogues.js \"Town Hall\"",
+            "node \"{{runner}}/assert.mjs\" has README.md \"Town Hall\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"milestones-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"milestones-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"milestones-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"milestones-inside\""
           ]
         }
       ],
-      "human_check": "Judge the hall of achievements."
+      "human_check": "Judge the hall of achievements and the look of the Town Hall. Also check the Tamil of the signs (நகர மன்றம் is a draft) for the person; the Tamil review is a human check, not a test."
     },
     {
       "id": "057",
@@ -4880,22 +5462,33 @@
         "portfolio"
       ],
       "depends_on": [
+        "051",
+        "052",
+        "053",
+        "054",
+        "055",
         "056"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
         "portfolio/README.md",
-        "portfolio/docs/review/**"
+        "portfolio/docs/review/**",
+        "portfolio/docs/shots/**",
+        "portfolio/src/world/**",
+        "portfolio/src/ui/minimap.js"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/world/zones.test.js",
         "portfolio/tests/e2e/dialogues-all.spec.js",
         "portfolio/tests/e2e/journey-2-door.spec.js",
-        "portfolio/tests/e2e/journey-3-library.spec.js"
+        "portfolio/tests/e2e/journey-3-library.spec.js",
+        "portfolio/tests/unit/docs/landmarksReview.test.js"
       ],
+      "unfreeze": [],
       "verify": [
         "npm run lint",
         "npx vitest run tests/unit/world/zones.test.js",
@@ -4931,11 +5524,25 @@
       "steps": [
         {
           "n": 1,
-          "title": "Remove v1 building code and finish the zone table",
+          "title": "Remove v1 building code, keep the v1-world terrain, finish the zone table",
           "verify": [
             "npx vitest run tests/unit/world/zones.test.js",
-            "node -e \"const fs=require('fs');process.exit(['src/world/buildings.js','src/world/buildingAnims.js'].some(p=>fs.existsSync(p))?1:0)\"",
-            "npm run lint"
+            "node -e \"const fs=require('fs');process.exit(['src/world/buildingAnims.js'].some(p=>fs.existsSync(p))?1:0)\"",
+            "node \"{{runner}}/assert.mjs\" none src/world/buildings.js \"updateBuildings\"",
+            "node \"{{runner}}/assert.mjs\" none src/systems/gameloop.js \"updateBuildings\"",
+            "node \"{{runner}}/assert.mjs\" has src/world/areas/index.js \"v1-world\"",
+            "npm run lint",
+            "npx vitest run tests/unit/world/sliceAreas.test.js",
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/slice-regression.spec.js",
+              "timeout_min": 40
+            },
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/journey-1-arrive.spec.js",
+              "timeout_min": 30
+            }
           ]
         },
         {
@@ -4952,7 +5559,7 @@
         },
         {
           "n": 3,
-          "title": "Journeys 2, 3 and 4 and the review pack",
+          "title": "Journeys 2, 3 and 4, budgets, shots and the review pack",
           "verify": [
             {
               "repo": "portfolio",
@@ -4966,10 +5573,22 @@
             },
             {
               "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/lighthouse.spec.js",
+              "timeout_min": 30
+            },
+            {
+              "repo": "portfolio",
               "cmd": "npm run check:budget",
               "timeout_min": 20
             },
-            "node \"{{runner}}/assert.mjs\" exists docs/review/landmarks-review.md"
+            "npx vitest run tests/unit/docs/landmarksReview.test.js",
+            "node \"{{runner}}/assert.mjs\" exists docs/review/landmarks-review.md",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"plaza-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/budgets.json \"lighthouse-outside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"milestones-inside\"",
+            "node \"{{runner}}/assert.mjs\" has src/shots.json \"library-archive\"",
+            "npm run check:ledger",
+            "npm run check:size"
           ]
         }
       ],
@@ -4985,7 +5604,8 @@
       "depends_on": [
         "057"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**"
@@ -4999,18 +5619,21 @@
       ],
       "verify": [
         "npm run lint",
+        "npm run test",
         "npx vitest run tests/unit/npc/skinned.test.js tests/unit/npc/npc.test.js tests/unit/npc/manager.test.js tests/unit/avatar/humanoid.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/npc-core.spec.js",
           "timeout_min": 15
-        }
+        },
+        "node scripts/check-buildings.mjs --all"
       ],
       "steps": [
         {
           "n": 1,
           "title": "Skinned humanoid with vertex colours and extra clips",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/npc/skinned.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/entity/avatar/skinnedHumanoid.js src/entity/avatar/clipsExtra.js"
           ]
@@ -5019,6 +5642,7 @@
           "n": 2,
           "title": "NPC state machine and movement",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/npc/npc.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/npc/npc.js"
           ]
@@ -5027,13 +5651,14 @@
           "n": 3,
           "title": "NPC manager, LOD and the hook",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/npc/manager.test.js",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/npc-core.spec.js",
               "timeout_min": 15
             },
-            "node \"{{runner}}/assert.mjs\" exists src/world/npc/manager.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/npc/manager.js src/fixtures/npcs.js"
           ]
         }
       ],
@@ -5049,7 +5674,8 @@
       "depends_on": [
         "058"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 100,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**"
@@ -5058,15 +5684,21 @@
       "freeze": [
         "portfolio/tests/unit/npc/population.test.js",
         "portfolio/tests/unit/kit/npcLoops.test.js",
+        "portfolio/tests/unit/npc/manager.remove.test.js",
         "portfolio/tests/e2e/npc-population.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/npc/population.test.js tests/unit/kit/npcLoops.test.js",
+        "npx vitest run tests/unit/npc/population.test.js tests/unit/kit/npcLoops.test.js tests/unit/npc/manager.remove.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/npc-population.spec.js",
           "timeout_min": 25
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 20
         },
         "node scripts/check-buildings.mjs --all"
       ],
@@ -5075,6 +5707,7 @@
           "n": 1,
           "title": "Population data and generator",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/npc/population.test.js tests/unit/kit/npcLoops.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/npc/population.js"
           ]
@@ -5083,6 +5716,8 @@
           "n": 2,
           "title": "Spawn through the streamed areas and Playwright",
           "verify": [
+            "npm run lint",
+            "npx vitest run tests/unit/npc/manager.remove.test.js",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/npc-population.spec.js",
@@ -5108,7 +5743,8 @@
       "depends_on": [
         "059"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**"
@@ -5116,14 +5752,20 @@
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/life/motion.test.js",
+        "portfolio/tests/unit/life/nature.perf.test.js",
         "portfolio/tests/e2e/nature.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/life/motion.test.js",
+        "npx vitest run tests/unit/life/motion.test.js tests/unit/life/nature.perf.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/nature.spec.js",
+          "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
           "timeout_min": 20
         }
       ],
@@ -5132,6 +5774,7 @@
           "n": 1,
           "title": "Pure motion models",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/life/motion.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/life/motion.js"
           ]
@@ -5140,6 +5783,8 @@
           "n": 2,
           "title": "Instanced rendering, placement and tiers",
           "verify": [
+            "npm run lint",
+            "npx vitest run tests/unit/life/nature.perf.test.js",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/nature.spec.js",
@@ -5153,7 +5798,8 @@
             "node \"{{runner}}/assert.mjs\" exists src/world/life/nature.js"
           ]
         }
-      ]
+      ],
+      "human_check": "Look at the harbour, beach and forest: do the gulls, crabs and butterflies read as living things, without looking like a swarm or sliding over the ground?"
     },
     {
       "id": "061",
@@ -5165,7 +5811,8 @@
       "depends_on": [
         "060"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 100,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
@@ -5177,9 +5824,6 @@
         "portfolio/tests/unit/life/routes.test.js",
         "portfolio/tests/e2e/moving-things.spec.js"
       ],
-      "unfreeze": [
-        "portfolio/tests/unit/layout/plots.test.js"
-      ],
       "verify": [
         "npm run lint",
         "npx vitest run tests/unit/life/animators.test.js tests/unit/life/routes.test.js tests/unit/layout/townPlan.test.js",
@@ -5187,6 +5831,11 @@
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/moving-things.spec.js",
           "timeout_min": 25
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 20
         }
       ],
       "steps": [
@@ -5194,6 +5843,7 @@
           "n": 1,
           "title": "Animator registry and kinds",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/life/animators.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/life/animators.js"
           ]
@@ -5202,14 +5852,16 @@
           "n": 2,
           "title": "Routes: boats, bus, auto-rickshaw",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/life/routes.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/world/life/routes.js"
+            "node \"{{runner}}/assert.mjs\" exists src/world/life/routes.js src/world/life/routes.json"
           ]
         },
         {
           "n": 3,
           "title": "Lighthouse beam, blinking mast lights, wiring and Playwright",
           "verify": [
+            "npm run lint",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/moving-things.spec.js",
@@ -5222,7 +5874,8 @@
             }
           ]
         }
-      ]
+      ],
+      "human_check": "Watch the harbour, the bus stop and the lighthouse at dusk: do the boats, the bus and the beam move believably, and do the wall clocks show the real time?"
     },
     {
       "id": "062",
@@ -5234,23 +5887,31 @@
       "depends_on": [
         "061"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/shots/062/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/weather/model.test.js",
         "portfolio/tests/unit/weather/render.test.js",
+        "portfolio/tests/unit/weather/wetness.test.js",
         "portfolio/tests/e2e/weather.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/weather/model.test.js tests/unit/weather/render.test.js",
+        "npx vitest run tests/unit/weather/model.test.js tests/unit/weather/render.test.js tests/unit/weather/wetness.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/weather.spec.js",
+          "timeout_min": 20
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
           "timeout_min": 20
         }
       ],
@@ -5259,22 +5920,34 @@
           "n": 1,
           "title": "Weather model (pure)",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/weather/model.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/weather/model.js"
           ]
         },
         {
           "n": 2,
-          "title": "Clouds, mist, rain rendering and ground wetness",
+          "title": "2a: cloud dome, rain streaks, splash rings and the weather index",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/weather/render.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/world/weather/clouds.js src/world/weather/rain.js src/world/weather/index.js"
           ]
         },
         {
           "n": 3,
+          "title": "2b: ground wetness, light, mist fog, the setNight rule and the rain event",
+          "verify": [
+            "npm run lint",
+            "npx vitest run tests/unit/weather/wetness.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/world/weather/index.js"
+          ]
+        },
+        {
+          "n": 4,
           "title": "Playwright and a look",
           "verify": [
+            "npm run lint",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/weather.spec.js",
@@ -5299,24 +5972,32 @@
       "depends_on": [
         "062"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 100,
       "allowed_paths": [
         "portfolio/src/**",
-        "portfolio/tests/**"
+        "portfolio/tests/**",
+        "portfolio/docs/shots/063/**"
       ],
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/lights/nightGlow.test.js",
         "portfolio/tests/unit/lights/allBuildingsLights.test.js",
+        "portfolio/tests/unit/sky/night.test.js",
         "portfolio/tests/e2e/living-light.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/lights/nightGlow.test.js tests/unit/lights/allBuildingsLights.test.js",
+        "npx vitest run tests/unit/lights/nightGlow.test.js tests/unit/lights/allBuildingsLights.test.js tests/unit/sky/night.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/living-light.spec.js",
           "timeout_min": 25
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npm run check:budget",
+          "timeout_min": 20
         },
         "node scripts/check-buildings.mjs --all"
       ],
@@ -5325,6 +6006,7 @@
           "n": 1,
           "title": "Night glow system",
           "verify": [
+            "npm run lint",
             "npx vitest run tests/unit/lights/nightGlow.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/systems/lights/nightGlow.js"
           ]
@@ -5333,8 +6015,8 @@
           "n": 2,
           "title": "Sky at dusk: moon, stars, warm sun, and the all-buildings light rule",
           "verify": [
-            "npx vitest run tests/unit/lights/allBuildingsLights.test.js",
-            "npm run lint"
+            "npm run lint",
+            "npx vitest run tests/unit/sky/night.test.js tests/unit/lights/allBuildingsLights.test.js"
           ]
         },
         {
@@ -5366,7 +6048,8 @@
       "depends_on": [
         "063"
       ],
-      "est_turns": 55,
+      "est_turns": 75,
+      "max_turns": 95,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
@@ -5378,11 +6061,15 @@
       "freeze": [
         "portfolio/tests/unit/audio/newSfx.test.js",
         "portfolio/tests/unit/audio/surfaces.test.js",
+        "portfolio/tests/unit/audio/engine.test.js",
+        "portfolio/tests/unit/audio/doorData.test.js",
+        "portfolio/tests/unit/audio/events.test.js",
+        "portfolio/tests/unit/audio/footsteps.test.js",
         "portfolio/tests/e2e/footsteps.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/audio/newSfx.test.js tests/unit/audio/surfaces.test.js tests/unit/audio/files.test.js",
+        "npx vitest run tests/unit/audio/newSfx.test.js tests/unit/audio/surfaces.test.js tests/unit/audio/engine.test.js tests/unit/audio/files.test.js tests/unit/audio/doorData.test.js tests/unit/audio/events.test.js tests/unit/audio/footsteps.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/footsteps.spec.js",
@@ -5403,32 +6090,36 @@
           "verify": [
             "npx vitest run tests/unit/audio/newSfx.test.js tests/unit/scripts/synthSfx.test.js",
             "npm run check:ledger",
-            "node \"{{runner}}/assert.mjs\" exists assets/audio/sfx/footstep_metal_1.wav assets/audio/sfx/door_open.wav assets/audio/sfx/lift_ding.wav"
+            "node \"{{runner}}/assert.mjs\" exists assets/audio/sfx/footstep_metal_1.wav assets/audio/sfx/door_open.wav assets/audio/sfx/lift_ding.wav assets/audio/sfx/lift_move.wav",
+            "node \"{{runner}}/assert.mjs\" has tests/unit/audio/newSfx.test.js \"LEDGER.json\""
           ]
         },
         {
           "n": 2,
           "title": "Surface mapping, bank and engine",
           "verify": [
-            "npx vitest run tests/unit/audio/surfaces.test.js",
+            "npx vitest run tests/unit/audio/surfaces.test.js tests/unit/audio/engine.test.js tests/unit/audio/doorData.test.js",
             "node \"{{runner}}/assert.mjs\" exists src/systems/audio/surfaces.js src/systems/audio/bank.js src/systems/audio/engine.js",
-            "node -e \"const fs=require('fs');process.exit(['src/systems/audio.js'].some(p=>fs.existsSync(p))?1:0)\""
+            "node \"{{runner}}/assert.mjs\" has src/systems/audio.js \"AUDIO_FILES\"",
+            "node \"{{runner}}/assert.mjs\" none src/systems \"systems/audio\\.js\""
           ]
         },
         {
           "n": 3,
           "title": "Footsteps and event sounds, Playwright",
           "verify": [
+            "npx vitest run tests/unit/audio/events.test.js tests/unit/audio/footsteps.test.js",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/footsteps.spec.js",
               "timeout_min": 25
             },
-            "node \"{{runner}}/assert.mjs\" exists src/systems/audio/footsteps.js"
+            "node \"{{runner}}/assert.mjs\" exists src/systems/audio/footsteps.js src/systems/audio/events.js",
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"Sound events\""
           ]
         }
       ],
-      "human_check": "Walk over grass, sand, stone, wood, carpet and the lighthouse stairs with sound on and judge the footsteps."
+      "human_check": "Walk over grass, sand, gravel, stone, wood, carpet and the lighthouse stairs with sound on and judge the footsteps; listen to the sand and gravel steps (not asserted by the test) and to the lift_move loop seam."
     },
     {
       "id": "065",
@@ -5440,7 +6131,8 @@
       "depends_on": [
         "064"
       ],
-      "est_turns": 55,
+      "est_turns": 70,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
@@ -5472,7 +6164,8 @@
           "title": "Ambience loops and the pure acoustics model",
           "verify": [
             "npx vitest run tests/unit/audio/ambienceSfx.test.js tests/unit/audio/acoustics.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/systems/audio/acoustics.js"
+            "node \"{{runner}}/assert.mjs\" exists src/systems/audio/acoustics.js",
+            "node \"{{runner}}/assert.mjs\" has scripts/assets/synthSfx.mjs \"LOOPS\""
           ]
         },
         {
@@ -5491,11 +6184,12 @@
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/acoustics.spec.js",
               "timeout_min": 25
-            }
+            },
+            "node \"{{runner}}/assert.mjs\" has docs/world-conventions.md \"Emitters\""
           ]
         }
       ],
-      "human_check": "Walk through a door with headphones: the outside should dull and the room should have a little echo."
+      "human_check": "Walk through a door with headphones: the outside should dull and the room should have a little echo. Also judge the ten new loops for seams and level."
     },
     {
       "id": "066",
@@ -5507,7 +6201,8 @@
       "depends_on": [
         "065"
       ],
-      "est_turns": 50,
+      "est_turns": 70,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
@@ -5549,14 +6244,14 @@
           "title": "Music generator and loops",
           "verify": [
             "npx vitest run tests/unit/audio/synthMusic.test.js",
-            "node \"{{runner}}/assert.mjs\" exists scripts/assets/synthMusic.mjs assets/audio/music/music_town_day.wav",
+            "node \"{{runner}}/assert.mjs\" exists scripts/assets/synthMusic.mjs assets/audio/music/music_town_day.wav assets/audio/music/music_town_night.wav assets/audio/music/music_harbour.wav assets/audio/music/music_beach.wav assets/audio/music/music_forest.wav assets/audio/music/music_hotel.wav assets/audio/music/music_cafe.wav assets/audio/music/music_office.wav assets/audio/music/music_studio.wav assets/audio/music/music_hall.wav",
             "npm run check:ledger",
             "npm run check:size"
           ]
         },
         {
           "n": 2,
-          "title": "Area-to-track table, crossfading and sliders",
+          "title": "Area-to-track table, crossfading, sliders and settings",
           "verify": [
             "npx vitest run tests/unit/audio/music.test.js",
             {
@@ -5568,11 +6263,16 @@
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/audio-settings.spec.js",
               "timeout_min": 15
+            },
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/settings.spec.js",
+              "timeout_min": 10
             }
           ]
         }
       ],
-      "human_check": "Listen to each generated track. They are simple and ambient; say if you want different moods, or drop in your own CC0 tracks later."
+      "human_check": "Listen to each generated track (all ten, with headphones, checking the loop seam and the level). They are simple and ambient; say if you want different moods, or drop in your own CC0 tracks later."
     },
     {
       "id": "067",
@@ -5584,7 +6284,8 @@
       "depends_on": [
         "066"
       ],
-      "est_turns": 45,
+      "est_turns": 60,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -5597,6 +6298,9 @@
       ],
       "verify": [
         "npm run lint",
+        "npm run test",
+        "npm run check:ledger",
+        "npm run check:size",
         "npx vitest run tests/unit/ui/resumeText.test.js",
         {
           "repo": "portfolio",
@@ -5608,26 +6312,29 @@
           "cmd": "npm run build",
           "timeout_min": 15
         },
-        "node scripts/check-phone.mjs"
+        "node scripts/check-phone.mjs",
+        "node \"{{runner}}/assert.mjs\" has src/ui/hud.js \"Shift[+]R\""
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Resume sections as data and a DOM builder",
+          "title": "Resume sections as data (no DOM in this step)",
           "verify": [
             "npx vitest run tests/unit/ui/resumeText.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/content/resumeText.js src/ui/textMode.js"
+            "node \"{{runner}}/assert.mjs\" exists src/content/resumeText.js src/content/milestones.js"
           ]
         },
         {
           "n": 2,
-          "title": "The overlay, the route and the entry controls",
+          "title": "The overlay, the route, the key, the boot split and the e2e",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/text-mode.spec.js",
               "timeout_min": 15
-            }
+            },
+            "node \"{{runner}}/assert.mjs\" none src/ui/textMode.js \"innerHTML\"",
+            "node \"{{runner}}/assert.mjs\" none src/content/resumeText.js \"innerHTML\""
           ]
         }
       ]
@@ -5642,7 +6349,8 @@
       "depends_on": [
         "067"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -5655,6 +6363,7 @@
       ],
       "verify": [
         "npm run lint",
+        "npm run test",
         "npx vitest run tests/unit/map/entrance.test.js",
         {
           "repo": "portfolio",
@@ -5665,27 +6374,44 @@
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/dialogues-all.spec.js",
           "timeout_min": 40
-        }
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/all-landmarks-close.spec.js",
+          "timeout_min": 40
+        },
+        "npm run check:phone",
+        {
+          "repo": "portfolio",
+          "cmd": "npm run build",
+          "timeout_min": 15
+        },
+        "node \"{{runner}}/assert.mjs\" none dist \"__world\"",
+        "node \"{{runner}}/assert.mjs\" none dist \"fastTravelPoint\"",
+        "npm run check:budget",
+        "npm run check:ledger"
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Entrance points and the shared teleport",
+          "title": "Fast-travel points, the teleport API and the hook",
           "verify": [
             "npx vitest run tests/unit/map/entrance.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/systems/teleport.js"
+            "node \"{{runner}}/assert.mjs\" exists src/systems/teleport.js",
+            "node \"{{runner}}/assert.mjs\" has src/dev/worldHook.js \"fastTravelPoint\""
           ]
         },
         {
           "n": 2,
-          "title": "The map UI",
+          "title": "The map UI, HUD button, keys, fade and e2e",
           "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/map.spec.js",
               "timeout_min": 25
             },
-            "node \"{{runner}}/assert.mjs\" exists src/ui/map.js"
+            "node \"{{runner}}/assert.mjs\" exists src/ui/map.js",
+            "node \"{{runner}}/assert.mjs\" has index.html \"id=\"map\"\""
           ]
         }
       ]
@@ -5700,7 +6426,8 @@
       "depends_on": [
         "068"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
@@ -5712,12 +6439,14 @@
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/build/staticResume.test.js",
+        "portfolio/tests/dist/staticResume.dist.test.js",
         "portfolio/tests/unit/build/seo.test.js",
+        "portfolio/tests/unit/boot/webglCheck.test.js",
         "portfolio/tests/e2e/journey-8-no-webgl.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/build/staticResume.test.js tests/unit/build/seo.test.js",
+        "npx vitest run tests/unit/build/staticResume.test.js tests/unit/build/seo.test.js tests/unit/boot/webglCheck.test.js",
         {
           "repo": "portfolio",
           "cmd": "npm run build",
@@ -5736,39 +6465,42 @@
           "timeout_min": 15
         },
         "npm run check:ledger",
-        "npm run check:size"
+        "npm run check:size",
+        "node \"{{runner}}/assert.mjs\" none dist/assets \"__world\"",
+        "node \"{{runner}}/assert.mjs\" none dist/assets \"fastTravelPoint\""
       ],
       "steps": [
         {
           "n": 1,
-          "title": "Static resume HTML at build time",
+          "title": "Renderer, Node-safe data and the Vite plugin",
           "verify": [
             "npx vitest run tests/unit/build/staticResume.test.js",
-            "node \"{{runner}}/assert.mjs\" exists scripts/vite-plugin-static-resume.mjs",
-            "node \"{{runner}}/assert.mjs\" has vite.config.js \"static-resume\""
+            "node \"{{runner}}/assert.mjs\" exists scripts/vite-plugin-static-resume.mjs src/content/resumeText.js"
           ]
         },
         {
           "n": 2,
-          "title": "WebGL detection, fallback view, SEO tags and the share image",
+          "title": "WebGL detection, boot order, fallback view, SEO tags and the share image",
           "verify": [
+            "npx vitest run tests/unit/boot/webglCheck.test.js",
             "npx vitest run tests/unit/build/seo.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/boot/webglCheck.js scripts/make-og-image.mjs assets/og-image.jpg",
+            "node \"{{runner}}/assert.mjs\" exists src/boot/webglCheck.js src/boot/world.js scripts/make-og-image.mjs assets/og-image.jpg",
             "npm run check:ledger"
           ]
         },
         {
           "n": 3,
-          "title": "Journey 8 and the build checks",
+          "title": "Journey 8, the dist checks and the build gates",
           "verify": [
             {
               "repo": "portfolio",
-              "cmd": "npx playwright test tests/e2e/journey-8-no-webgl.spec.js",
+              "cmd": "npm run build",
               "timeout_min": 15
             },
+            "npx vitest run tests/dist/staticResume.dist.test.js",
             {
               "repo": "portfolio",
-              "cmd": "npm run build",
+              "cmd": "npx playwright test tests/e2e/journey-8-no-webgl.spec.js",
               "timeout_min": 15
             },
             "node scripts/check-phone.mjs",
@@ -5788,7 +6520,8 @@
       "depends_on": [
         "069"
       ],
-      "est_turns": 40,
+      "est_turns": 45,
+      "max_turns": 75,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -5801,6 +6534,7 @@
       ],
       "verify": [
         "npm run lint",
+        "npm run test",
         "npx vitest run tests/unit/ui/tour.test.js",
         {
           "repo": "portfolio",
@@ -5816,15 +6550,16 @@
       "steps": [
         {
           "n": 1,
-          "title": "Tour state machine and storage (pure)",
+          "title": "Tour state machine, storage and text table (pure)",
           "verify": [
             "npx vitest run tests/unit/ui/tour.test.js",
-            "node \"{{runner}}/assert.mjs\" exists src/ui/tourState.js"
+            "node \"{{runner}}/assert.mjs\" exists src/ui/tourState.js",
+            "node \"{{runner}}/assert.mjs\" has src/util/urlParams.js \"tour\""
           ]
         },
         {
           "n": 2,
-          "title": "Tour UI and Playwright",
+          "title": "Tour UI, the start rule, the pulse ring and Playwright",
           "verify": [
             {
               "repo": "portfolio",
@@ -5846,7 +6581,8 @@
       "depends_on": [
         "070"
       ],
-      "est_turns": 50,
+      "est_turns": 55,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -5860,6 +6596,7 @@
       ],
       "verify": [
         "npm run lint",
+        "npm run test",
         "npx vitest run tests/unit/input/touch.test.js",
         {
           "repo": "portfolio",
@@ -5888,16 +6625,18 @@
         },
         {
           "n": 2,
-          "title": "The touch HUD",
+          "title": "The touch HUD and the shared input path",
           "verify": [
-            "node \"{{runner}}/assert.mjs\" has index.html \"safe-area-inset\"",
-            "node \"{{runner}}/assert.mjs\" has src/systems/input.js \"touchModel\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/input.js \"createJoystick[(]\"",
+            "node \"{{runner}}/assert.mjs\" has src/systems/input.js \"createLookPad[(]\"",
+            "node \"{{runner}}/assert.mjs\" has index.html \"id=\"touch-layer\"\"",
+            "npx vitest run tests/unit/input/touchVisibility.test.js",
             "npm run lint"
           ]
         },
         {
           "n": 3,
-          "title": "Playwright with touch events at a phone viewport",
+          "title": "Playwright with touch events at phone viewports",
           "verify": [
             {
               "repo": "portfolio",
@@ -5908,7 +6647,7 @@
           ]
         }
       ],
-      "human_check": "Try it on a real phone (iOS Safari and Android Chrome): moving, looking, doors, the map and the text mode."
+      "human_check": "Try it on a real phone (iOS Safari and Android Chrome): moving, looking, doors, the map and the text mode, in portrait and landscape."
     },
     {
       "id": "072",
@@ -5920,7 +6659,8 @@
       "depends_on": [
         "071"
       ],
-      "est_turns": 50,
+      "est_turns": 60,
+      "max_turns": 100,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
@@ -5930,12 +6670,15 @@
       "freeze": [
         "portfolio/tests/unit/engine/contextGuard.test.js",
         "portfolio/tests/unit/engine/chunks.test.js",
+        "portfolio/tests/unit/engine/errors.test.js",
         "portfolio/tests/e2e/context-loss.spec.js",
-        "portfolio/tests/e2e/chunk-fail.spec.js"
+        "portfolio/tests/e2e/chunk-fail.spec.js",
+        "portfolio/tests/unit/build/distChunks.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/engine/contextGuard.test.js tests/unit/engine/chunks.test.js",
+        "npm run test",
+        "npx vitest run tests/unit/engine/contextGuard.test.js tests/unit/engine/chunks.test.js tests/unit/engine/errors.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/context-loss.spec.js",
@@ -5956,7 +6699,8 @@
           "cmd": "npm run build",
           "timeout_min": 15
         },
-        "node scripts/check-prod-hook.mjs"
+        "node scripts/check-prod-hook.mjs",
+        "npm run check:size"
       ],
       "steps": [
         {
@@ -5964,25 +6708,39 @@
           "title": "Context loss and restore",
           "verify": [
             "npx vitest run tests/unit/engine/contextGuard.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/engine/contextGuard.js",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/context-loss.spec.js",
               "timeout_min": 15
-            },
-            "node \"{{runner}}/assert.mjs\" exists src/engine/contextGuard.js"
+            }
           ]
         },
         {
           "n": 2,
-          "title": "Failed chunks, areas and assets",
+          "title": "Retry wrapper, lazy modules, asset fallbacks and the global handler",
           "verify": [
             "npx vitest run tests/unit/engine/chunks.test.js",
+            "npx vitest run tests/unit/engine/errors.test.js",
+            "node \"{{runner}}/assert.mjs\" exists src/engine/chunks.js src/engine/errors.js"
+          ]
+        },
+        {
+          "n": 3,
+          "title": "Playwright failure cases and the build split",
+          "verify": [
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/chunk-fail.spec.js",
               "timeout_min": 20
             },
-            "node \"{{runner}}/assert.mjs\" exists src/engine/chunks.js"
+            {
+              "repo": "portfolio",
+              "cmd": "npm run build",
+              "timeout_min": 15
+            },
+            "npx vitest run tests/unit/build/distChunks.test.js",
+            "node scripts/check-prod-hook.mjs"
           ]
         }
       ]
@@ -5997,7 +6755,8 @@
       "depends_on": [
         "072"
       ],
-      "est_turns": 45,
+      "est_turns": 50,
+      "max_turns": 80,
       "allowed_paths": [
         "portfolio/scripts/**",
         "portfolio/tests/**"
@@ -6006,7 +6765,10 @@
       "freeze": [
         "portfolio/tests/unit/content/fixtures.test.js",
         "portfolio/tests/unit/scripts/checkContent.test.js",
-        "portfolio/tests/fixtures/content/resume-source.txt"
+        "portfolio/tests/fixtures/content/resume-source.txt",
+        "portfolio/tests/fixtures/content/proper-nouns.json",
+        "portfolio/tests/fixtures/content/v1",
+        "portfolio/tests/fixtures/content/allowlist-v0.json"
       ],
       "verify": [
         "npm run lint",
@@ -6019,7 +6781,7 @@
           "title": "Source fixtures",
           "verify": [
             "npx vitest run tests/unit/content/fixtures.test.js",
-            "node \"{{runner}}/assert.mjs\" exists tests/fixtures/content/resume-source.txt tests/fixtures/content/v1/dialogues.js.txt scripts/dev/extract-resume.mjs"
+            "node \"{{runner}}/assert.mjs\" exists tests/fixtures/content/resume-source.txt tests/fixtures/content/proper-nouns.json tests/fixtures/content/v1/contact.js.txt tests/fixtures/content/v1/projects.js.txt tests/fixtures/content/v1/experience.js.txt tests/fixtures/content/v1/education.js.txt tests/fixtures/content/v1/dialogues.js.txt scripts/dev/extract-resume.mjs"
           ]
         },
         {
@@ -6044,14 +6806,19 @@
         "073"
       ],
       "est_turns": 50,
+      "max_turns": 85,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/tests/**",
-        "portfolio/docs/review/**"
+        "portfolio/docs/review/**",
+        "portfolio/scripts/content-allowlist.json"
       ],
       "allow_extra": [],
       "freeze": [
-        "portfolio/tests/unit/content/rewriteGuard.test.js"
+        "portfolio/tests/unit/content/rewriteGuard.test.js",
+        "portfolio/tests/unit/content/rewriteDiff.test.js",
+        "portfolio/tests/unit/ui/claimWords.test.js",
+        "portfolio/tests/unit/content/allowlistStarters.test.js"
       ],
       "unfreeze": [
         "portfolio/tests/fixtures/zoneExpect.json"
@@ -6059,7 +6826,7 @@
       "verify": [
         "npm run lint",
         "npm run check:content",
-        "npx vitest run tests/unit/content/rewriteGuard.test.js tests/unit/ui/resumeText.test.js tests/unit/content/zoneExpect.test.js",
+        "npx vitest run tests/unit/content/rewriteGuard.test.js tests/unit/content/allowlistStarters.test.js tests/unit/content/rewriteDiff.test.js tests/unit/ui/claimWords.test.js tests/unit/ui/resumeText.test.js tests/unit/content/zoneExpect.test.js",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/dialogues-all.spec.js",
@@ -6070,22 +6837,22 @@
           "cmd": "npx playwright test tests/e2e/text-mode.spec.js",
           "timeout_min": 15
         },
-        "node scripts/check-phone.mjs"
+        "npm run check:phone"
       ],
       "steps": [
         {
           "n": 1,
           "title": "Rewrite guard tests first",
           "verify": [
-            "npx vitest run tests/unit/content/rewriteGuard.test.js"
+            "npx vitest run tests/unit/content/rewriteGuard.test.js tests/unit/content/allowlistStarters.test.js"
           ]
         },
         {
           "n": 2,
-          "title": "Rewrite the content",
+          "title": "Rewrite the content and prove the change",
           "verify": [
             "npm run check:content",
-            "npx vitest run tests/unit/content/rewriteGuard.test.js tests/unit/ui/resumeText.test.js tests/unit/content/zoneExpect.test.js"
+            "npx vitest run tests/unit/content/rewriteGuard.test.js tests/unit/content/rewriteDiff.test.js tests/unit/ui/claimWords.test.js tests/unit/ui/resumeText.test.js tests/unit/content/zoneExpect.test.js"
           ]
         },
         {
@@ -6102,7 +6869,7 @@
               "cmd": "npx playwright test tests/e2e/text-mode.spec.js",
               "timeout_min": 15
             },
-            "node scripts/check-phone.mjs",
+            "npm run check:phone",
             "node \"{{runner}}/assert.mjs\" exists docs/review/content-changes.md"
           ]
         }
@@ -6119,7 +6886,8 @@
       "depends_on": [
         "074"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 100,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
@@ -6130,14 +6898,27 @@
       "allow_extra": [],
       "freeze": [
         "portfolio/tests/unit/kit/phoneTier.test.js",
-        "portfolio/tests/e2e/phone-download.spec.js"
+        "portfolio/tests/unit/kit/interiors.test.js",
+        "portfolio/tests/unit/build/preload.test.js",
+        "portfolio/tests/e2e/phone-download.spec.js",
+        "portfolio/tests/e2e/phone-world.spec.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/kit/phoneTier.test.js tests/unit/props/allProps.test.js tests/unit/kit/building.test.js",
+        "npx vitest run tests/unit/kit/phoneTier.test.js tests/unit/kit/interiors.test.js tests/unit/build/preload.test.js tests/unit/props/allProps.test.js tests/unit/kit/building.test.js",
+        {
+          "repo": "portfolio",
+          "cmd": "npm run build",
+          "timeout_min": 15
+        },
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/phone-download.spec.js",
+          "timeout_min": 30
+        },
+        {
+          "repo": "portfolio",
+          "cmd": "npx playwright test tests/e2e/phone-world.spec.js",
           "timeout_min": 30
         },
         {
@@ -6150,7 +6931,7 @@
       "steps": [
         {
           "n": 1,
-          "title": "Decor halving and lazy interiors in the kit",
+          "title": "Decor flags and decor halving in the kit",
           "verify": [
             "npx vitest run tests/unit/kit/phoneTier.test.js tests/unit/props/allProps.test.js tests/unit/kit/building.test.js",
             "node \"{{runner}}/assert.mjs\" has src/world/kit/building.js \"ensureInterior\""
@@ -6158,8 +6939,22 @@
         },
         {
           "n": 2,
-          "title": "Phone budgets and the first-session download",
+          "title": "Interior budget constants, memory estimate and the interior manager",
           "verify": [
+            "npx vitest run tests/unit/kit/interiors.test.js tests/unit/kit/building.test.js",
+            "node scripts/check-buildings.mjs --all"
+          ]
+        },
+        {
+          "n": 3,
+          "title": "Preload manifest, download test, phone budget and the bounded tuning loop",
+          "verify": [
+            {
+              "repo": "portfolio",
+              "cmd": "npm run build",
+              "timeout_min": 15
+            },
+            "node scripts/make-preload.mjs",
             {
               "repo": "portfolio",
               "cmd": "npx playwright test tests/e2e/phone-download.spec.js",
@@ -6167,14 +6962,20 @@
             },
             {
               "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/phone-world.spec.js",
+              "timeout_min": 30
+            },
+            "npx vitest run tests/unit/build/preload.test.js",
+            {
+              "repo": "portfolio",
               "cmd": "npm run check:budget",
               "timeout_min": 25
             },
-            "node \"{{runner}}/assert.mjs\" exists src/preload.json docs/perf/phone-final.json"
+            "node \"{{runner}}/assert.mjs\" exists src/preload.json docs/perf/phone-bytes.json docs/perf/phone-final.json"
           ]
         }
       ],
-      "human_check": "Run the site on a real phone: does it start quickly, move smoothly and not crash? (D29)"
+      "human_check": "Run the site on a real phone: does it start quickly, move smoothly and not crash? (D29). If phone-final.json has notMet entries, decide on them."
     },
     {
       "id": "076",
@@ -6186,7 +6987,8 @@
       "depends_on": [
         "075"
       ],
-      "est_turns": 55,
+      "est_turns": 60,
+      "max_turns": 100,
       "model": "opus",
       "allowed_paths": [
         "portfolio/src/**",
@@ -6199,11 +7001,14 @@
       ],
       "allow_extra": [],
       "freeze": [
-        "portfolio/tests/unit/scripts/perfReport.test.js"
+        "portfolio/tests/unit/scripts/perfReport.test.js",
+        "portfolio/tests/unit/perf/findUnused.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/scripts/perfReport.test.js",
+        "npx vitest run tests/unit/scripts/perfReport.test.js tests/unit/perf/findUnused.test.js",
+        "node \"{{runner}}/assert.mjs\" none src/budgets.json \"baselineAllowance\"",
+        "node scripts/check-budget.mjs --list",
         {
           "repo": "portfolio",
           "cmd": "npm run check:budget",
@@ -6212,6 +7017,7 @@
         "node scripts/find-unused-assets.mjs",
         "npm run check:ledger",
         "npm run check:size",
+        "node scripts/generate-credits.mjs --check",
         {
           "repo": "portfolio",
           "cmd": "npx playwright test tests/e2e/world-tour.spec.js",
@@ -6223,27 +7029,48 @@
           "n": 1,
           "title": "Perf report tool and the unused-asset finder",
           "verify": [
-            "npx vitest run tests/unit/scripts/perfReport.test.js",
+            "npx vitest run tests/unit/scripts/perfReport.test.js tests/unit/perf/findUnused.test.js",
+            "node scripts/perf-report.mjs --spot square-day --profile desktop",
             "node \"{{runner}}/assert.mjs\" exists scripts/perf-report.mjs scripts/find-unused-assets.mjs"
           ]
         },
         {
           "n": 2,
-          "title": "Run the full budget, fix, slim the assets",
+          "title": "Baseline allowances, the missing spots and the bounded fix loop",
           "verify": [
+            "node \"{{runner}}/assert.mjs\" none src/budgets.json \"baselineAllowance\"",
+            "node scripts/check-budget.mjs --list",
             {
               "repo": "portfolio",
               "cmd": "npm run check:budget",
               "timeout_min": 40
             },
+            "node \"{{runner}}/assert.mjs\" exists docs/perf/desktop-final.md"
+          ]
+        },
+        {
+          "n": 3,
+          "title": "Remove unused assets, slim the assets and the final checks",
+          "verify": [
             "node scripts/find-unused-assets.mjs",
             "npm run check:ledger",
             "npm run check:size",
             "node scripts/generate-credits.mjs --check",
+            {
+              "repo": "portfolio",
+              "cmd": "npx playwright test tests/e2e/world-tour.spec.js",
+              "timeout_min": 30
+            },
+            {
+              "repo": "portfolio",
+              "cmd": "npm run check:budget",
+              "timeout_min": 40
+            },
             "node \"{{runner}}/assert.mjs\" exists docs/perf/desktop-final.md"
           ]
         }
-      ]
+      ],
+      "human_check": "Real desktop frame times at the heaviest spots (the tool measures draw calls and triangles only). Read docs/perf/desktop-final.md for not_met spots and the 70 MB status."
     },
     {
       "id": "077",
@@ -6256,6 +7083,7 @@
         "076"
       ],
       "est_turns": 50,
+      "max_turns": 90,
       "allowed_paths": [
         "portfolio/src/**",
         "portfolio/scripts/**",
@@ -6316,6 +7144,7 @@
           "title": "The journeys runner",
           "verify": [
             "npx vitest run tests/unit/scripts/journeys.test.js",
+            "node scripts/run-journeys.mjs --dry-run",
             {
               "repo": "portfolio",
               "cmd": "npm run test:journeys",
@@ -6337,6 +7166,7 @@
         "077"
       ],
       "est_turns": 40,
+      "max_turns": 70,
       "allowed_paths": [
         "portfolio/README.md",
         "portfolio/CREDITS.md",
@@ -6354,7 +7184,10 @@
         "npm run lint",
         "npx vitest run tests/unit/docs/readme.test.js tests/unit/docs/runbook.test.js",
         "node scripts/generate-credits.mjs --check",
-        "node scripts/check-phone.mjs"
+        "node scripts/check-phone.mjs",
+        "npm run check:content",
+        "npm run check:ledger",
+        "npm run check:size"
       ],
       "steps": [
         {
@@ -6362,7 +7195,9 @@
           "title": "README and credits",
           "verify": [
             "npx vitest run tests/unit/docs/readme.test.js",
-            "node scripts/generate-credits.mjs --check"
+            "node scripts/generate-credits.mjs",
+            "node scripts/generate-credits.mjs --check",
+            "node \"{{runner}}/assert.mjs\" exists docs/images/screenshot.png"
           ]
         },
         {
@@ -6386,7 +7221,8 @@
       "depends_on": [
         "078"
       ],
-      "est_turns": 45,
+      "est_turns": 60,
+      "max_turns": 100,
       "allowed_paths": [
         "portfolio/.github/workflows/pages.yml",
         "portfolio/eslint.config.js",
@@ -6404,11 +7240,17 @@
         "portfolio/tests/unit/lint/logging.test.js",
         "portfolio/tests/unit/security/links.test.js",
         "portfolio/tests/unit/scripts/checkAudit.test.js",
-        "portfolio/tests/unit/scripts/checkSizeDist.test.js"
+        "portfolio/tests/unit/scripts/checkSizeDist.test.js",
+        "portfolio/tests/unit/docs/finalReport.test.js"
       ],
       "verify": [
         "npm run lint",
-        "npx vitest run tests/unit/workflowFinal.test.js tests/unit/workflow.test.js tests/unit/lint/logging.test.js tests/unit/security/links.test.js tests/unit/scripts/checkAudit.test.js tests/unit/scripts/checkSizeDist.test.js",
+        "npx vitest run tests/unit/workflowFinal.test.js tests/unit/workflow.test.js tests/unit/lint/logging.test.js tests/unit/security/links.test.js tests/unit/scripts/checkAudit.test.js tests/unit/scripts/checkSizeDist.test.js tests/unit/docs/finalReport.test.js",
+        {
+          "repo": "portfolio",
+          "cmd": "npm run build",
+          "timeout_min": 15
+        },
         {
           "repo": "portfolio",
           "cmd": "node scripts/run-gates.mjs full --strict",
@@ -6423,7 +7265,7 @@
       "steps": [
         {
           "n": 1,
-          "title": "Workflow hardening test and logging rule",
+          "title": "Workflow hardening, logging rule and external links",
           "verify": [
             "npx vitest run tests/unit/workflowFinal.test.js tests/unit/workflow.test.js tests/unit/lint/logging.test.js tests/unit/security/links.test.js",
             "npm run lint"
@@ -6431,7 +7273,7 @@
         },
         {
           "n": 2,
-          "title": "Dependency audit and bundle size",
+          "title": "Dependency audit, bundle size and the package scripts",
           "verify": [
             "npx vitest run tests/unit/scripts/checkAudit.test.js tests/unit/scripts/checkSizeDist.test.js",
             {
@@ -6445,8 +7287,13 @@
         },
         {
           "n": 3,
-          "title": "Strict final gates",
+          "title": "Strict final gates and the final report",
           "verify": [
+            {
+              "repo": "portfolio",
+              "cmd": "npm run build",
+              "timeout_min": 15
+            },
             {
               "repo": "portfolio",
               "cmd": "node scripts/run-gates.mjs full --strict",
@@ -6457,11 +7304,12 @@
               "cmd": "node scripts/run-gates.mjs e2e --strict",
               "timeout_min": 120
             },
-            "node \"{{runner}}/assert.mjs\" exists docs/review/final-report.md"
+            "node \"{{runner}}/assert.mjs\" exists docs/review/final-report.md",
+            "npx vitest run tests/unit/docs/finalReport.test.js"
           ]
         }
       ],
-      "human_check": "FINAL: read `docs/review/final-report.md` and `docs/RELEASE-CHECKLIST.md`; switch Settings > Pages > Source to GitHub Actions once; approve and merge `world-v2` into `main` yourself (D27)."
+      "human_check": "FINAL: read docs/review/final-report.md for the honest state of the gates and the audit, and the spec section 6 checks; switch Settings > Pages > Source to GitHub Actions once; approve and merge world-v2 into main yourself (D27)."
     }
   ]
 }

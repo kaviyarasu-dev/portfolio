@@ -1,4 +1,4 @@
-phase: splitting
+phase: plans-approved
 slug: realistic-world-overhaul
 repo: C:\xampp-8.2\htdocs\kavi\New folder\portfolio  (git root; branch main only so far; remote origin kaviyarasu-dev/portfolio; all plan work goes on branch world-v2)
 Size: XL
@@ -69,3 +69,43 @@ Cross-plan items for upcoming fixes:
 Working method (unchanged): reader (plan-cold-reader, folder path + plan id only; if it hits the 15-turn limit send it a message to deliver the report) -> lead writes findings/NNN.md + one line in split-review.md right away -> ONE fixer per defs file (general-purpose agent, brief = findings briefs, edits only its defs, node --check only; tell it to SAVE edits early, an earlier fixer lost everything by only designing) -> lead runs gen.mjs + validator. Max 3-4 agents at once. Never two fixers on one defs file.
 Next steps: (1) fixers: e3a (032-036), e3b (037 only), e4a (042; and 043 wherever it lives) -- max 3 at once; (2) cold-read 044-079 in batches of 3; (3) fix per defs file; (4) gen + validator; (5) plan-auditor per epic E1..E8 + one cross-epic (architecture and contracts only), spec docs/specs/2026-10-30-realistic-world-overhaul-design.md, record verdicts in split-review.md, max 2 rounds; (6) STEP 4 table + approval; (7) phase: plans-approved; (8) STEP 5 run text (git switch -c world-v2 in portfolio, commit docs/specs, both clean; user runs runner, never the lead).
 Open items for STEP 4: many plans heavy (maxTurns 80-100); second-pass cold read of fixed plans not re-run (optional for worst); README.md outside allowed_paths in 043.
+
+## CONV 4 (2026-11-14): fixers launched for e3a (032-036), e3b (037 only), e4a (042+043). Next: gen+validate, cold readers 044-079 (3 at a time), per-defs fixers, auditors.
+
+## RESUME HERE v5 (written 2026-11-14 conv 4, after a rate limit; THIS SECTION SUPERSEDES v4)
+Validator VALID. Round-1 FIXES DONE: 001-044 (e3a 032-036, e3b 037, e4a 042-044 all fixed this conversation; buildingPlan.mjs got additive pass-throughs structItems/extItems/intItems/verify2/verify3/acceptExtra/maxTurns/allowed/propsStep; README goes into a plan's `allowed` list).
+Cold readers DONE with briefs in findings/NNN.md + split-review.md lines: 044-052 (all NEEDS FIXES). Fix PENDING (no defs edits saved yet; first e4b fixer was killed by the rate limit, e4b.mjs unchanged): 045-048 in defs/e4b.mjs (045 hand-written; 046-048 buildingPlan), 049+050 in defs/e4b.mjs (run AFTER the 045-048 fixer), 051+052 in defs/e4c.mjs (briefs 051.md, 052.md).
+Cold readers NOT done: 053, 054, 055 (were running when the limit hit; resume via SendMessage or re-run), 056, then 057-079.
+Model for building plans = fixed 043 block in defs/e4a.mjs (layout bounds, door/window tables, light tables, registry.js DECORATORS with skipGeneric, registerLandmarkArea, `allowed` README, stage structure->full, spots+has asserts). Cross-plan: plan 063 (e5.mjs) reads src/world/kit/bake.js (nonexistent) -> repoint to src/world/town/bakeStatic.js.
+Method unchanged: reader (15-turn limit -> SendMessage to deliver report) -> lead writes findings brief + split-review line -> ONE fixer per defs file (tell it to SAVE edits early) -> lead gen + validator. Max 3-4 agents at once. Then plan-auditors, STEP 4, approval, plans-approved, STEP 5.
+
+## RESUME HERE v6 (written 2026-11-14 end of conv 4; ALL subagents stopped; THIS SECTION SUPERSEDES v5 and older)
+Validator: VALID (0 warnings) after the last gen run. All defs + buildingPlan.mjs pass node --check.
+Round-1 FIXES DONE (defs edited, gen+validate OK): 001-045. (045 in defs/e4b.mjs, saved; est 60 maxTurns 90.)
+Round-1 FIXES PENDING (briefs exist in findings/NNN.md, NO defs edits saved yet):
+ - defs/e4b.mjs: ONE fixer for 046, 047, 048 first (briefs 046.md, 047.md, 048.md), THEN a second fixer for 049, 050 (briefs 049.md, 050.md). Do NOT touch 045 (done) or 044.
+ - defs/e4c.mjs: ONE fixer for 051, 052, 053, 054 first (briefs 051-054.md), THEN a second fixer for 055, 056, 057 (briefs 055.md, 056.md, 057.md). (First e4c fixer was stopped just before splicing 051; e4c.mjs is unchanged.)
+ - defs/e5.mjs: 058 (brief 058.md) + 063 repoint kit/bake.js -> src/world/town/bakeStatic.js; wait for 059-063 briefs and fix the whole file in one fixer.
+Cold readers DONE with briefs + split-review lines: 044-058 (all NEEDS FIXES). NOT done: 059-079 (059 was stopped midway: re-run it). Then e5 059-063, e6 064-066, e7 067-074, e8 075-079.
+Model for building plans (043-056) = fixed 043 and 044 blocks in defs/e4a.mjs + buildingPlan.mjs (optional pass-throughs structItems/extItems/intItems/verify2/verify3/acceptExtra/maxTurns/allowed/propsStep; README goes into the plan's `allowed` list). 045 in e4b.mjs is the model for a hand-written landmark plan. Generic building-plan fixes: room bounds + leftover rule, door/window tables, light tables, registry.js DECORATORS with skipGeneric, registerLandmarkArea(<zone>Area.js) priority 30 radii 120/170 interior true, stage structure->full with json assert, spots with coordinates in budgets+shots + has asserts, v1 factory removal with `none` checks, zones mode object with E-away assert, teleport (not walkTo), expect.poll, extras never declared in manifest exteriorDetails, sign keys digit-free (frozen 025), Tamil review -> human_check, est <= 60 maxTurns 90-100.
+Known cross-plan items: walkTo (040) is road-graph only (no doors/stairs): tests use teleport helpers; 057 must NOT remove the v1-world area (terrain owner, frozen 031 tests); 053 timeline-wall has 8 slots (042); 049 ferry goes in a NEW set file (038 harbour.js test frozen); 050 vs 039 'temple' name collision.
+Method: reader (plan-cold-reader, folder path + plan id only; 15-turn limit -> SendMessage to deliver report) -> lead writes findings/NNN.md + one split-review.md line right away -> ONE fixer per defs file (general-purpose, prompt: 'SAVE edits early, first saved edit within ~8 tool calls, node --check after each edit, edit only your plans block') -> lead runs gen.mjs + validator. Max 3-4 agents at once (rate limit hit once; the 5-hour limit resets, then resume with SendMessage). After all: plan-auditor per epic E1..E8 + one cross-epic (architecture and contracts only), spec docs/specs/2026-10-30-realistic-world-overhaul-design.md, record verdicts in split-review.md, max 2 rounds, VALID; STEP 4 table + approval; phase: plans-approved; STEP 5 run text (git switch -c world-v2 in portfolio, commit docs/specs, both clean; user runs the runner, never the lead).
+
+## CONV 5 (2026-11-14, started from v6; v6 still valid)
+Validator VALID at start of conv 5. Launched: fixer e4b 046-048; fixer e4c 051-054; cold reader 059. Next: e4b 049+050 (after 046-048 fixer), e4c 055-057 (after 051-054 fixer), e5 058 fix (after 059-063 readers), cold readers 060-079, per-defs fixers, auditors.
+
+## RESUME HERE v7 (written 2026-11-14 end of conv 5; ALL subagents stopped by the user; THIS SECTION SUPERSEDES v6 and CONV 5)
+Validator VALID (last gen run at start of conv 5). Only defs file changed in conv 5 is none (e4c.mjs was restored to its committed HEAD version after a stopped fixer left it unparseable; the half-edited copy is kept in the scratchpad, not in the repo). First action in the new session: node --check on all defs + buildingPlan.mjs, then gen.mjs + validator.
+Round-1 FIXES DONE: 001-045.
+Round-1 FIXES PENDING (no saved edits in conv 5):
+ - defs/e4b.mjs: 046, 047, 048 (ONE fixer), then 049, 050 (second fixer). Briefs findings/046-050.md.
+ - defs/e4c.mjs: 051-054 (ONE fixer), then 055-057 (second fixer). Briefs findings/051-057.md. Starts from the HEAD version.
+ - defs/e5.mjs: 058 + 059 + 060 + 061-063 (wait for briefs 061-063, then ONE fixer for the whole file; includes 063 repoint kit/bake.js -> src/world/town/bakeStatic.js).
+Cold readers DONE with briefs + split-review lines: 001-060.
+ - 059 (findings/059.md): NEEDS FIXES; counts sum ~92 vs 60-90 cap, npcSeats undefined, area plumbing, shirt colours vs 058 variants.
+ - 060 (findings/060.md): NEEDS FIXES; no hook/listObjects shape for animals, particleScale rounding breaks low 40-60%, reduced-motion 'less than half' flakes, est 70-90.
+Cold readers NOT done (stopped mid-run, no report): 061, 062 -> re-run. Not started: 063-079.
+Then: e6 064-066, e7 067-074, e8 075-079 cold readers and their fixers.
+Method unchanged: reader (plan-cold-reader, folder + id only) -> lead writes findings/NNN.md + one split-review line -> ONE fixer per defs file (general-purpose; SAVE edits early; node --check after each edit; do not run gen; edit only own plans block) -> lead gen + validator. Max 3-4 agents at once.
+Then plan-auditor per epic E1..E8 + one cross-epic, max 2 rounds, STEP 4, approval, plans-approved, STEP 5.
+Known from the conv 5 readers: TIER/quality defaults (medium on SwiftShader, force ?quality= in tests); particleScale rounding = round; nature hook needs a named field and listObjects shape; NPC seats are not player interactables; 058 needs a remove() on NpcManager if 059 uses it.

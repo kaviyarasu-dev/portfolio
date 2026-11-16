@@ -47,9 +47,9 @@ Check for this step (the runner runs it too; it fails before the work and passes
 - `node "{{runner}}/assert.mjs" exists src/world/props/sets/rooftop.js`
 - `node "{{runner}}/assert.mjs" has src/world/props/index.js "sets/rooftop"`
 - `node "{{runner}}/assert.mjs" has src/content/signage.js "first-floor"`
-- `node "{{runner}}/assert.mjs" has docs/building-manifest.md "wallMaterial"`
-- `node "{{runner}}/assert.mjs" has docs/building-manifest.md "roomMin"`
-- `node "{{runner}}/assert.mjs" has src/world/buildings/plaza/manifest.json "rooftop"`
+- `node "{{runner}}/assert.mjs" has docs/building-manifest.md "Stage, roomMin and wallMaterial (plans 020 to 027)"`
+- `node "{{runner}}/assert.mjs" has src/world/buildings/plaza/manifest.json ""rooftop": 14"`
+- `node "{{runner}}/assert.mjs" has src/world/buildings/plaza/manifest.json ""bath-4": 10"`
 
 ### Step 2: Corridor on the first floor
 

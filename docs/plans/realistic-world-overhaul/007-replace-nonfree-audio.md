@@ -47,7 +47,7 @@ Check for this step (the runner runs it too; it fails before the work and passes
 ### Step 3: Playwright: no failed requests
 
 Deliver:
-- `tests/e2e/audio-assets.spec.js`: wait for `window.__world.ready`; click the canvas and press `Shift` to unlock audio; wait 4 s; assert no response had status 400 or higher and no `requestfailed` happened except an aborted media request (`ERR_ABORTED` on a `.ogg`, which streaming music can cause); log offending URLs in the assertion message; assert at least one `.wav` request returned 200 and at least one `.ogg` request returned 200 or 206.
+- `tests/e2e/audio-assets.spec.js`: wait for `window.__world.ready`; click the canvas and press `Shift` to unlock audio; then use `expect.poll` (up to 10 s, no fixed wait) until a `.wav` response has returned status 200; then assert no response had status 400 or higher and no `requestfailed` happened except an aborted media request (`ERR_ABORTED` on a `.ogg`, which streaming music can cause); log offending URLs in the assertion message; assert at least one `.wav` request returned 200 and at least one `.ogg` request returned 200 or 206.
 
 Check for this step (the runner runs it too; it fails before the work and passes after):
 - `npx playwright test tests/e2e/audio-assets.spec.js`

@@ -3,7 +3,8 @@ import { has, exists, vt, pw, npm, node } from './lib.mjs';
 
 export function buildingPlan(s) {
   const z = s.zone;
-  const T = `tests/unit/buildings/${z}`;
+  // optional s.testBase renames the unit test files (default: the zone id); optional s.stepOverrides = { <1-based step number>: { items, verify, title } } replaces parts of a generated step (default output unchanged)
+  const T = `tests/unit/buildings/${s.testBase || z}`;
   const steps = [];
 
   steps.push({
@@ -14,6 +15,7 @@ export function buildingPlan(s) {
       `Doors: ${s.doors}. At least one unlocked exterior door that is not decorative. Windows: ${s.windows}. Stairs and lifts: ${s.stairs}.`,
       `\`exteriorDetails\` counts (all seven classes, window at least 4): ${s.details}. \`interactables\`: declare only \`${s.read.id}\` now (kind \`read\`, room \`${s.read.room}\`, \`dialogueKey\` \`main\`, prompt "${s.read.prompt}").`,
       `\`${T}.test.js\` first: \`checkBuilding(manifest, { stage: "structure" })\` passes; the room ids above exist exactly; the exterior door is unlocked; ${s.structureTest}; the CLI \`check:buildings --only ${z} --stage structure\` exits 0.`,
+      ...(s.structItems || []),
     ],
     verify: [vt(`${T}.test.js`), node(`scripts/check-buildings.mjs --only ${z} --stage structure`), exists(`src/world/buildings/${z}/manifest.json`)],
   });
@@ -25,21 +27,33 @@ export function buildingPlan(s) {
       `Signage from \`src/content/signage.js\`: add the keys ${s.signs} (English plus Tamil draft; see the vocabulary in plan 025; flag the Tamil for the person).`,
       `Counts of built detail objects must reach the manifest counts (\`checkDetails\`). Windows get frames; buildings without visible interiors use curtain fills only if the interior is hidden.`,
       `\`${T}Exterior.test.js\` first: detail counts per class at least the manifest counts, the sign materials record the English and Tamil strings, the exterior door clearance stays free, and the walk graph still reaches every room.`,
+      ...(s.extItems || []),
     ],
-    verify: [vt(`${T}Exterior.test.js`), node(`scripts/check-buildings.mjs --only ${z} --stage structure`), exists(`src/world/buildings/${z}/build.js`)],
+    verify: [vt(`${T}Exterior.test.js`), node(`scripts/check-buildings.mjs --only ${z} --stage structure`), exists(`src/world/buildings/${z}/build.js`), ...(s.verify2 || [])],
   });
 
+  const newPropsItem = s.newProps ? `New props first (category \`${s.newProps.cat}\`, file \`src/world/props/sets/${s.newProps.file}.js\`, same quality bar and metadata rules as plans 019 and 022): ${s.newProps.types.map((t) => '`' + t + '`').join(', ')}${s.newProps.note ? '. ' + s.newProps.note : ''}. Register them in \`src/world/props/index.js\` and add \`tests/unit/props/${s.newProps.file}.test.js\` (exact list, sizes within 20 percent of the bounding box, categories, ${s.newProps.test}).` : null;
+  // optional own props step (s.propsStep) between the exterior and the interior step; default output is unchanged
+  if (s.newProps && s.propsStep) {
+    steps.push({
+      title: s.propsStep,
+      items: [newPropsItem, ...(s.propsItems || [])],
+      verify: [vt(`tests/unit/props/${s.newProps.file}.test.js`, 'tests/unit/props/allProps.test.js'), ...(s.verifyProps || [])],
+    });
+  }
+  const inlineProps = s.newProps && !s.propsStep;
   const interiorItems = [
-    ...(s.newProps ? [`New props first (category \`${s.newProps.cat}\`, file \`src/world/props/sets/${s.newProps.file}.js\`, same quality bar and metadata rules as plans 019 and 022): ${s.newProps.types.map((t) => '`' + t + '`').join(', ')}${s.newProps.note ? '. ' + s.newProps.note : ''}. Register them in \`src/world/props/index.js\` and add \`tests/unit/props/${s.newProps.file}.test.js\` (exact list, sizes within 20 percent of the bounding box, categories, ${s.newProps.test}).`] : []),
+    ...(inlineProps ? [newPropsItem] : []),
     ...s.rooms.map((r) => `Room \`${r.id}\` (floor material ${r.floor}): ${r.objects}. Lights: ${r.lights}.`),
     `Over all rooms at least 40 distinct object types (rooms rule: at least 12 distinct types per room, 14 in the main room); every type exists in the catalog. ${s.interiorExtra || ''}`,
     `Interactables: ${s.read.id} (\`read\`, the object is ${s.read.object}); light switches per room; seats ${s.seats}.`,
+    ...(s.intItems || []),
     `\`${T}Interior.test.js\` first: \`checkBuilding\` full stage passes; per-room distinct type counts; no placement problems; every room reachable with the unlocked doors open; ${s.interiorTest}.`,
   ];
   steps.push({
     title: 'Interior: rooms, objects, lights, interactables',
     items: interiorItems,
-    verify: [vt(`${T}Interior.test.js`, ...(s.newProps ? [`tests/unit/props/${s.newProps.file}.test.js`, 'tests/unit/props/allProps.test.js'] : [])), node(`scripts/check-buildings.mjs --only ${z}`)],
+    verify: [vt(`${T}Interior.test.js`, ...(inlineProps ? [`tests/unit/props/${s.newProps.file}.test.js`, 'tests/unit/props/allProps.test.js'] : [])), node(`scripts/check-buildings.mjs --only ${z}`), ...(s.verify3 || [])],
   });
 
   steps.push({
@@ -55,14 +69,16 @@ export function buildingPlan(s) {
     verify: [pw(`tests/e2e/${z}.spec.js`, 20), { cmd: 'npm run check:budget', timeout_min: 15 }, node(`scripts/check-buildings.mjs --only ${z}`), ...(s.verify4 || [])],
   });
 
+  if (s.stepOverrides) for (const [k, o] of Object.entries(s.stepOverrides)) Object.assign(steps[Number(k) - 1], o);
+
   return {
-    id: s.id, name: s.slug, title: s.title, epic: 'E4', est: s.est || 55, ...(s.model ? { model: s.model } : {}),
+    id: s.id, name: s.slug, title: s.title, epic: 'E4', est: s.est || 55, ...(s.maxTurns ? { maxTurns: s.maxTurns } : {}), ...(s.deps ? { deps: s.deps } : {}), ...(s.model ? { model: s.model } : {}),
     arch: 'sections 3, 10.6 and requirement R6, R8, decision D4, D9, D18, A5, A30',
     goal: [s.goal, `This is a Rich-bar landmark: 3 to 6 rooms, at least 40 distinct object types, an enterable door, all seven exterior detail classes, and every room reachable (\`npm run check:buildings -- --only ${z}\`).`],
     read: ['docs/building-manifest.md', 'src/world/buildings/plaza/manifest.json', 'src/world/buildings/plaza/build.js', 'src/world/kit/exterior.js', 'src/world/kit/building.js', 'src/world/layout/town.json', 'src/world/zones.js', 'src/content/dialogues.js', 'src/content/signage.js', 'scripts/check-buildings.mjs', ...(s.read2 || [])],
     steps,
-    accept: [npm('lint'), vt(`${T}.test.js`, `${T}Exterior.test.js`, `${T}Interior.test.js`), node(`scripts/check-buildings.mjs --only ${z}`), pw(`tests/e2e/${z}.spec.js`, 20), { cmd: 'npm run check:budget', timeout_min: 15 }, npm('check:ledger')],
-    allowed: ['portfolio/src/**', 'portfolio/tests/**', 'portfolio/docs/**'],
+    accept: [npm('lint'), vt(`${T}.test.js`, `${T}Exterior.test.js`, `${T}Interior.test.js`), node(`scripts/check-buildings.mjs --only ${z}`), pw(`tests/e2e/${z}.spec.js`, 20), { cmd: 'npm run check:budget', timeout_min: 15 }, npm('check:ledger'), ...(s.acceptExtra || [])],
+    allowed: s.allowed || ['portfolio/src/**', 'portfolio/tests/**', 'portfolio/docs/**'],
     freeze: [`portfolio/${T}.test.js`, `portfolio/${T}Exterior.test.js`, `portfolio/${T}Interior.test.js`, `portfolio/tests/e2e/${z}.spec.js`, ...(s.newProps ? [`portfolio/tests/unit/props/${s.newProps.file}.test.js`] : []), ...(s.freezeExtra || [])],
     human: s.human || `Walk the ${s.display} inside and out and judge the realism.`,
     risks: s.risks,
